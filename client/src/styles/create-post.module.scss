@@ -1,0 +1,43 @@
+.createPost {
+  width: 650px;
+  background-color: #FFFFFF;
+  text-align: center;
+  padding: 15px;
+  border-radius: 10px;
+
+  .buttonCreate {
+    width: 100%;
+    margin-left: 10px;
+    border-radius: 50px;
+    background-color: #eeeeee;
+    color: #7d7e85;
+    font-size: 16px;
+    justify-content: flex-start;
+    text-transform: none;
+
+    &:hover {
+      background: #E4E6E9
+    }
+  }
+
+  .button {
+    text-transform: none;
+    font-weight: bold;
+    font-size: 12px;
+    border-radius: 5px;
+    width: 100%;
+    color: #7d7e85;
+
+    &:hover {
+      background: #F2F2F2;
+    }
+
+  }
+
+  hr {
+    margin-top: 13px;
+    border: none;
+    background-color: #d0d0d0;
+    height: 1px
+  }
+}
