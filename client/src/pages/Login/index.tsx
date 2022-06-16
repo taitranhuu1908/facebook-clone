@@ -1,16 +1,27 @@
-import React from 'react'
+import React, {useState} from 'react'
 import './login.scss'
-import {Box, Divider, ButtonBase, Container, InputBase, Typography} from "@mui/material";
+import {Box, ButtonBase, Container, Divider, Typography} from "@mui/material";
 import styled from "@emotion/styled";
 import {Link} from 'react-router-dom';
+import {SubmitHandler, useForm} from "react-hook-form";
+import {IUserLogin} from "../../app/models/User";
+import * as yup from 'yup';
+import {yupResolver} from '@hookform/resolvers/yup'
+import RegisterModal from "../../components/Modal/Register";
 
-const InputLogin = styled(InputBase)`
+const InputLogin = styled("input")`
   background-color: white;
   border-radius: 6px;
   font-size: 17px;
-  padding: 10px 12px;
-  width: 330px;
+  padding: 16px 18px;
+  width: 360px;
   border: 1px solid #dddfe2;
+  outline: none;
+  margin-top: 10px;
+
+  &:focus {
+    border: 2px solid #1877f2;
+  }
 `
 
 const ButtonLogin = styled(ButtonBase)`
@@ -19,8 +30,8 @@ const ButtonLogin = styled(ButtonBase)`
   border-radius: 6px;
   font-size: 20px;
   line-height: 48px;
-  padding: 0 16px;
-  width: 332px;
+  padding: 0 18px;
+  width: 360px;
   color: white;
   font-weight: bold;
   margin-top: 10px;
@@ -38,7 +49,22 @@ const ButtonCreateNew = styled(ButtonBase)`
   margin: 10px;
 `
 
+const schema = yup.object().shape({
+    email: yup.string().email().required("Email hoặc số di động bạn nhập không kết nối với tài khoản nào"),
+    password: yup.string().required("Mật khẩu không được để trống")
+})
+
 const LoginPage: React.FC = () => {
+    const {register, formState: {errors}, handleSubmit} = useForm<IUserLogin>({
+        resolver: yupResolver(schema),
+        mode: "onSubmit"
+    }    )
+    const [openRegister, setOpenRegister] = useState(false)
+
+    const handleLogin: SubmitHandler<IUserLogin> = (data) => {
+        console.log(data)
+    }
+
     return (
         <Box className="root__login">
             <Box className="login__top">
@@ -50,14 +76,28 @@ const LoginPage: React.FC = () => {
                         </Typography>
                     </Box>
                     <Box>
-                        <form className="login__form">
-                            <InputLogin type="text" placeholder="Email hoặc số điện thoại"/>
-                            <InputLogin type="password" placeholder="Mật khẩu"/>
-                            <ButtonLogin>Đăng nhập</ButtonLogin>
+                        <form className="login__form" onSubmit={handleSubmit(handleLogin)}>
+                            <InputLogin type="text" className={`${errors.email ? "input__login--error" : ""}`} {...register("email")}
+                                        placeholder="Email hoặc số điện thoại"/>
+                            {errors.email && <Typography className="message__login--error">
+                                {errors.email.message}.
+                                {" "}
+                                <Link to="/login" className="text-decoration-none">
+                                    <Typography className="message__error-link" component="span">
+                                        Hãy tìm tài khoản của bạn và đăng nhập.
+                                    </Typography>
+                                </Link>
+                            </Typography>}
+                            <InputLogin type="password" {...register("password")} className={`${errors.password ? "input__login--error" : ""}`} placeholder="Mật khẩu"/>
+                            {errors.password && <Typography className="message__login--error">
+                                {errors.password.message}
+                            </Typography>}
+                            <ButtonLogin type="submit">Đăng nhập</ButtonLogin>
                             <Link className="forgot__text" to="/forgot-password">Quên mật khẩu?</Link>
                             <Divider sx={{width: "332px"}}/>
-                            <ButtonCreateNew>Tạo tài khoản mới</ButtonCreateNew>
+                            <ButtonCreateNew onClick={() => setOpenRegister(true)}>Tạo tài khoản mới</ButtonCreateNew>
                         </form>
+                        <RegisterModal open={openRegister} onClose={() => setOpenRegister(false)}/>
                         <Box sx={{
                             width: "390px",
                             display: "flex",
@@ -106,7 +146,8 @@ const LoginPage: React.FC = () => {
                     <Link className="text-footer" to={"/login"}>Lựa chọn quảng cáo</Link>
                     <Link className="text-footer" to={"/login"}>Điều khoản</Link>
                     <Link className="text-footer" to={"/login"}>Trợ giúp</Link>
-                    <Link className="text-footer" to={"/login"}>Tải thông tin liên hệ lên & đối tượng không phải người dùng</Link>
+                    <Link className="text-footer" to={"/login"}>Tải thông tin liên hệ lên & đối tượng không phải người
+                        dùng</Link>
                     <Link className="text-footer" to={"/login"}>Cài đặt</Link>
                 </Container>
             </Box>

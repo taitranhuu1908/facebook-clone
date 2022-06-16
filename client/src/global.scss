@@ -114,6 +114,21 @@ table {
     border-spacing: 0;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 .text-decoration-none {
     text-decoration: none;
+}
+.text-color-gray {
+    color: #606770 !important;
+}
+
+.text-color-link {
+    color: #00a0e9 !important;
+}
+
+.input-error {
+    border: 1px solid #ff0000 !important;
 }
