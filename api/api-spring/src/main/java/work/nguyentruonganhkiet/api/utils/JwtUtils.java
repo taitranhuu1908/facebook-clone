@@ -1,69 +1,70 @@
 package work.nguyentruonganhkiet.api.utils;
 
+
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import work.nguyentruonganhkiet.api.model.dtos.UserDetailsImpl;
+import work.nguyentruonganhkiet.api.model.dtos.CustomUserDetails;
 
 import java.util.Date;
 
 @Component
 public class JwtUtils {
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${jwt.app.jwtSecret}")
-    private String jwtSecret;
+	private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${jwt.app.jwtExpirationMs}")
-    private int jwtExpirationMs;
+	private String jwtSecret = "secret";
 
-    public String generateJwtToken(UserDetailsImpl userDetails) {
-        return Jwts.builder()
-                .setSubject((userDetails.getUsername()))
-                .setIssuedAt(new Date())
-                .setExpiration(generateExpirationDate())
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
-    }
+	// 10 minutes
+	private int jwtExpirationMs = 600000;
 
-    public Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + jwtExpirationMs);
-    }
+	public String generateJwtToken( CustomUserDetails userDetails ) {
+		return Jwts.builder()
+				.setSubject(( userDetails.getUsername() ))
+				.setIssuedAt(new Date())
+				.setExpiration(generateExpirationDate())
+				.signWith(SignatureAlgorithm.HS512 , jwtSecret)
+				.compact();
+	}
 
-    public Claims getClaimsFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
-    }
+	public Date generateExpirationDate() {
+		return new Date(System.currentTimeMillis() + jwtExpirationMs);
+	}
 
-    private boolean isTokenExpired(Claims claims) {
-        return claims.getExpiration().after(new Date());
-    }
+	public Claims getClaimsFromJwtToken( String token ) {
+		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+	}
 
-    public String getUserNameFromJwtToken(String token) {
-        Claims claims = getClaimsFromJwtToken(token);
-        if (claims != null && isTokenExpired(claims)) {
-            return claims.getSubject();
-        }
-        return null;
-    }
+	private boolean isTokenExpired( Claims claims ) {
+		return claims.getExpiration().after(new Date());
+	}
 
-    public boolean validateJwtToken(String authToken) {
-        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-            return true;
-        } catch (SignatureException e) {
-            logger.error("Invalid JWT signature: {}", e.getMessage());
-        } catch (MalformedJwtException e) {
-            logger.error("Invalid JWT token: {}", e.getMessage());
-        } catch (ExpiredJwtException e) {
-            logger.error("JWT token is expired: {}", e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            logger.error("JWT token is unsupported: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty: {}", e.getMessage());
-        }
+	public String getUserNameFromJwtToken( String token ) {
+		Claims claims = getClaimsFromJwtToken(token);
+		if (claims != null && isTokenExpired(claims)) {
+			return claims.getSubject();
+		}
+		return null;
+	}
 
-        return false;
-    }
+	public boolean validateJwtToken( String authToken ) {
+		try {
+			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+			return true;
+		} catch (SignatureException e) {
+			logger.error("Invalid JWT signature: {}" , e.getMessage());
+		} catch (MalformedJwtException e) {
+			logger.error("Invalid JWT token: {}" , e.getMessage());
+		} catch (ExpiredJwtException e) {
+			logger.error("JWT token is expired: {}" , e.getMessage());
+		} catch (UnsupportedJwtException e) {
+			logger.error("JWT token is unsupported: {}" , e.getMessage());
+		} catch (IllegalArgumentException e) {
+			logger.error("JWT claims string is empty: {}" , e.getMessage());
+		}
+
+		return false;
+	}
+
 }
