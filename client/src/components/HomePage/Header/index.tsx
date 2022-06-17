@@ -1,11 +1,11 @@
 import React from 'react';
-import './header.scss';
+import styles from './header.module.scss';
 
 interface IProps {
 
 }
 
 const Header: React.FC<IProps> = () => {
-    return <>Header</>
+    return <div className={styles.root}>Header</div>
 }
 export default Header;
