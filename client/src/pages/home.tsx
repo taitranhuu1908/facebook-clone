@@ -1,11 +1,11 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import Header from "../components/HomePage/Header";
 
 const HomePage: React.FC = () => {
     return (
-        <div>
-            <Link to="/login">Test</Link>
-        </div>
+        <>
+            <Header/>
+        </>
     )
 }
 
