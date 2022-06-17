@@ -1,5 +1,5 @@
 import React from 'react'
-import CreatePost from '../components/create-post';
+import CreatePost from '../components/CreatePost';
 
 function Test() {
     return (
