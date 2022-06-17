@@ -1,0 +1,22 @@
+.root-register-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  width: 450px;
+  padding: 0;
+  border-radius: 4px;
+
+  .header {
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .body {
+    padding: 16px;
+  }
+
+}

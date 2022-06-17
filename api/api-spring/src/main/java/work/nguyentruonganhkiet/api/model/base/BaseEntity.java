@@ -1,31 +1,28 @@
 package work.nguyentruonganhkiet.api.model.base;
 
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Timestamp;
 
 @MappedSuperclass
 @Getter
 @Setter
-public abstract class BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+@AllArgsConstructor
+@NoArgsConstructor
+public class BaseEntity {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(nullable = false, updatable = false)
+	private Long id;
 
-    @Column()
-    private Boolean isDeleted = false;
+	@CreationTimestamp
+	private Timestamp createdAt;
+	@UpdateTimestamp
+	private Timestamp updatedAt;
 
-    @Column()
-    private Boolean isActivated = true;
-
-    @CreationTimestamp
-    private Date createdAt;
-
-    @CreationTimestamp
-    private Date updatedAt;
-
+	private boolean isDelete = false;
 }

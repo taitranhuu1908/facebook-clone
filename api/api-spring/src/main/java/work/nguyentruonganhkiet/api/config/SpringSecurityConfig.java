@@ -9,60 +9,57 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import work.nguyentruonganhkiet.api.middleware.AuthenticateMiddleware;
-import work.nguyentruonganhkiet.api.model.dtos.UserDetailsImpl;
-import work.nguyentruonganhkiet.api.services.UserServicesImpl;
-import work.nguyentruonganhkiet.api.utils.AuthenticationEntryPointHandler;
+import work.nguyentruonganhkiet.api.service.UserService;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-        prePostEnabled = true
+		prePostEnabled = true
 )
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    UserServicesImpl userDetailsService;
+	@Autowired
+	UserService userDetailsService;
 
-    @Autowired
-    private AuthenticationEntryPointHandler unauthorizedHandler;
+	@Autowired
+	private AuthenticationEntryPointHandler unauthorizedHandler;
 
-    @Bean
-    public AuthenticateMiddleware authenticationJwtTokenFilter() {
-        return new AuthenticateMiddleware();
-    }
+	@Bean
+	public AuthenticationFilter authenticationJwtTokenFilter() {
+		return new AuthenticationFilter();
+	}
 
-    @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
+	@Override
+	public void configure( AuthenticationManagerBuilder authenticationManagerBuilder ) throws Exception {
+		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+	}
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/test/**").permitAll()
-                .anyRequest().authenticated();
+	@Override
+	protected void configure( HttpSecurity http ) throws Exception {
+		http.cors().and().csrf().disable()
+				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+				.authorizeRequests().antMatchers("/api/auth/**").permitAll()
+				.antMatchers("/api/test/**").permitAll()
+				.anyRequest().authenticated();
 
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-    }
+		http.addFilterBefore(authenticationJwtTokenFilter() , UsernamePasswordAuthenticationFilter.class);
+	}
+
 }

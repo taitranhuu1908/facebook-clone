@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const HomePage: React.FC = () => {
     return (
         <div>
-            <Link to="/test">Test</Link>
+            <Link to="/login">Test</Link>
         </div>
     )
 }
