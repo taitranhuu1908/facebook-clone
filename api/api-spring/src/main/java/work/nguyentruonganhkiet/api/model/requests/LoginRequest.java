@@ -1,4 +1,4 @@
-package work.nguyentruonganhkiet.api.model.request;
+package work.nguyentruonganhkiet.api.model.requests;
 
 
 import lombok.Data;

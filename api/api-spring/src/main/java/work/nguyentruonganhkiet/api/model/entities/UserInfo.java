@@ -16,13 +16,14 @@ import javax.persistence.OneToOne;
 public class UserInfo extends BaseEntity {
 
 	private String fullName;
+	private String birthday;
 	private String phone;
 	private String address;
 	private String avatar;
 	private String coverImage;
 	private String about;
-	private String birthday;
 	private String bio;
+	private boolean gender;
 
 	@OneToOne(mappedBy = "userInfo", orphanRemoval = true)
 	private Users users;

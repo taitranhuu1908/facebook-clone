@@ -1,7 +1,6 @@
 package work.nguyentruonganhkiet.api.controller;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import work.nguyentruonganhkiet.api.model.dtos.CustomUserDetails;
 import work.nguyentruonganhkiet.api.model.entities.Role;
 import work.nguyentruonganhkiet.api.model.entities.Users;
-import work.nguyentruonganhkiet.api.model.reponse.JwtResponse;
-import work.nguyentruonganhkiet.api.model.reponse.MessageResponse;
-import work.nguyentruonganhkiet.api.model.request.LoginRequest;
-import work.nguyentruonganhkiet.api.model.request.SignupRequest;
-import work.nguyentruonganhkiet.api.model.role.RoleEnum;
+import work.nguyentruonganhkiet.api.model.reponses.JwtResponse;
+import work.nguyentruonganhkiet.api.model.reponses.MessageResponse;
+import work.nguyentruonganhkiet.api.model.requests.LoginRequest;
+import work.nguyentruonganhkiet.api.model.requests.SignupRequest;
+import work.nguyentruonganhkiet.api.model.enums.RoleEnum;
 import work.nguyentruonganhkiet.api.repository.RoleRepository;
 import work.nguyentruonganhkiet.api.repository.UserRepository;
 import work.nguyentruonganhkiet.api.utils.JwtUtils;
@@ -94,7 +93,7 @@ public class AuthController {
 				.password(encoder.encode(signUpRequest.getPassword()))
 				.build();
 
-		Set<String> assignRoles = !signUpRequest.getRole().isEmpty() ? signUpRequest.getRole() : new HashSet<>();
+		Set<String> assignRoles = ! signUpRequest.getRole().isEmpty() ? signUpRequest.getRole() : new HashSet<>();
 		Set<Role> roles = new HashSet<>();
 
 		if (assignRoles == null) {

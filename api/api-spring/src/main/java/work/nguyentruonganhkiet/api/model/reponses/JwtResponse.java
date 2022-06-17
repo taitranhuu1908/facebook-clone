@@ -1,4 +1,4 @@
-package work.nguyentruonganhkiet.api.model.reponse;
+package work.nguyentruonganhkiet.api.model.reponses;
 
 
 import lombok.Builder;
