@@ -15,10 +15,10 @@ interface IProps {
     className?: string;
 }
 
-const InputRegister = React.forwardRef((props: IProps, ref) => {
+const InputRegister: React.FC<IProps> = (props) => {
     const {type = 'text', className, name, placeholder, onChange, value, isError = false, textPopper, ...args} = props;
     return (
-        <InputCustom className={className} ref={ref} type={type} name={name} placeholder={placeholder} onChange={onChange} value={value} {...args}
+        <InputCustom className={className} type={type} name={name} placeholder={placeholder} onChange={onChange} value={value} {...args}
                      endAdornment={isError && textPopper ? (
                          <>
                              <IconButtonPopper bgrColor={'#be4b49'} textColor={'#f8ecec'} text={textPopper}>
@@ -27,7 +27,7 @@ const InputRegister = React.forwardRef((props: IProps, ref) => {
                          </>
                      ) : null}/>
     )
-})
+}
 
 const InputCustom = styled(InputBase)`
   border: 1px solid #ccd0d5;
