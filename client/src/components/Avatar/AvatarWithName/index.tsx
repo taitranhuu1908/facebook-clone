@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from "@emotion/styled";
-import {Avatar, ButtonBase, Typography} from "@mui/material";
+import {Avatar, ButtonBase, Tooltip, Typography} from "@mui/material";
 
 interface IProps {
     src: string;
@@ -9,10 +9,12 @@ interface IProps {
 
 const AvatarWithName: React.FC<IProps> = ({src, title}) => {
     return <>
-        <AvatarWithNameStyled>
-            <Avatar src={""} sx={{width: '35px', height: '35px'}}/>
-            <UsernameText>{title}</UsernameText>
-        </AvatarWithNameStyled>
+        <Tooltip title={title}>
+            <AvatarWithNameStyled>
+                <Avatar src={""} sx={{width: '35px', height: '35px'}}/>
+                <UsernameText>{title}</UsernameText>
+            </AvatarWithNameStyled>
+        </Tooltip>
     </>
 }
 
@@ -21,7 +23,7 @@ const AvatarWithNameStyled = styled(ButtonBase)`
   align-items: center;
   gap: 10px;
   border-radius: 30px;
-  padding: 2px 6px;
+  padding: 4px 6px;
 
   &:hover {
     background-color: #f3f3f3;

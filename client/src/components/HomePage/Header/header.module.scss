@@ -24,6 +24,9 @@ $header-height: 56px;
 
   .headerMid {
     flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .headerRight {

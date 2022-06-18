@@ -1,14 +1,26 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import styles from './header.module.scss';
 import {Box} from "@mui/material";
 import InputSearch from "./InputSearch";
 import ButtonCircle from "../../Button/Circle";
 import AvatarWithName from "../../Avatar/AvatarWithName";
+import NavigateItem from "./NavigateItem";
+import {NAVIGATE_LIST} from "../../../constants";
 
 interface IProps {
 }
 
 const Header: React.FC<IProps> = () => {
+
+
+    const renderNavigate = useMemo(() => {
+        return NAVIGATE_LIST.map((item, index) => {
+            return <NavigateItem key={index} to={item.to} active={false}>
+                <img src={item.src} alt={item.title}/>
+            </NavigateItem>
+        })
+    }, []);
+
     return <Box className={styles.root}>
         <Box className={styles.headerRight}>
             <Box className={styles.logo}>
@@ -18,7 +30,9 @@ const Header: React.FC<IProps> = () => {
                 <InputSearch/>
             </Box>
         </Box>
-        <Box className={styles.headerMid}></Box>
+        <Box className={styles.headerMid}>
+            {renderNavigate}
+        </Box>
         <Box className={styles.headerRight}>
             <AvatarWithName src={""} title={"Hữu Tài TRần"}/>
             <ButtonCircle title={'Menu'}>
