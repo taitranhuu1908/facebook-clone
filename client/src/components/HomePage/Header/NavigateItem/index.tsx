@@ -1,22 +1,25 @@
 import React from 'react';
 import styled from "@emotion/styled";
-import {ButtonBase} from "@mui/material";
+import {ButtonBase, Tooltip} from "@mui/material";
 import {Link} from "react-router-dom";
 
 interface IProps {
     children: React.ReactNode;
     to: string;
     active: boolean;
+    title?: string;
 }
 
-const NavigateItem: React.FC<IProps> = ({to, children, active}) => {
+const NavigateItem: React.FC<IProps> = ({title, to, children, active}) => {
 
     return <>
-        <Link to={to} className={active ? 'navigate-active' : ''}>
-            <ButtonStyled>
-                {children}
-            </ButtonStyled>
-        </Link>
+        <Tooltip title={title || ''}>
+            <Link to={to} className={active ? 'navigate-active' : ''}>
+                <ButtonStyled>
+                    {children}
+                </ButtonStyled>
+            </Link>
+        </Tooltip>
     </>
 }
 

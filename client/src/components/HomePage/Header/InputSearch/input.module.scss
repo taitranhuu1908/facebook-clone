@@ -11,5 +11,10 @@
 
   .inputSearch {
     background: transparent;
+    transition: width .3s;
+  }
+
+  .hidden {
+    display: none;
   }
 }

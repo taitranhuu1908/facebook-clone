@@ -1,33 +1,31 @@
+import {GameNavigate, GroupNavigate, HomeNavigate, MarketplaceNavigate, WatchNavigate} from '../components/Icons';
+
+
 export const NAVIGATE_LIST = [
     {
-        src: '/images/navigate/home-navigate.svg',
+        Icon: HomeNavigate,
         to: '/',
         title: 'Trang chủ',
-        srcActive: '/images/navigate/home-navigate-active.svg'
     },
     {
-        src: '/images/navigate/media-navigate.svg',
+        Icon: WatchNavigate,
         to: '/watch',
         title: 'Watch',
-        srcActive: '/images/navigate/media-navigate-active.svg'
     },
     {
-        src: '/images/navigate/market-navigate.svg',
+        Icon: MarketplaceNavigate,
         to: '/marketplace',
         title: 'Marketplace',
-        srcActive: '/images/navigate/market-navigate-active.svg'
     },
     {
-        src: '/images/navigate/group-navigate.svg',
+        Icon: GroupNavigate,
         to: '/group',
         title: 'Nhóm',
-        srcActive: '/images/navigate/group-navigate-active.svg'
     },
     {
-        src: '/images/navigate/game-navigate.svg',
+        Icon: GameNavigate,
         to: '/game',
         title: 'Trò chơi',
-        srcActive: '/images/navigate/game-navigate-active.svg'
     },
 
 ]

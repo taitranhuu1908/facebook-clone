@@ -6,20 +6,23 @@ import ButtonCircle from "../../Button/Circle";
 import AvatarWithName from "../../Avatar/AvatarWithName";
 import NavigateItem from "./NavigateItem";
 import {NAVIGATE_LIST} from "../../../constants";
+import {useLocation} from 'react-router-dom';
 
 interface IProps {
 }
 
 const Header: React.FC<IProps> = () => {
-
+    const {pathname} = useLocation();
 
     const renderNavigate = useMemo(() => {
         return NAVIGATE_LIST.map((item, index) => {
-            return <NavigateItem key={index} to={item.to} active={false}>
-                <img src={item.src} alt={item.title}/>
+            const {Icon} = item;
+            return <NavigateItem title={item.title} key={index} to={item.to} active={pathname === item.to}>
+                <Icon active={pathname === item.to}/>
             </NavigateItem>
         })
-    }, []);
+    }, [pathname]);
+
 
     return <Box className={styles.root}>
         <Box className={styles.headerRight}>

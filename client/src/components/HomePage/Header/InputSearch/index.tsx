@@ -24,11 +24,10 @@ const InputSearch: React.FC<IProps> = () => {
         setIsFocus(true)
     }
 
-
     return <form className={styles.root}>
-        {!isFocus && <span>
+        <span className={isFocus ? styles.hidden : ''}>
             <SearchIcon sx={{color: '#65676b'}}/>
-        </span>}
+        </span>
         <InputBase type="text"
                    ref={inputRef}
                    onFocus={onFocusSearch}
