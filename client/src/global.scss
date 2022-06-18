@@ -40,3 +40,30 @@
   color: #65676b !important;
   fill: #65676b !important;
 }
+
+.text-limit-line-3 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* number of lines to show */
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+::-webkit-scrollbar-track
+{
+  border-radius: 10px;
+  background: transparent;
+}
+
+::-webkit-scrollbar
+{
+  width: 10px;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+  border-radius: 10px;
+  background-color: #e0e0e0;
+}

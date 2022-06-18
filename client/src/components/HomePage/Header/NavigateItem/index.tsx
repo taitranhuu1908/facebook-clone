@@ -11,7 +11,6 @@ interface IProps {
 }
 
 const NavigateItem: React.FC<IProps> = ({title, to, children, active}) => {
-
     return <>
         <Tooltip title={title || ''}>
             <Link to={to} className={active ? 'navigate-active' : ''}>
