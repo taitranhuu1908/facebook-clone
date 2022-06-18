@@ -1,7 +1,5 @@
-$header-height: 56px;
-
 .root {
-  height: $header-height;
+  height: var(--header-height);
   width: 100%;
   display: flex;
   justify-content: space-between;

@@ -1,19 +1,22 @@
 import React from 'react';
-import {IconButton, Tooltip} from "@mui/material";
+import {Badge, IconButton, Tooltip} from "@mui/material";
 import styled from "@emotion/styled";
 
 interface IProps {
     children: React.ReactNode;
-    onClick?: () => void;
+    onClick?: (e: any) => void;
     title?: string;
+    number?: number;
 }
 
-const ButtonCircle: React.FC<IProps> = ({title = '', onClick, children}) => {
+const ButtonCircle: React.FC<IProps> = ({title = '', onClick, children, number}) => {
     return <>
         <Tooltip title={title}>
-            <IconButtonCustom onClick={onClick}>
-                {children}
-            </IconButtonCustom>
+            <Badge badgeContent={number || null} color='error'>
+                <IconButtonCustom onClick={onClick}>
+                    {children}
+                </IconButtonCustom>
+            </Badge>
         </Tooltip>
     </>
 }
