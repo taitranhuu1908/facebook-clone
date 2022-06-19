@@ -1,10 +1,12 @@
 import React from 'react'
-import Header from "../../components/HomePage/Header";
+import HomeLayout from "../../layouts/HomeLayout";
 
 const HomePage: React.FC = () => {
     return (
         <>
-            <Header/>
+            <HomeLayout>
+                Xin chao
+            </HomeLayout>
         </>
     )
 }

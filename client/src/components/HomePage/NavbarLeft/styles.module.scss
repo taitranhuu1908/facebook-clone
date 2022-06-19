@@ -1,0 +1,20 @@
+.root {
+  max-width: 300px;
+  min-width: 280px;
+  max-height: 100%;
+  padding: 10px 5px;
+  overflow: auto;
+  transition: all 0.5s ease-in-out;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+  }
+
+  &:hover {
+    &::-webkit-scrollbar {
+      width: 10px;
+      background: #F5F5F5;
+    }
+  }
+}
