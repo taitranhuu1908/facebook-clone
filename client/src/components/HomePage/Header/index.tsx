@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import styles from './header.module.scss';
-import {Box} from "@mui/material";
+import {Box, InputBase} from "@mui/material";
 import InputSearch from "./InputSearch";
 import ButtonCircle from "../../Button/Circle";
 import NavigateItem from "./NavigateItem";
@@ -9,6 +9,8 @@ import {useLocation} from 'react-router-dom';
 import AvatarCircle from "../../Avatar/AvatarCircle";
 import Menu from "./Menu";
 import MenuItemWithAvatar from "./MenuItemWithAvatar";
+import styled from "@emotion/styled";
+import MenuChatItem from "./MenuChatItem";
 
 interface IProps {
 }
@@ -43,9 +45,11 @@ const Header: React.FC<IProps> = () => {
                 });
                 break;
             case 'messenger':
-                setAnchorEl({
-                    messenger: event.currentTarget,
-                    notify: null
+                setAnchorEl(({messenger}) => {
+                    return {
+                        messenger: messenger ? null : event.currentTarget,
+                        notify: null,
+                    }
                 })
                 break;
             default:
@@ -79,11 +83,11 @@ const Header: React.FC<IProps> = () => {
                 <img src="/images/button/icon-button-bar.svg" alt=""/>
             </ButtonCircle>
             <ButtonCircle title={'Messenger'}
-                          onClick={(event) => openMenu(event,'messenger')}>
+                          onClick={(event) => openMenu(event, 'messenger')}>
                 <img src="/images/button/icon-button-message.svg" alt=""/>
             </ButtonCircle>
             <ButtonCircle number={4} title={'Thông báo'}
-                          onClick={(event) => openMenu(event,'notify')}>
+                          onClick={(event) => openMenu(event, 'notify')}>
                 <img src="/images/button/icon-button-notify.svg" alt=""/>
             </ButtonCircle>
             <Menu title={'Thông  báo'} handleClose={handleClose}
@@ -94,10 +98,14 @@ const Header: React.FC<IProps> = () => {
                                         'Sản phẩm bảo hành 06 Tháng\n' +
                                         '⏰ Bảo hành 06 tháng'}/>
             </Menu>
-            <Menu title={'Messenger'} anchorEl={anchorEl['messenger']}
+            <Menu title={'Chat'} anchorEl={anchorEl['messenger']}
                   handleClose={handleClose}
             >
-                asd
+                <InputSearchMessenger placeholder={'Tìm kiếm trên Messenger'} />
+                <MenuChatItem src={''} title={'Hữu Tài'} to={'/'} description={'\'𝐋𝐨𝐚 𝐦𝐚́𝐲 𝐭𝐢́𝐧𝐡 𝐒𝐩𝐞𝐚𝐤𝐞𝐫 𝐄-𝟏𝟎𝟏𝟒 được thiết kế đẹp mắt, sang trọng.\\n\' +\n' +
+                    '                                        \'Thích hợp để bạn sử dụng trong không gian phòng nhỏ và ấm áp\\n\' +\n' +
+                    '                                        \'Sản phẩm bảo hành 06 Tháng\\n\' +\n' +
+                    '                                        \'⏰ Bảo hành 06 tháng'}/>
             </Menu>
             <AvatarCircle
                 src={'https://scontent.fsgn2-2.fna.fbcdn.net/v/t1.18169-9/18556006_104946380091976_9183765241575257849_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=ABFvsFoX_lwAX-zdp_y&_nc_ht=scontent.fsgn2-2.fna&oh=00_AT9uahBdcXjjXX6nSy_4PRWkuRdvpm94vMcBuTqh_9lz4g&oe=62D468C7'}
@@ -106,5 +114,14 @@ const Header: React.FC<IProps> = () => {
 
     </Box>
 }
+
+const InputSearchMessenger = styled(InputBase)`
+  width: 100%;
+  border-radius: 30px;
+  background-color: #f5f5f5;
+  padding: 5px 15px;
+  font-size: 16px;
+  margin-bottom: 10px;
+`
 
 export default Header;
