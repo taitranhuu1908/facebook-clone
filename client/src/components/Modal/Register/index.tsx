@@ -97,12 +97,15 @@ const RegisterModal: React.FC<IProps> = ({open, onClose}) => {
                 <form onSubmit={handleSubmit(handleRegister)}>
                     <Grid container spacing={2} className="body">
                         <Grid item xs={6}>
-                            <InputRegister className={errors.firstName ? 'input-error' : ""} {...register('firstName')} placeholder={"Họ"} isError={!!errors.firstName}
+                            <InputRegister className={errors.firstName ? 'input-error' : ""} {...register('firstName')}
+                                           placeholder={"Họ"} isError={!!errors.firstName}
                                            textPopper={'Tên bạn là gì?'}/>
                         </Grid>
-                        <Grid item xs={6}><InputRegister className={errors.firstName ? 'input-error' : ""} {...register('lastName')} placeholder={"Tên"}
-                                                         isError={!!errors.lastName}
-                                                         textPopper={'Tên bạn là gì?'}/></Grid>
+                        <Grid item xs={6}><InputRegister
+                            className={errors.firstName ? 'input-error' : ""} {...register('lastName')}
+                            placeholder={"Tên"}
+                            isError={!!errors.lastName}
+                            textPopper={'Tên bạn là gì?'}/></Grid>
                         <Grid item xs={12}><InputRegister isError={!!errors.email}
                                                           className={errors.firstName ? 'input-error' : ""}
                                                           {...register('email')}
