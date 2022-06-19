@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import styles from './styles.module.scss';
 import {Avatar, Box, List} from "@mui/material";
-import NavItem from "./NavItem";
+import NavItem from "../NavItemLink";
 import {LIST_ITEM_NAVBAR} from "../../../constants";
 
 interface IProps {
