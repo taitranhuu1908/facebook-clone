@@ -11,4 +11,16 @@
   top: var(--header-height);
   right: 0;
   background: var(--background-home);
+
+  &::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+  }
+
+  &:hover {
+    &::-webkit-scrollbar {
+      width: 10px;
+      background: #F5F5F5;
+    }
+  }
 }
