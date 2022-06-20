@@ -31,14 +31,15 @@ const WrapperContentStyled = styled.main`
   margin-top: var(--header-height);
   display: flex;
   background-color: var(--background-home);
-  max-height: 100vh;
   height: 100%;
 `
 
 const ContentStyled = styled.div`
   margin-right: var(--navbar-width);
   margin-left: var(--navbar-width);
-  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `
 
 export default HomeLayout;
