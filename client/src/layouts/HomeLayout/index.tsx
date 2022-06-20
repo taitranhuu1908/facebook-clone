@@ -39,6 +39,9 @@ const ContentStyled = styled.div`
   margin-right: var(--navbar-width);
   margin-left: var(--navbar-width);
   height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `
 
 export default HomeLayout;
