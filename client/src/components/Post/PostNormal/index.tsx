@@ -25,6 +25,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import InsertCommentOutlinedIcon from '@mui/icons-material/InsertCommentOutlined';
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import Fancybox from "../../Fancybox";
+import Comment from "../Comment";
 
 interface IProps {
     time?: string;
@@ -171,6 +172,10 @@ const PostNormal: React.FC<IProps> = (props) => {
                             <ButtonAction startIcon={<ReplyOutlinedIcon/>}>Chia sẻ</ButtonAction>
                         </Grid>
                     </Grid>
+                </Box>
+                <Box sx={{padding: '0 10px'}}>
+                    <Divider sx={{width: '100%'}}/>
+                    <Comment />
                 </Box>
             </Paper>
         </ListItem>
