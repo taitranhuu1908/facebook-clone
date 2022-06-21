@@ -9,7 +9,7 @@ interface IProps {
 
 const AvatarOnline: React.FC<IProps> = ({src, online}) => {
     return <>
-        <Box sx={{position: 'relative', width: '40px', height: '40px'}}>
+        <Box sx={{position: 'relative', minWidth: '40px', height: '40px'}}>
             <Avatar src={src} sx={{width: '100%', height: '100%'}}/>
             {online && <span className={styles.onl}></span>}
         </Box>
