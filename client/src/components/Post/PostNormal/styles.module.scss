@@ -1,0 +1,92 @@
+.root {
+  width: 100%;
+  padding: 10px 0;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+
+    .headerLeft {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+
+
+      .headerTitle {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+
+  .body {
+    margin-top: 10px;
+
+    .bodyText {
+      font-size: 15px;
+      //line-height: 1.5;
+      color: #333;
+      padding: 0 10px;
+
+    }
+
+    .bodyImage {
+      position: relative;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+
+      .wrapperImage {
+        min-width: 500px;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          position: relative;
+        }
+      }
+
+      .bgrImage {
+        position: absolute;
+        background: gray;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        &:after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.4);
+        }
+      }
+    }
+  }
+
+
+  .footer {
+    padding: 0 10px;
+
+    .footerText {
+      padding: 10px 0;
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footerActions {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding-top: 10px;
+    }
+  }
+}

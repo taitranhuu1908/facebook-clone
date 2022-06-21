@@ -1,0 +1,16 @@
+.root {
+  position: absolute;
+  max-height: calc(100vh - var(--header-height));
+  min-height: 0;
+  width: 360px;
+  right: 0;
+  top: 100%;
+  padding: 10px 12px;
+  overflow: auto;
+
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+  }
+}
