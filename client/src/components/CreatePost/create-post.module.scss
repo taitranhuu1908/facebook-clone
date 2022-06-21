@@ -1,3 +1,7 @@
+* {
+  font-family: 'Roboto', sans-serif;
+}
+
 .createPost {
   width: 650px;
   background-color: #FFFFFF;
@@ -38,30 +42,86 @@
 
 
 }
+
 hr {
-  margin-top: 13px;
   border: none;
   background-color: #d0d0d0;
   height: 1px
+
 }
+
 .modal {
+  border-radius: 5px;
   width: 500px;
   background-color: #ffffff;
   justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+
   .header {
     padding: 10px;
     display: flex;
-    justify-content: center;
     text-align: center;
     width: 100%;
-    .closeButton{
+    height: 100%;
+    justify-content: space-evenly;
+    position: relative;
 
+    h3 {
+      position: absolute;
+      align-self: center;
+    }
+
+    .closeButton {
+      margin-left: auto;
+      background-color: #efefef;
     }
   }
+
   .body {
-
+    padding: 5px 15px 5px 15px;
+    width: 100%;
+    .name{
+      font-size:.875rem;
+      display: block;
+      font-weight: 600;
+      color: #050505;
+    }
+    .buttonStatus {
+      gap: 5px;
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+      border-radius: 5px;
+      text-transform: none;
+      padding: 0px 7px 0px 7px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      background-color: #E4E6EB;
+      color: black;
+      &:hover {
+        background: #E4E6E9
+      }
+      .status{
+        color: #050505;
+      }
+    }
+    .textarea{
+      width: 100%;
+    }
   }
-  .footer{
 
+  .footer {
+    padding: 10px;
+    width: 100%;
+
+    button {
+      background-color: dodgerblue;
+      color: white;
+      width: 100%;
+    }
   }
 }

@@ -1,14 +1,16 @@
 import React from 'react';
-import {Box, Avatar, Button, Modal, IconButton} from "@mui/material";
+import {Avatar, Box, Button, IconButton, Modal} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-// @ts-ignore
 import styles from './create-post.module.scss';
+import PublicIcon from '@mui/icons-material/Public';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 
 interface Props {
     name: string;
     avatar: string;
 }
+
 
 const CreatePost: React.FC<Props> = (props) => {
     const [open, setOpen] = React.useState(false);
@@ -22,6 +24,7 @@ const CreatePost: React.FC<Props> = (props) => {
     };
     return (
         <Box className={styles.createPost}>
+
             <Box sx={{display: 'flex'}}>
                 <Avatar alt={props.name} src={props.avatar}/>
                 <Button onClick={handleClickOpen} className={styles.buttonCreate}>{props.name} ơi, bạn đang nghĩ gì
@@ -34,17 +37,27 @@ const CreatePost: React.FC<Props> = (props) => {
                 >
                     <Box className={styles.modal}>
                         <Box className={styles.header}>
-                            <h2>Tạo bài viết</h2>
+                            <h3>Tạo bài viết</h3>
                             <IconButton className={styles.closeButton} aria-label="delete">
                                 <CloseIcon onClick={handleClose}/>
                             </IconButton>
                         </Box>
                         <hr/>
                         <Box className={styles.body}>
-                            aaaaaaaaaaaaaaa
+                            <Box sx={{display: 'flex', gap: 1}}>
+                                <Avatar alt={props.name} src={props.avatar}/>
+                                <Box>
+                                    <span className={styles.name}>{props.name}</span>
+                                    <Button className={styles.buttonStatus}><PublicIcon sx={{fontSize: '1rem'}}/><span
+                                        className={styles.status}>Công khai</span><ArrowDropDownIcon/></Button>
+                                </Box>
+                            </Box>
+                            <Box className={styles.textarea}>
+
+                            </Box>
                         </Box>
-                        <hr/>
                         <Box className={styles.footer}>
+                            <Button>Đăng</Button>
                         </Box>
                     </Box>
                 </Modal>
