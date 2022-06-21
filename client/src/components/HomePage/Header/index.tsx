@@ -86,7 +86,7 @@ const Header: React.FC<IProps> = () => {
                           onClick={(event) => openMenu(event, 'messenger')}>
                 <img src="/images/button/icon-button-message.svg" alt=""/>
             </ButtonCircle>
-            <ButtonCircle number={4} title={'Thông báo'}
+            <ButtonCircle color={'error'} number={4} title={'Thông báo'}
                           onClick={(event) => openMenu(event, 'notify')}>
                 <img src="/images/button/icon-button-notify.svg" alt=""/>
             </ButtonCircle>
