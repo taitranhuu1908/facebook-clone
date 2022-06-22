@@ -3,7 +3,6 @@ import HomeLayout from "../../layouts/HomeLayout";
 import ListPost from "../../components/Post/ListPost";
 import {Box} from "@mui/material";
 import PostNormal from "../../components/Post/PostNormal";
-import Chatbox from "../../components/Chatbox";
 
 const HomePage: React.FC = () => {
     return (
@@ -53,7 +52,6 @@ const HomePage: React.FC = () => {
                         image={'https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/289351441_1017445195452228_8523658811044581587_n.jpg?stp=dst-jpg_s640x640&_nc_cat=110&ccb=1-7&_nc_sid=0debeb&_nc_ohc=Bo-_ivmu2YAAX96H-BR&_nc_ht=scontent.fhan5-8.fna&oh=00_AT9funPXzLVFixoiJhO0u4g9lAm4ViJBZvMh8SJlF8fj1A&oe=62B559AC'}
                     />
                 </ListPost>
-                <Chatbox title={'Nguyễn Trương Anh Kiệt'}/>
             </Box>
         </HomeLayout>
     )
