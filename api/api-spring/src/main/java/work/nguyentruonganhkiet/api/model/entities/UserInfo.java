@@ -2,6 +2,7 @@ package work.nguyentruonganhkiet.api.model.entities;
 
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import work.nguyentruonganhkiet.api.model.base.BaseEntity;
 
 import javax.persistence.Entity;
@@ -12,7 +13,7 @@ import javax.persistence.OneToOne;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class UserInfo extends BaseEntity {
 
 	private String fullName;
@@ -26,6 +27,6 @@ public class UserInfo extends BaseEntity {
 	private boolean gender;
 
 	@OneToOne(mappedBy = "userInfo", orphanRemoval = true)
-	private Users users;
+	private User users;
 
 }

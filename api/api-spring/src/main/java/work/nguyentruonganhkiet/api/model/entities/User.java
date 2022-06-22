@@ -33,8 +33,6 @@ public class User extends BaseEntity {
 	@OneToOne(orphanRemoval = true)
 	@JoinColumn(name = "user_info_id", unique = true)
 	private UserInfo userInfo;
-	@ManyToMany(mappedBy = "users")
-	private Set<Role> roles = new LinkedHashSet<>();
 
 	@OneToMany(mappedBy = "user", orphanRemoval = true)
 	private Set<Comment> comments = new LinkedHashSet<>();
@@ -47,5 +45,8 @@ public class User extends BaseEntity {
 
 	@OneToMany(mappedBy = "user", orphanRemoval = true)
 	private Set<Message> messages = new LinkedHashSet<>();
+
+	@ManyToMany(mappedBy = "users")
+	private Set<Role> roles = new LinkedHashSet<>();
 
 }
