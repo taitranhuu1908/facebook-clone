@@ -1,4 +1,4 @@
-package work.nguyentruonganhkiet.api.model.role;
+package work.nguyentruonganhkiet.api.model.enums;
 
 public class RoleEnum {
 	public static final String ROLE_ADMIN = "ROLE_ADMIN";
