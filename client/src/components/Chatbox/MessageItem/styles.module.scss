@@ -5,6 +5,7 @@
   align-items: flex-end;
 
   .text {
+    width: 80%;
     width: fit-content;
     font-size: 15px;
     padding: 5px 10px;
@@ -41,6 +42,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
+  word-break: break-word;
 }
 
 .left {
@@ -48,6 +50,5 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
+  word-break: break-word;
 }
-
-
