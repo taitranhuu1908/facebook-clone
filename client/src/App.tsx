@@ -11,7 +11,7 @@ import {useGetFriendsQuery, useGetMeQuery} from "./app/services/UserService";
 function App() {
     useGetMeQuery();
     useGetFriendsQuery();
-
+    
     return (
         <Routes>
             <Route path="/" element={<HomePage/>}/>

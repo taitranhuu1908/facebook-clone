@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from './styles.module.scss'
 import {
     Avatar,
@@ -27,15 +27,23 @@ import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import {IUser} from "../../app/models/User";
 import {useAppDispatch} from "../../app/hook";
 import {closeChatBox} from "../../app/features/ChatBoxSlice";
+import {SubmitHandler, useForm} from "react-hook-form";
+import Picker from 'emoji-picker-react';
 
 interface IProps {
     chatbox: IUser;
     position: 'chatbox-one' | 'chatbox-two' | 'chatbox-three';
 }
 
+type Inputs = {
+    message: string;
+}
+
 const Chatbox: React.FC<IProps> = ({chatbox, position}) => {
     const elementRef = useRef<HTMLElement>(null);
     const [elementActive, setElementActive] = useState(false)
+    const emojiRef = useRef<HTMLElement>(null);
+    const [emojiActive, setEmojiActive] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const [information, setInformation] = useState({
@@ -43,6 +51,8 @@ const Chatbox: React.FC<IProps> = ({chatbox, position}) => {
         avatar: ''
     })
     const dispatch = useAppDispatch();
+    const {register, handleSubmit, setValue, watch} = useForm<Inputs>();
+    const [messageList, setMessageList] = useState<Inputs[]>([]);
 
     useEffect(() => {
         setInformation((information) => {
@@ -69,17 +79,38 @@ const Chatbox: React.FC<IProps> = ({chatbox, position}) => {
         }
     }, []);
 
+    const checkEmojiActive = useCallback((e: any) => {
+        if (emojiRef.current && !emojiRef.current.contains(e.target as Node)) {
+            setEmojiActive(false);
+        }
+    }, []);
+
+
     useEffect(() => {
         document.addEventListener('mousedown', checkActive);
+        document.addEventListener('mousedown', checkEmojiActive);
 
         return () => {
             document.removeEventListener('mousedown', checkActive);
+            document.removeEventListener('mousedown', checkEmojiActive);
         }
-    }, [checkActive])
+    }, [checkActive, checkEmojiActive])
+
+    const renderMessage = useMemo(() => {
+        return messageList.slice().reverse().map((item: Inputs, index) => {
+            return <MessageItem key={index} owner={true} text={item.message}/>
+        })
+    }, [messageList]);
 
 
     const handleFocus = () => {
         setElementActive(true);
+    }
+
+    const handleSendMessage: SubmitHandler<Inputs> = (data) => {
+        setMessageList((messageList) => [...messageList, data]);
+        setValue('message', '');
+        setEmojiActive(false);
     }
 
     return (
@@ -150,7 +181,8 @@ const Chatbox: React.FC<IProps> = ({chatbox, position}) => {
 
             <Box className={styles.body}>
                 <Box className={styles.bodyMessages}>
-                    <MessageItem owner={true} text={'Xin chào mọi người'}/>
+                    {renderMessage}
+                    <MessageItem owner={true} text={'ời'}/>
                     <MessageItem owner={false} text={'Xin chào mọi người'}/>
                 </Box>
             </Box>
@@ -162,11 +194,31 @@ const Chatbox: React.FC<IProps> = ({chatbox, position}) => {
                     </IconButton>
                 </Tooltip>
                 <input type="file" hidden id="file"/>
-                <InputStyled endAdornment={<IconButton><SmileIcon active={elementActive}/></IconButton>}
-                             placeholder={'Aa'}/>
-                <IconButton>
-                    <LikeIcon active={elementActive}/>
-                </IconButton>
+                <form style={{display: 'flex', width: '100%', position: 'relative'}}
+                      onSubmit={handleSubmit(handleSendMessage)}>
+                    <InputStyled {...register('message', {required: true})}
+                                 endAdornment={<IconButton
+                                     onClick={() => setEmojiActive((emojiActive) => !emojiActive)}>
+                                     <SmileIcon active={elementActive}/>
+                                 </IconButton>}
+                                 placeholder={'Aa'}/>
+                    {emojiActive && <WrapperEmojiStyled ref={emojiRef}>
+                        <Picker pickerStyle={{
+                            position: 'absolute',
+                            top: '0px',
+                            left: '0px',
+                            bottom: '0px',
+                            right: '0px',
+                            width: '100%',
+                            height: '100%'
+                        }} onEmojiClick={(event, emojiData) => {
+                            setValue('message', `${watch('message')}${emojiData.emoji}`);
+                        }}/>
+                    </WrapperEmojiStyled>}
+                    <IconButton type="submit">
+                        <LikeIcon active={elementActive}/>
+                    </IconButton>
+                </form>
             </Box>
         </Box>
     )
@@ -177,6 +229,18 @@ const InputStyled = styled(InputBase)`
   background: var(--background-gray);
   border-radius: 32px;
   padding-left: 10px;
+`
+
+const WrapperEmojiStyled = styled(Box)`
+  position: absolute;
+  width: 300px;
+  background-color: white;
+  bottom: 100%;
+  right: 50px;
+  height: 300px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 1px rgba(0, 0, 0, 0.1);
 `
 
 const paperProps = {
