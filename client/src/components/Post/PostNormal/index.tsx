@@ -17,12 +17,12 @@ import styles from './styles.module.scss'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 // @ts-ignore
 import {ColorExtractor} from 'react-color-extractor';
 import styled from "@emotion/styled";
 import {LikeCircle} from "../../Icons";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import InsertCommentOutlinedIcon from '@mui/icons-material/InsertCommentOutlined';
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import Fancybox from "../../Fancybox";
 import Comment from "../Comment";
@@ -138,8 +138,7 @@ const PostNormal: React.FC<IProps> = (props) => {
                     </Box>
                     <Fancybox>
                         <Box className={styles.bodyImage}>
-                        <span style={colorImage ? {backgroundColor: colorImage[1]} : {}}
-                              className={styles.bgrImage}></span>
+                        <span style={colorImage ? {backgroundColor: colorImage[1]} : {}} className={styles.bgrImage}></span>
                             <Box className={styles.wrapperImage} sx={{width: `calc((100vh - 325px) * ${ratio})`}}>
                                 <ColorExtractor getColors={getColors}>
                                     <img style={{cursor: 'pointer'}} onLoad={onLoadImage} data-fancybox={postId}
@@ -166,7 +165,7 @@ const PostNormal: React.FC<IProps> = (props) => {
                             <ButtonAction startIcon={<FavoriteBorderIcon/>}>Yêu thích</ButtonAction>
                         </Grid>
                         <Grid item xs={4}>
-                            <ButtonAction startIcon={<InsertCommentOutlinedIcon/>}>Bình luận</ButtonAction>
+                            <ButtonAction startIcon={<ChatBubbleOutlineIcon/>}>Bình luận</ButtonAction>
                         </Grid>
                         <Grid item xs={4}>
                             <ButtonAction startIcon={<ReplyOutlinedIcon/>}>Chia sẻ</ButtonAction>

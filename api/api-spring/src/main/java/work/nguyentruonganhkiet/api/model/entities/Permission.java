@@ -2,6 +2,7 @@ package work.nguyentruonganhkiet.api.model.entities;
 
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import work.nguyentruonganhkiet.api.model.base.BaseEntity;
@@ -15,7 +16,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class Permission extends BaseEntity {
 
 	@Column(name = "name", nullable = false, unique = true)
