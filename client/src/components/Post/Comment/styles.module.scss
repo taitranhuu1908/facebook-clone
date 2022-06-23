@@ -1,0 +1,14 @@
+.root {
+  padding: 10px 0;
+
+  .header {
+
+    display: flex;
+    gap: 15px;
+
+    .headerActions {
+      position: absolute;
+      right: 30px;
+    }
+  }
+}

@@ -14,6 +14,7 @@ const HomePage: React.FC = () => {
                 <ListPost>
                     <PostNormal
                         postId={1}
+                        likeNumber={10000}
                         time={'1 giờ trước'}
                         username={'Nguyễn Trương Anh Kiệt'}
                         content={'“Vì sao IU vẫn ngày càng trở nên nổi tiếng và thành công bất chấp những scandal chấn động trong quá khứ?\n' +
@@ -46,6 +47,12 @@ const HomePage: React.FC = () => {
                             'Sai lầm của IU trong quá khứ là như thế, nên cô đã hứng chịu những lời chỉ trích tẩy chay vô cùng gay gắt tại hàn quốc thời đó. Cô có lỗi với EH và đã trả giá cho sai lầm của mình. Thế nhưng có lỗi với 1 người không có nghĩa là nhân cách của IU vô cùng thối nát và tệ hại. Phải làm sao mà bao idol/người nổi tiếng hiện nay trong Kbiz từ tiền bối đến hậu bối đều yêu thích và chọn IU là hình mẫu lý tưởng của mình, phải làm sao mà hiện nay IU là 1 trong những ngôi sao được yêu mến nhất hàn quốc với quốc dân độ cực kỳ cao. Kể từ sau sai lầm thời trẻ, IU chuyển mình thay đổi trở nên chín chắn và trưởng thành hơn, biết sẻ chia và cho đi nhiều hơn, thường ủng hộ và ngầm pr sản phẩm âm nhạc/phim ảnh cho các đồng nghiệp, thường tặng quà cho fan hâm mộ và các đồng nghiệp, thường xuyên đóng góp thiện nguyện cho xã hội, giúp đỡ những người gặp khó khăn trong cộng đồng, truyền cảm hứng sống tốt cho nhiều người. IU đã thay đổi ngày một trở nên tốt hơn và cống hiến nhiều hơn cho xã hội.\n' +
                             'Như vậy, có thể thấy công chúng hàn quốc từng yêu thương cô nên ưu ái dành tặng danh hiệu em gái quốc dân, họ cũng sẵn sàng ghét bỏ đay nghiến và chỉ trích 1 cách cay đắng khi cô phạm sai lầm, và sau đó cũng chính công chúng hàn quốc đã đón nhận IU trở lại nhờ vào chất lượng âm nhạc và cách sống đẹp của cô sau này. “'}
                         image={'https://scontent.fsgn2-5.fna.fbcdn.net/v/t39.30808-6/287682609_5071402476290958_8239100455644975051_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=0debeb&_nc_ohc=RUTHUgwiidYAX_KGYCs&_nc_ht=scontent.fsgn2-5.fna&oh=00_AT_LViTou9e6P3LWK4iPMX7BukmweNHRhqw2ZsVSH-gRQg&oe=62B5757E'}
+                    />
+                    <PostNormal
+                        postId={3}
+                        time={'1 giờ trước'}
+                        username={'Nguyễn Trương Anh Kiệt'}
+                        image={'https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/289351441_1017445195452228_8523658811044581587_n.jpg?stp=dst-jpg_s640x640&_nc_cat=110&ccb=1-7&_nc_sid=0debeb&_nc_ohc=Bo-_ivmu2YAAX96H-BR&_nc_ht=scontent.fhan5-8.fna&oh=00_AT9funPXzLVFixoiJhO0u4g9lAm4ViJBZvMh8SJlF8fj1A&oe=62B559AC'}
                     />
                 </ListPost>
             </Box>
