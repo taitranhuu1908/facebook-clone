@@ -20,16 +20,16 @@ import javax.persistence.ManyToOne;
 @SuperBuilder
 public class Message extends BaseEntity {
 
-	public String message;
+    public String message;
 
-	public String media;
+    public String media;
 
-	@ManyToOne
-	@JoinColumn(name = "room_id")
-	private Room room;
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

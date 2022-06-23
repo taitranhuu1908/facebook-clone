@@ -19,50 +19,51 @@ import work.nguyentruonganhkiet.api.service.UserService;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-		prePostEnabled = true
+        prePostEnabled = true
 )
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	UserService userDetailsService;
+    @Autowired
+    UserService userDetailsService;
 
-	@Autowired
-	private AuthenticationEntryPointHandler unauthorizedHandler;
+    @Autowired
+    private AuthenticationEntryPointHandler unauthorizedHandler;
 
-	@Bean
-	public AuthenticationFilter authenticationJwtTokenFilter() {
-		return new AuthenticationFilter();
-	}
+    @Bean
+    public AuthenticationFilter authenticationJwtTokenFilter() {
+        return new AuthenticationFilter();
+    }
 
-	@Override
-	public void configure( AuthenticationManagerBuilder authenticationManagerBuilder ) throws Exception {
-		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-	}
+    @Override
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
 
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
-	}
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Override
-	protected void configure( HttpSecurity http ) throws Exception {
-		http.cors().and().csrf().disable()
-				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-				.authorizeRequests().antMatchers("/api/auth/**").permitAll()
-				.antMatchers("/api/test/**").permitAll()
-				.antMatchers("/api-docs/**").permitAll()
-				.antMatchers("/swagger-ui.html/**").permitAll()
-				.antMatchers("/swagger-ui/**").permitAll()
-				.anyRequest().authenticated();
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/test/**").hasRole("USER")
+//				.antMatchers("/api/test/**").permitAll()
+                .antMatchers("/api-docs/**").permitAll()
+                .antMatchers("/swagger-ui.html/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .anyRequest().authenticated();
 
-		http.addFilterBefore(authenticationJwtTokenFilter() , UsernamePasswordAuthenticationFilter.class);
-	}
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
 
 }

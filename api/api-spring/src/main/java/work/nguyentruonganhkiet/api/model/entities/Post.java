@@ -40,4 +40,8 @@ public class Post extends BaseEntity {
 	@OneToMany(mappedBy = "post", orphanRemoval = true)
 	private Set<CommentPost> commentPosts = new LinkedHashSet<>();
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }

@@ -1,4 +1,4 @@
-package work.nguyentruonganhkiet.api.controller;
+package work.nguyentruonganhkiet.api.controller.api;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
