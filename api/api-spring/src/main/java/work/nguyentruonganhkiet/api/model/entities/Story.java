@@ -24,18 +24,18 @@ import java.util.Set;
 @EntityListeners(StoryObserve.class)
 public class Story extends BaseEntity {
 
-	private String title;
-	private String image;
-	private String slug;
+    private String title;
+    private String image;
+    private String slug;
 
-	@OneToMany(mappedBy = "story", orphanRemoval = true)
-	private Set<ReactStory> reactStories = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "story", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<ReactStory> reactStories = new LinkedHashSet<>();
 
-	@OneToMany(mappedBy = "story", orphanRemoval = true)
-	private Set<CommentStory> commentStories = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "story", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<CommentStory> commentStories = new LinkedHashSet<>();
 
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }
