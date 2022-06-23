@@ -1,0 +1,14 @@
+.storyContainer {
+  width: 100%;
+  height: 250px;
+  padding: 16px;
+  display: flex;
+  gap: 10px;
+  position: relative;
+
+  .seeAll {
+    position: absolute;
+    top: 40%;
+    right: -1%;
+  }
+}
