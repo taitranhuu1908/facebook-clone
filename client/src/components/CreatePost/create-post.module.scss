@@ -3,10 +3,10 @@
 }
 
 .createPost {
-  width: 650px;
+  padding: 15px;
+  width: 100%;
   background-color: #FFFFFF;
   text-align: center;
-  padding: 15px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
 
@@ -84,12 +84,14 @@ hr {
   .body {
     padding: 5px 15px 5px 15px;
     width: 100%;
-    .name{
-      font-size:.875rem;
+
+    .name {
+      font-size: .875rem;
       display: block;
       font-weight: 600;
       color: #050505;
     }
+
     .buttonStatus {
       gap: 5px;
       display: flex;
@@ -102,15 +104,95 @@ hr {
       font-weight: bold;
       background-color: #E4E6EB;
       color: black;
+
       &:hover {
         background: #E4E6E9
       }
-      .status{
+
+      .status {
         color: #050505;
       }
     }
-    .textarea{
+
+    .buttonGroup {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #E4E6E9;
+      box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5px;
+
+      .buttonFunction {
+        span {
+          height: 24px;
+          width: 24px;
+          background-size: auto;
+          background-repeat: no-repeat;
+          display: inline-block;
+        }
+
+        .addImage {
+          background-image: url("https://static.xx.fbcdn.net/rsrc.php/v3/yN/r/_xsMaU2JwVR.png");
+          background-position: 0px -258px;
+        }
+
+        .addTag {
+          background-image: url("https://static.xx.fbcdn.net/rsrc.php/v3/yN/r/_xsMaU2JwVR.png");
+          background-position: 0px -233px;
+        }
+
+        .addFeeling {
+          background-image: url("https://static.xx.fbcdn.net/rsrc.php/v3/yN/r/_xsMaU2JwVR.png");
+          background-position: 0px -208px;
+        }
+
+        .addLocation {
+          background-image: url("https://static.xx.fbcdn.net/rsrc.php/v3/yE/r/HyeXO0sd7uk.png");
+          background-position: 0px -225px;
+        }
+
+        .addActivity {
+          background-image: url("https://static.xx.fbcdn.net/rsrc.php/v3/yf/r/IUYFS2LyvHB.png");
+          background-position: 0px -100px;
+        }
+
+        .addMore {
+          background-image: url("https://static.xx.fbcdn.net/rsrc.php/v3/yN/r/_xsMaU2JwVR.png");
+          background-position: 0px -133px;
+        }
+      }
+    }
+
+    .buttonAdd {
+      color: #050505;
+      text-transform: none;
+      font-weight: bold;
+      font-size: .875rem;
+
+      &:hover {
+        background: #ffffff;
+      }
+
+      &:focus {
+        background: #ffffff;
+      }
+
+      &:active {
+        background: #ffffff;
+      }
+    }
+
+    .textarea {
       width: 100%;
+      max-height: 60vh;
+      &:focus {
+        outline: none;
+      }
+
+      &:active {
+        outline: none;
+      }
     }
   }
 

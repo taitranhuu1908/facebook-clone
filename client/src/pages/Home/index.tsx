@@ -3,11 +3,14 @@ import HomeLayout from "../../layouts/HomeLayout";
 import ListPost from "../../components/Post/ListPost";
 import {Box} from "@mui/material";
 import PostNormal from "../../components/Post/PostNormal";
+import CreatePost from "../../components/CreatePost";
+
 
 const HomePage: React.FC = () => {
     return (
         <HomeLayout>
             <Box sx={{maxWidth: '680px', width: '680px'}}>
+                <CreatePost  name={'Nguyễn Phan Huy Hiếu'} avatar={''}/>
                 <ListPost>
                     <PostNormal
                         postId={1}
