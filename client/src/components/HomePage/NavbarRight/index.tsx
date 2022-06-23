@@ -9,7 +9,7 @@ import CakeIcon from '@mui/icons-material/Cake';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import {useAppDispatch, useAppSelector} from "../../../app/hook";
 import {IUser} from "../../../app/models/User";
-import {openChatBox} from "../../../app/features/ChatBoxSlice";
+import {createChatBox} from "../../../app/features/ChatBoxSlice";
 
 interface IProps {
 
@@ -23,7 +23,7 @@ const NavbarRight: React.FC<IProps> = () => {
         if (friends.length !== 0) {
             return friends.map((item: IUser, index: number) => {
                 return <NavItemButton key={index} onClick={() => {
-                    dispatch(openChatBox(item));
+                    dispatch(createChatBox(item));
                 }} title={`${item.firstName} ${item.lastName}`} Icon={<AvatarOnline
                     src={item.picture} online={true}/>}/>
             })

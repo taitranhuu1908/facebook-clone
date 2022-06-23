@@ -9,7 +9,7 @@ import AvatarCircle from "../../../Avatar/AvatarCircle";
 import styled from "@emotion/styled";
 import {useAppDispatch, useAppSelector} from "../../../../app/hook";
 import {IUser} from "../../../../app/models/User";
-import {openChatBox} from "../../../../app/features/ChatBoxSlice";
+import {createChatBox} from "../../../../app/features/ChatBoxSlice";
 
 interface IProps {
 
@@ -52,7 +52,7 @@ const HeaderRight: React.FC<IProps> = () => {
         return friends.map((item: IUser, index) => {
             return <MenuChatItem key={index}
                                  onClick={() => {
-                                     dispatch(openChatBox(item))
+                                     dispatch(createChatBox(item))
                                  }}
                                  user={item} src={item.picture} title={`${item.firstName} ${item.lastName}`}
                                  description={'Xin chào mọi người'}/>

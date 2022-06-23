@@ -26,7 +26,7 @@ import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import {IUser} from "../../app/models/User";
 import {useAppDispatch} from "../../app/hook";
-import {closeChatBox} from "../../app/features/ChatBoxSlice";
+import {closeChatBox, minimizeChatBox} from "../../app/features/ChatBoxSlice";
 import {SubmitHandler, useForm} from "react-hook-form";
 import Picker from 'emoji-picker-react';
 
@@ -169,7 +169,9 @@ const Chatbox: React.FC<IProps> = ({chatbox, position}) => {
 
                 <Box className={styles.headerActions}>
                     <Tooltip placement={'top'} title={'Thu nhỏ đoạn chat'}>
-                        <IconButton><RemoveIcon className={elementActive ? 'color-active' : ''}/></IconButton>
+                        <IconButton onClick={() => {
+                            dispatch(minimizeChatBox(chatbox))
+                        }}><RemoveIcon className={elementActive ? 'color-active' : ''}/></IconButton>
                     </Tooltip>
                     <Tooltip placement={'top'} title={'Đóng đoạn chat'}>
                         <IconButton onClick={() => {

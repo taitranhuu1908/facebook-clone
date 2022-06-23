@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React from 'react';
 import Header from "../../components/HomePage/Header";
 import styled from "@emotion/styled";
 import NavbarRight from "../../components/HomePage/NavbarRight";
@@ -6,7 +6,8 @@ import NavbarLeft from "../../components/HomePage/NavbarLeft";
 import {Box} from "@mui/material";
 import Chatbox from "../../components/Chatbox";
 import {useAppSelector} from "../../app/hook";
-import {IUser} from "../../app/models/User";
+import ChatBoxHidden from "../../components/Chatbox/Hidden";
+import {IChatBox} from "../../app/features/ChatBoxSlice";
 
 interface IProps {
     children: React.ReactNode;
@@ -16,11 +17,13 @@ const HomeLayout: React.FC<IProps> = ({children}) => {
 
     const {chatbox} = useAppSelector(state => state.chatBoxSlice);
 
-    const renderChatBox = useMemo(() => {
-        return chatbox.slice(0, 2).map((item: IUser, index) => {
-            return <Chatbox key={index} position={index === 0 ? 'chatbox-one' : 'chatbox-two'} chatbox={item}/>
+    const renderChatBox = () => {
+        return chatbox.map((item: IChatBox, index) => {
+            if (item.status === "HIDE") return null;
+            return <Chatbox key={index} position={index === 0 ? 'chatbox-one' : 'chatbox-two'}
+                            chatbox={item.user}/>
         })
-    }, [chatbox]);
+    }
 
     return <>
         <Header/>
@@ -34,7 +37,8 @@ const HomeLayout: React.FC<IProps> = ({children}) => {
             <Box>
                 <NavbarRight/>
             </Box>
-            {renderChatBox}
+            {renderChatBox()}
+            <ChatBoxHidden/>
         </WrapperContentStyled>
     </>
 }
