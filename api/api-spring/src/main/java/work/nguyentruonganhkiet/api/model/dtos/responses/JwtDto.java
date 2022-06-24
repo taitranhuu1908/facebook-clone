@@ -1,4 +1,4 @@
-package work.nguyentruonganhkiet.api.model.dtos.reponses;
+package work.nguyentruonganhkiet.api.model.dtos.responses;
 
 
 import lombok.Builder;
@@ -9,9 +9,10 @@ import java.util.List;
 
 @Data
 @Builder
-public class JwtResponse {
+public class JwtDto {
 	private String token;
 	private String type;
 	private UserDetails user;
+	private int expiresIn;
 	private List<String> roles;
 }

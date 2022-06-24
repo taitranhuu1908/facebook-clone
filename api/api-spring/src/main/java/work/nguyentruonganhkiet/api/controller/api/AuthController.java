@@ -1,7 +1,6 @@
 package work.nguyentruonganhkiet.api.controller.api;
 
 
-import io.swagger.v3.oas.annotations.OpenAPI30;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,11 +11,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import work.nguyentruonganhkiet.api.model.dtos.CustomUserDetails;
-import work.nguyentruonganhkiet.api.model.dtos.reponses.JwtResponse;
-import work.nguyentruonganhkiet.api.model.dtos.reponses.MessageResponse;
-import work.nguyentruonganhkiet.api.model.dtos.reponses.entities.UserDto;
 import work.nguyentruonganhkiet.api.model.dtos.requests.LoginDto;
 import work.nguyentruonganhkiet.api.model.dtos.requests.RegisterDto;
+import work.nguyentruonganhkiet.api.model.dtos.responses.JwtDto;
+import work.nguyentruonganhkiet.api.model.dtos.responses.MessageReturnDto;
+import work.nguyentruonganhkiet.api.model.dtos.responses.entities.UserDto;
 import work.nguyentruonganhkiet.api.model.entities.Role;
 import work.nguyentruonganhkiet.api.model.entities.User;
 import work.nguyentruonganhkiet.api.model.entities.UserInfo;
@@ -28,95 +27,91 @@ import work.nguyentruonganhkiet.api.utils.JwtUtils;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static work.nguyentruonganhkiet.api.model.enums.RoleEnum.ROLE_USER;
+import static work.nguyentruonganhkiet.api.utils.constant.API.*;
 import static work.nguyentruonganhkiet.api.utils.constant.STATUS.HTTP_BAD_REQUEST;
 import static work.nguyentruonganhkiet.api.utils.constant.STATUS.HTTP_OK;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(API_ENDPOINTS_AUTH)
 public class AuthController {
-    final AuthenticationManager authenticationManager;
+	final AuthenticationManager authenticationManager;
 
-    final UserRepository userRepository;
+	final UserRepository userRepository;
 
-    final UserInfoRepository userInfoRepository;
+	final UserInfoRepository userInfoRepository;
 
-    final RoleRepository roleRepository;
+	final RoleRepository roleRepository;
 
-    final PasswordEncoder encoder;
+	final PasswordEncoder encoder;
 
-    final JwtUtils jwtUtils;
+	final JwtUtils jwtUtils;
 
-    final ModelMapper modelMapper;
+	final ModelMapper modelMapper;
 
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils, UserInfoRepository userInfoRepository, ModelMapper modelMapper) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.encoder = encoder;
-        this.jwtUtils = jwtUtils;
-        this.userInfoRepository = userInfoRepository;
-        this.modelMapper = modelMapper;
-    }
+	public AuthController( AuthenticationManager authenticationManager , UserRepository userRepository , RoleRepository roleRepository , PasswordEncoder encoder , JwtUtils jwtUtils , UserInfoRepository userInfoRepository , ModelMapper modelMapper ) {
+		this.authenticationManager = authenticationManager;
+		this.userRepository = userRepository;
+		this.roleRepository = roleRepository;
+		this.encoder = encoder;
+		this.jwtUtils = jwtUtils;
+		this.userInfoRepository = userInfoRepository;
+		this.modelMapper = modelMapper;
+	}
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+	@PostMapping(API_ENDPOINTS_AUTH_LOGIN)
+	public ResponseEntity<?> login( @Valid @RequestBody LoginDto loginRequest ) {
+		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail() , loginRequest.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        String jwt = jwtUtils.generateJwtToken(userDetails);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+		String jwt = jwtUtils.generateJwtToken(userDetails);
 
-        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+		return ResponseEntity.ok(JwtDto.builder().token(jwt).expiresIn(864000).type("Bearer").build());
+	}
 
-        UserDetails user = (UserDetails) authentication.getDetails();
+	@PostMapping(API_ENDPOINTS_AUTH_REGISTER)
+	public ResponseEntity<?> register( @Valid @RequestBody RegisterDto signUpRequest ) {
+		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+			return ResponseEntity.badRequest().body(MessageReturnDto.builder().status(HTTP_BAD_REQUEST).message("Email is already in use!").build());
+		}
 
-        return ResponseEntity.ok(JwtResponse.builder().token(jwt).type("Bearer").user(user).roles(roles).build());
-    }
+		User user = User.builder().email(signUpRequest.getEmail()).password(encoder.encode(signUpRequest.getPassword())).build();
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterDto signUpRequest) {
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(MessageResponse.builder().status(HTTP_BAD_REQUEST).message("Email is already in use!").build());
-        }
+		Role userRole = roleRepository.findByName(ROLE_USER).orElseGet(() ->
+				roleRepository.save(Role.builder().name(ROLE_USER).build())
+		);
 
-        User user = User.builder().email(signUpRequest.getEmail()).password(encoder.encode(signUpRequest.getPassword())).build();
+		userRole.setUsers(new HashSet<>(List.of(user)));
 
-        Role userRole = roleRepository.findByName(ROLE_USER).orElseGet(() ->
-                roleRepository.save(Role.builder().name(ROLE_USER).build())
-        );
+		user.setRoles(new HashSet<>(List.of(userRole)));
 
-        userRole.setUsers(new HashSet<>(List.of(user)));
+		UserInfo userInfo = UserInfo.builder()
+				.fullName(signUpRequest.getName())
+				.gender(signUpRequest.isGender())
+				.birthday(signUpRequest.getBirthday())
+				.users(user)
+				.build();
 
-        user.setRoles(new HashSet<>(List.of(userRole)));
+		userInfoRepository.save(userInfo);
 
-        UserInfo userInfo = UserInfo.builder()
-                .fullName(signUpRequest.getName())
-                .gender(signUpRequest.isGender())
-                .birthday(signUpRequest.getBirthday())
-                .users(user)
-                .build();
+		user.setUserInfo(userInfo);
 
-        userInfoRepository.save(userInfo);
+		userRepository.save(user);
 
-        user.setUserInfo(userInfo);
+		return ResponseEntity.ok(MessageReturnDto.builder().message("User registered successfully!").status(HTTP_OK).build());
+	}
 
-        userRepository.save(user);
+	@GetMapping(API_ENDPOINTS_AUTH_ME)
+	public ResponseEntity<UserDto> getUserInfo() {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return ResponseEntity.ok(MessageResponse.builder().message("User registered successfully!").status(HTTP_OK).build());
-    }
+		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
 
-    @GetMapping("/me")
-    public ResponseEntity<UserDto> getUserInfo() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		UserDto userDto = modelMapper.map(user , UserDto.class);
 
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
-
-        UserDto userDto = modelMapper.map(user, UserDto.class);
-
-        return ResponseEntity.ok(userDto);
-    }
+		return ResponseEntity.ok(userDto);
+	}
 
 }

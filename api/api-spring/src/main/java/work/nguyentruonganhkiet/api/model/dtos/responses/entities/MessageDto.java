@@ -1,4 +1,4 @@
-package work.nguyentruonganhkiet.api.model.dtos.reponses.entities;
+package work.nguyentruonganhkiet.api.model.dtos.responses.entities;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Data
-public class MessageDto implements Serializable {
+public class MessageDto {
     private  Long id;
     private  Timestamp createdAt;
     private  Timestamp updatedAt;
