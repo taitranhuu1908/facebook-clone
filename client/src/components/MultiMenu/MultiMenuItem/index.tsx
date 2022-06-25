@@ -6,9 +6,10 @@ interface IProps {
     icon: React.ReactNode;
     text: string;
     arrowIcon?: boolean;
+    onClick?: () => void;
 }
 
-const MultiMenuItem: React.FC<IProps> = ({icon, arrowIcon = false, text}) => {
+const MultiMenuItem: React.FC<IProps> = ({icon, arrowIcon = false, text, onClick}) => {
     return <>
         <ListItem disablePadding secondaryAction={
             arrowIcon && (
@@ -17,12 +18,12 @@ const MultiMenuItem: React.FC<IProps> = ({icon, arrowIcon = false, text}) => {
                 </IconButton>
             )
         }>
-            <ListItemButton sx={{borderRadius: '6px'}}>
+            <ListItemButton sx={{borderRadius: '6px', padding: '10px 20px'}} onClick={onClick}>
                 <ListItemIcon>
                     {icon}
                 </ListItemIcon>
                 <ListItemText
-                    primary={<Typography fontWeight={'bold'}>
+                    primary={<Typography sx={{fontSize: '16px'}} fontWeight={'bold'}>
                         {text}
                     </Typography>}
                 />
