@@ -14,8 +14,8 @@ import work.nguyentruonganhkiet.api.model.dtos.responses.MessageReturnDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.PostDto;
 import work.nguyentruonganhkiet.api.model.entities.Post;
 import work.nguyentruonganhkiet.api.model.entities.User;
-import work.nguyentruonganhkiet.api.repositories.PostRepository;
 import work.nguyentruonganhkiet.api.repositories.UserRepository;
+import work.nguyentruonganhkiet.api.service.PostService;
 import work.nguyentruonganhkiet.api.utils.constant.STATUS;
 
 import javax.validation.Valid;
@@ -29,120 +29,125 @@ import static work.nguyentruonganhkiet.api.utils.constant.API.API_ENDPOINTS_POST
 @RequestMapping(API_ENDPOINTS_POSTS)
 public class PostController {
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	@Autowired
-	private PostRepository postRepository;
+    @Autowired
+    private PostService postService;
 
-	@Autowired
-	private ModelMapper modelMapper;
+    @Autowired
+    private ModelMapper modelMapper;
 
-	@GetMapping("/friends")
-	public MessageReturnDto<List<PostDto>> getAllPostsOfFriends(
-			@RequestParam(name = "page", defaultValue = "0") int page ,
-			@RequestParam(name = "size", defaultValue = "10") int size ,
-			@RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy
-	) {
+    @GetMapping("/friends")
+    public MessageReturnDto<List<PostDto>> getAllPostsOfFriends(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy
+    ) {
 
-		Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
 
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
 
-		List<Post> posts = this.postRepository.findAllByUserId(user.getId() , pageable);
+        try {
+            List<Post> posts = this.postService.findAllByUserId(user.getId(), pageable);
 
-		List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post , PostDto.class)).collect(Collectors.toList());
+            List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
 
-		return MessageReturnDto.
-				<List<PostDto>>builder()
-				.data(postDtos)
-				.message(STATUS.HTTP_OK_MESSAGE)
-				.status(STATUS.HTTP_OK)
-				.build();
+            return MessageReturnDto.
+                    <List<PostDto>>builder()
+                    .data(postDtos)
+                    .message(STATUS.HTTP_OK_MESSAGE)
+                    .status(STATUS.HTTP_OK)
+                    .build();
+        } catch (Exception e) {
+            return MessageReturnDto.getExceptionReturn();
+        }
 
-	}
 
-	@PostMapping("/create")
-	public MessageReturnDto<PostDto> createPost( @Valid @RequestBody PostCreateDto post ) {
+    }
 
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    @PostMapping("/create")
+    public MessageReturnDto<PostDto> createPost(@Valid @RequestBody PostCreateDto post) {
 
-		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		try {
-			Post p = this.postRepository.save(Post
-					.builder()
-					.user(user)
-					.body(post.getBody())
-					.thumbnail(post.getThumbnail())
-					.description(post.getDescription())
-					.body(post.getBody())
-					.cover(post.getCover())
-					.build());
+        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
 
-			PostDto pr = modelMapper.map(p , PostDto.class);
+        try {
+            Post p = this.postService.save(Post
+                    .builder()
+                    .user(user)
+                    .body(post.getBody())
+                    .thumbnail(post.getThumbnail())
+                    .description(post.getDescription())
+                    .body(post.getBody())
+                    .cover(post.getCover())
+                    .build());
 
-			return MessageReturnDto.<PostDto>builder()
-					.status(STATUS.HTTP_OK)
-					.message(STATUS.HTTP_OK_MESSAGE)
-					.data(pr)
-					.build();
-		} catch (Exception e) {
-			return MessageReturnDto.getExceptionReturn();
-		}
-	}
+            PostDto pr = modelMapper.map(p, PostDto.class);
 
-	@PutMapping("/update/{id}")
-	public MessageReturnDto<PostDto> updatePost( @PathVariable("id") Long id , @Valid @RequestBody PostCreateDto post ) {
+            return MessageReturnDto.<PostDto>builder()
+                    .status(STATUS.HTTP_OK)
+                    .message(STATUS.HTTP_OK_MESSAGE)
+                    .data(pr)
+                    .build();
+        } catch (Exception e) {
+            return MessageReturnDto.getExceptionReturn();
+        }
+    }
 
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    @PutMapping("/update/{id}")
+    public MessageReturnDto<PostDto> updatePost(@PathVariable("id") Long id, @Valid @RequestBody PostCreateDto post) {
 
-		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		Post p = this.postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
 
-		if (! Objects.equals(p.getUser().getId() , user.getId()))
-			return MessageReturnDto.<PostDto>builder()
-					.status(STATUS.HTTP_BAD_REQUEST)
-					.message(STATUS.HTTP_BAD_REQUEST_MESSAGE)
-					.build();
+        Post p = this.postService.findById(id);
 
-		if (p.isDelete())
-			return MessageReturnDto.<PostDto>builder()
-					.status(STATUS.HTTP_BAD_REQUEST)
-					.message(STATUS.HTTP_BAD_REQUEST_MESSAGE)
-					.build();
+        if (!Objects.equals(p.getUser().getId(), user.getId()))
+            return MessageReturnDto.<PostDto>builder()
+                    .status(STATUS.HTTP_BAD_REQUEST)
+                    .message(STATUS.HTTP_BAD_REQUEST_MESSAGE)
+                    .build();
 
-		p.setBody(post.getBody());
-		p.setThumbnail(post.getThumbnail());
-		p.setDescription(post.getDescription());
-		p.setBody(post.getBody());
-		p.setCover(post.getCover());
+        if (p.isDelete())
+            return MessageReturnDto.<PostDto>builder()
+                    .status(STATUS.HTTP_BAD_REQUEST)
+                    .message(STATUS.HTTP_BAD_REQUEST_MESSAGE)
+                    .build();
 
-		PostDto pr = modelMapper.map(p , PostDto.class);
+        p.setBody(post.getBody());
+        p.setThumbnail(post.getThumbnail());
+        p.setDescription(post.getDescription());
+        p.setBody(post.getBody());
+        p.setCover(post.getCover());
 
-		return MessageReturnDto.
-				<PostDto>builder()
-				.data(pr)
-				.message(STATUS.HTTP_OK_MESSAGE)
-				.status(STATUS.HTTP_OK)
-				.build();
-	}
+        PostDto pr = modelMapper.map(p, PostDto.class);
 
-	@DeleteMapping("/delete/{id}")
-	public MessageReturnDto<PostDto> deletePost( @PathVariable("id") Long id ) {
-		Post p = this.postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
-		p.setDelete(true);
-		this.postRepository.save(p);
+        return MessageReturnDto.
+                <PostDto>builder()
+                .data(pr)
+                .message(STATUS.HTTP_OK_MESSAGE)
+                .status(STATUS.HTTP_OK)
+                .build();
+    }
 
-		PostDto pr = modelMapper.map(p , PostDto.class);
+    @DeleteMapping("/delete/{id}")
+    public MessageReturnDto<PostDto> deletePost(@PathVariable("id") Long id) {
+        Post p = this.postService.findById(id);
+        p.setDelete(true);
+        this.postService.save(p);
 
-		return MessageReturnDto.<PostDto>builder()
-				.status(STATUS.HTTP_OK)
-				.message(STATUS.HTTP_OK_MESSAGE)
-				.data(pr)
-				.build();
-	}
+        PostDto pr = modelMapper.map(p, PostDto.class);
+
+        return MessageReturnDto.<PostDto>builder()
+                .status(STATUS.HTTP_OK)
+                .message(STATUS.HTTP_OK_MESSAGE)
+                .data(pr)
+                .build();
+    }
 }

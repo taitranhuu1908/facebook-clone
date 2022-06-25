@@ -55,12 +55,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/test/**").hasRole("USER")
-//				.antMatchers("/api/test/**").permitAll()
+                .authorizeRequests().antMatchers("/api/v1/auth/**").permitAll()
+                .antMatchers("/api/v1/test/**").permitAll()
                 .antMatchers("/api-docs/**").permitAll()
                 .antMatchers("/swagger-ui.html/**").permitAll()
                 .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/images/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
