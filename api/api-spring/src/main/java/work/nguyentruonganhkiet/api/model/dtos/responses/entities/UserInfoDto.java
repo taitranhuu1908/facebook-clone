@@ -1,4 +1,4 @@
-package work.nguyentruonganhkiet.api.model.dtos.reponses.entities;
+package work.nguyentruonganhkiet.api.model.dtos.responses.entities;
 
 import lombok.Data;
 

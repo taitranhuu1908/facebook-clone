@@ -1,4 +1,4 @@
-package work.nguyentruonganhkiet.api.model.dtos.reponses.entities;
+package work.nguyentruonganhkiet.api.model.dtos.responses.entities;
 
 import lombok.Data;
 
@@ -7,11 +7,13 @@ import java.sql.Timestamp;
 import java.util.Set;
 
 @Data
-public class RoleDto implements Serializable {
+public class CommentDto implements Serializable {
     private  Long id;
     private  Timestamp createdAt;
     private  Timestamp updatedAt;
     private  boolean isDelete;
-    private  String name;
-    private  Set<PermissionDto> permissions;
+    private  String comment;
+    private final UserDto user;
+    private  Set<ReactCommentDto> reactComments;
 }
+

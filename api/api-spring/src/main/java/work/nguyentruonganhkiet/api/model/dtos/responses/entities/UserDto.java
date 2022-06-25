@@ -1,4 +1,4 @@
-package work.nguyentruonganhkiet.api.model.dtos.reponses.entities;
+package work.nguyentruonganhkiet.api.model.dtos.responses.entities;
 
 import lombok.Data;
 
@@ -20,4 +20,5 @@ public class UserDto implements Serializable {
     private  Set<RoomDto> rooms;
     private  Set<RoleDto> roles;
     private  Set<PostDto> posts;
+    private final Set<FriendDto> friends;
 }
