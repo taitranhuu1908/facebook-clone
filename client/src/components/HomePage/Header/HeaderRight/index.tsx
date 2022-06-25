@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {Box, InputBase} from "@mui/material";
+import {Avatar, Box, Divider, IconButton, InputBase, List, Typography} from "@mui/material";
 import styles from "../header.module.scss";
 import ButtonCircle from "../../../Button/Circle";
 import Menu from "../Menu";
@@ -10,6 +10,12 @@ import styled from "@emotion/styled";
 import {useAppDispatch, useAppSelector} from "../../../../app/hook";
 import {IUser} from "../../../../app/models/User";
 import {createChatBox} from "../../../../app/features/ChatBoxSlice";
+import MultiMenu from "../../../MultiMenu";
+import {Link} from "react-router-dom";
+import MultiMenuItem from "../../../MultiMenu/MultiMenuItem";
+import SettingsIcon from '@mui/icons-material/Settings';
+
+const PROFILE_LINK = '/profile';
 
 interface IProps {
 
@@ -21,9 +27,11 @@ const HeaderRight: React.FC<IProps> = () => {
     const [anchorEl, setAnchorEl] = React.useState<{
         notify: null | HTMLElement;
         messenger: null | HTMLElement;
+        settings: null | HTMLElement;
     }>({
         notify: null,
-        messenger: null
+        messenger: null,
+        settings: null,
     });
     const openMenu = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, title: any) => {
         switch (title) {
@@ -31,6 +39,7 @@ const HeaderRight: React.FC<IProps> = () => {
                 setAnchorEl(({notify}) => {
                     return {
                         messenger: null,
+                        settings: null,
                         notify: notify ? null : event.currentTarget,
                     }
                 });
@@ -39,7 +48,17 @@ const HeaderRight: React.FC<IProps> = () => {
                 setAnchorEl(({messenger}) => {
                     return {
                         messenger: messenger ? null : event.currentTarget,
+                        settings: null,
                         notify: null,
+                    }
+                })
+                break;
+            case 'settings':
+                setAnchorEl(({settings}) => {
+                    return {
+                        messenger: null,
+                        notify: null,
+                        settings: settings ? null : event.currentTarget
                     }
                 })
                 break;
@@ -62,7 +81,8 @@ const HeaderRight: React.FC<IProps> = () => {
     const handleClose = () => {
         setAnchorEl({
             messenger: null,
-            notify: null
+            notify: null,
+            settings: null
         })
     }
 
@@ -93,9 +113,28 @@ const HeaderRight: React.FC<IProps> = () => {
                 <InputSearchMessenger placeholder={'Tìm kiếm trên Messenger'}/>
                 {renderMenuChat}
             </Menu>
-            <AvatarCircle
-                src={user.picture}
-                title={'Trang cá nhân của bạn'}/>
+            <IconButton onClick={(event) => openMenu(event, 'settings')}>
+                <AvatarCircle
+                    src={user.picture}
+                    title={'Trang cá nhân của bạn'}/>
+            </IconButton>
+            <MultiMenu anchorEl={anchorEl['settings']} handleClose={handleClose}>
+                <MultiMenuHeader>
+                    <Box sx={{display: 'flex', alignItems: 'center', gap: '15px', width: '100%'}}>
+                        <Avatar src={user.picture} sx={{width: '50px', height: '50px'}}/>
+                        <Typography fontWeight={'bold'}>{`${user.firstName} ${user.lastName}`}</Typography>
+                    </Box>
+                    <Divider sx={{width: '90%', backgroundColor: "#e4e6eb", margin: '0 auto'}}/>
+                    <Link to={PROFILE_LINK} className={'text-decoration-none'}>
+                        <Typography fontWeight={'bold'} className={'text-color-link'}>Xem tất cả trang cá
+                            nhân</Typography>
+                    </Link>
+                </MultiMenuHeader>
+
+                <List>
+                    <MultiMenuItem arrowIcon={true} icon={<SettingsIcon/>} text={'Cài đặt'}/>
+                </List>
+            </MultiMenu>
         </Box>
     </>
 }
@@ -108,5 +147,16 @@ const InputSearchMessenger = styled(InputBase)`
   font-size: 16px;
   margin-bottom: 10px;
 `
+
+const MultiMenuHeader = styled(Box)`
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  padding: 10px 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: flex-start;
+`
+
 
 export default HeaderRight;
