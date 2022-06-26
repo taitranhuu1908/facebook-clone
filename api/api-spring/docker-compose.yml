@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8
+    restart: unless-stopped
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: api
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - backend
+    ports:
+      - "3306:3306"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    ports:
+      - "1000:1000"
+
+networks:
+  backend:
+    driver: bridge
