@@ -11,12 +11,13 @@
     <groupId>work.nguyentruonganhkiet</groupId>
     <artifactId>api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>api</name>
     <description>api</description>
     <properties>
         <java.version>17</java.version>
         <repackage.classifier/>
+        <skipTests>true</skipTests>
     </properties>
 
     <dependencies>

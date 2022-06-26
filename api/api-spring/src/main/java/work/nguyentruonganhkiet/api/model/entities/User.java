@@ -1,5 +1,7 @@
 package work.nguyentruonganhkiet.api.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +26,7 @@ import java.util.Set;
 public class User extends BaseEntity {
 
 	@Column(nullable = false)
+	@JsonIgnore
 	private String password;
 
 	@Column(unique = true, nullable = false)
@@ -33,24 +36,39 @@ public class User extends BaseEntity {
 	private UserInfo userInfo;
 
 	@OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonManagedReference
 	private Set<Comment> comments = new LinkedHashSet<>();
 
 	@OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonManagedReference
 	private Set<Story> stories = new LinkedHashSet<>();
 
 	@ManyToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonManagedReference
 	private Set<Room> rooms = new LinkedHashSet<>();
 
 	@OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonManagedReference
 	private Set<Message> messages = new LinkedHashSet<>();
 
 	@ManyToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonManagedReference
 	private Set<Role> roles = new LinkedHashSet<>();
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@JsonManagedReference
 	private Set<Post> posts = new LinkedHashSet<>();
 
-	@OneToMany(mappedBy = "user", orphanRemoval = true)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@JsonManagedReference
 	private Set<Friend> friends = new LinkedHashSet<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private Set<React> reacts = new LinkedHashSet<>();
+
+	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private Set<Notification> notifications = new LinkedHashSet<>();
 
 }

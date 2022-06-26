@@ -1,11 +1,14 @@
 package work.nguyentruonganhkiet.api.controller.api;
 
 
+import io.swagger.v3.oas.annotations.Parameter;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +18,7 @@ import work.nguyentruonganhkiet.api.model.dtos.requests.LoginDto;
 import work.nguyentruonganhkiet.api.model.dtos.requests.RegisterDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.JwtDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.MessageReturnDto;
-import work.nguyentruonganhkiet.api.model.dtos.responses.entities.UserDto;
+import work.nguyentruonganhkiet.api.model.dtos.responses.entities.UserHaftDto;
 import work.nguyentruonganhkiet.api.model.entities.Role;
 import work.nguyentruonganhkiet.api.model.entities.User;
 import work.nguyentruonganhkiet.api.model.entities.UserInfo;
@@ -23,6 +26,7 @@ import work.nguyentruonganhkiet.api.repositories.RoleRepository;
 import work.nguyentruonganhkiet.api.repositories.UserInfoRepository;
 import work.nguyentruonganhkiet.api.repositories.UserRepository;
 import work.nguyentruonganhkiet.api.utils.JwtUtils;
+import work.nguyentruonganhkiet.api.utils.constant.STATUS;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -30,8 +34,7 @@ import java.util.List;
 
 import static work.nguyentruonganhkiet.api.model.enums.RoleEnum.ROLE_USER;
 import static work.nguyentruonganhkiet.api.utils.constant.API.*;
-import static work.nguyentruonganhkiet.api.utils.constant.STATUS.HTTP_BAD_REQUEST;
-import static work.nguyentruonganhkiet.api.utils.constant.STATUS.HTTP_OK;
+import static work.nguyentruonganhkiet.api.utils.constant.STATUS.*;
 
 @RestController
 @RequestMapping(API_ENDPOINTS_AUTH)
@@ -50,6 +53,8 @@ public class AuthController {
 
 	final ModelMapper modelMapper;
 
+
+	@Autowired
 	public AuthController( AuthenticationManager authenticationManager , UserRepository userRepository , RoleRepository roleRepository , PasswordEncoder encoder , JwtUtils jwtUtils , UserInfoRepository userInfoRepository , ModelMapper modelMapper ) {
 		this.authenticationManager = authenticationManager;
 		this.userRepository = userRepository;
@@ -61,57 +66,57 @@ public class AuthController {
 	}
 
 	@PostMapping(API_ENDPOINTS_AUTH_LOGIN)
-	public ResponseEntity<?> login( @Valid @RequestBody LoginDto loginRequest ) {
-		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail() , loginRequest.getPassword()));
+	public MessageReturnDto<?> login( @Valid @RequestBody LoginDto loginRequest ) {
+		try {
+			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail() , loginRequest.getPassword()));
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-		String jwt = jwtUtils.generateJwtToken(userDetails);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+			String jwt = jwtUtils.generateJwtToken(userDetails);
 
-		return ResponseEntity.ok(JwtDto.builder().token(jwt).expiresIn(864000).type("Bearer").build());
+			return ResponseEntity.ok(MessageReturnDto.<JwtDto>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).data(JwtDto.builder().expiresIn(8640000).token(jwt).build()).build()).getBody();
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
 	}
 
 	@PostMapping(API_ENDPOINTS_AUTH_REGISTER)
-	public ResponseEntity<?> register( @Valid @RequestBody RegisterDto signUpRequest ) {
-		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return ResponseEntity.badRequest().body(MessageReturnDto.builder().status(HTTP_BAD_REQUEST).message("Email is already in use!").build());
+	public MessageReturnDto<?> register( @Valid @RequestBody RegisterDto signUpRequest ) {
+		try {
+			if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+				return ResponseEntity.badRequest().body(MessageReturnDto.getCustomOKMessage("Email ready exist ! Please choose new one")).getBody();
+			}
+
+			User user = User.builder().email(signUpRequest.getEmail()).password(encoder.encode(signUpRequest.getPassword())).build();
+
+			Role userRole = roleRepository.findByName(ROLE_USER).orElseGet(() -> roleRepository.save(Role.builder().name(ROLE_USER).build()));
+
+			user.setRoles(new HashSet<>(List.of(userRole)));
+
+			UserInfo userInfo = UserInfo.builder().lastName(signUpRequest.getLastName()).firstName(signUpRequest.getFirstName()).gender(signUpRequest.isGender()).birthday(signUpRequest.getBirthday()).build();
+
+			user.setUserInfo(userInfo);
+
+			userRepository.save(user);
+
+			return ResponseEntity.ok(ResponseEntity.ok().body(MessageReturnDto.getOkReturn()).getBody()).getBody();
+
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
-
-		User user = User.builder().email(signUpRequest.getEmail()).password(encoder.encode(signUpRequest.getPassword())).build();
-
-		Role userRole = roleRepository.findByName(ROLE_USER).orElseGet(() ->
-				roleRepository.save(Role.builder().name(ROLE_USER).build())
-		);
-
-		userRole.setUsers(new HashSet<>(List.of(user)));
-
-		user.setRoles(new HashSet<>(List.of(userRole)));
-
-		UserInfo userInfo = UserInfo.builder()
-				.fullName(signUpRequest.getName())
-				.gender(signUpRequest.isGender())
-				.birthday(signUpRequest.getBirthday())
-				.users(user)
-				.build();
-
-		userInfoRepository.save(userInfo);
-
-		user.setUserInfo(userInfo);
-
-		userRepository.save(user);
-
-		return ResponseEntity.ok(MessageReturnDto.builder().message("User registered successfully!").status(HTTP_OK).build());
 	}
 
 	@GetMapping(API_ENDPOINTS_AUTH_ME)
-	public ResponseEntity<UserDto> getUserInfo() {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public MessageReturnDto<?> getUserInfo( @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
+			User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
 
-		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
+			UserHaftDto userDto = modelMapper.map(user , UserHaftDto.class);
 
-		UserDto userDto = modelMapper.map(user , UserDto.class);
-
-		return ResponseEntity.ok(userDto);
+			return ResponseEntity.ok(MessageReturnDto.<UserHaftDto>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).data(userDto).build()).getBody();
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
 	}
 
 }

@@ -1,24 +1,27 @@
 package work.nguyentruonganhkiet.api.model.dtos.responses.entities;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@ToString
 public class UserInfoDto implements Serializable {
-    private Long id;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
-    private boolean isDelete;
-    private String fullName;
-    private Date birthday;
-    private String phone;
-    private String address;
-    private String avatar;
-    private String coverImage;
-    private String about;
-    private String bio;
-    private boolean gender;
+	private Long id;
+	private String firstName;
+	private String lastName;
+	private String phone;
+	private String address;
+	private String avatar;
+	private String coverImage;
+	private String about;
+	private String bio;
+	private String slug;
+	private Date birthday;
+	private boolean gender;
 }

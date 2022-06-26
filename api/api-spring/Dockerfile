@@ -1,10 +1,11 @@
-# jdk 18 maven
-FROM maven:3.5.4-jdk-18
+FROM openjdk:17-jdk-alpine
 
-WORKDIR app
+COPY /target/api-0.0.1-SNAPSHOT.jar api-0.0.1-SNAPSHOT.jar
 
-RUN mvn clean package -DskipTests
+COPY /target/api-0.0.1-SNAPSHOT.jar.original api-0.0.1-SNAPSHOT.jar.original
 
-COPY target/app.jar app.jar
+ENTRYPOINT ["java","-jar","api-0.0.1-SNAPSHOT.jar"]
 
-CMD ["java", "-jar", "app.jar"]
+#CMD ["java", "-jar", "api-0.0.1-SNAPSHOT.jar"]
+
+EXPOSE 1000

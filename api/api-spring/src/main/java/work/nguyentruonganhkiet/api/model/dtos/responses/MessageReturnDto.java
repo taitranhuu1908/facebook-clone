@@ -1,11 +1,12 @@
 package work.nguyentruonganhkiet.api.model.dtos.responses;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.domain.Pageable;
+import org.springframework.validation.FieldError;
 import work.nguyentruonganhkiet.api.utils.constant.STATUS;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,9 +19,11 @@ public class MessageReturnDto<T> {
 
 	private T data;
 
-	private PaginationInfo paginate;
+	private Pageable paginate;
 
-	@Data
+	@Getter
+	@Setter
+
 	public static class PaginationInfo {
 		private Integer totalPage;
 
@@ -59,6 +62,35 @@ public class MessageReturnDto<T> {
 				.status(STATUS.HTTP_OK)
 				.message(STATUS.HTTP_OK_MESSAGE)
 				.data(data)
+				.build();
+	}
+
+	public static <T> MessageReturnDto getOkReturn() {
+		return MessageReturnDto.builder()
+				.status(STATUS.HTTP_OK)
+				.message(STATUS.HTTP_OK_MESSAGE)
+				.build();
+	}
+
+	public static MessageReturnDto getUnvalidReturn( List<FieldError> data ) {
+		return MessageReturnDto.builder()
+				.status(STATUS.HTTP_BAD_REQUEST)
+				.message(STATUS.HTTP_BAD_REQUEST_MESSAGE)
+				.data(data)
+				.build();
+	}
+
+	public static MessageReturnDto getCustomOKMessage( String message ) {
+		return MessageReturnDto.builder()
+				.status(STATUS.HTTP_OK)
+				.message(message)
+				.build();
+	}
+
+	public static MessageReturnDto getCustomExceptionMessage( String message ) {
+		return MessageReturnDto.builder()
+				.status(STATUS.HTTP_INTERNAL_SERVER_ERROR)
+				.message(message)
 				.build();
 	}
 

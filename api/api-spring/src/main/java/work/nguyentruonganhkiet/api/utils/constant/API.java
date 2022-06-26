@@ -23,5 +23,20 @@ public class API {
 
 	public static final String API_ENDPOINTS_STORIES = API_PREFIX_V1 + "/stories";
 
+	public static final String FRIENDS = "/friends";
+
+	public static final String ALL = "/all";
+
+	public static final String CREATE = "/create";
+
+	public static final String GET_ID = "/get/{id}";
+
+	public static final String UPDATE_ID = "/update/{id}";
+
+	public static final String DELETE_ID = "/delete/{id}";
+
+	public static final String REACT_ID = "/react/{id}";
+
+	public static final String COMMENT_ID = "/comment/{id}";
 
 }

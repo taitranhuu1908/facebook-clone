@@ -17,7 +17,7 @@ public class JwtUtils {
 	private final String jwtSecret = "secret";
 
 	// 10 minutes
-	private final int jwtExpirationMs = 864000;
+	private final int jwtExpirationMs = 8640000;
 
 	public String generateJwtToken( CustomUserDetails userDetails ) {
 		return Jwts.builder()
