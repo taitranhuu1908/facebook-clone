@@ -6,7 +6,7 @@ import SubMenu from "./SubMenu";
 import {Link, useNavigate} from "react-router-dom";
 import styled from "@emotion/styled";
 import {useAppSelector} from "../../app/hook";
-import {LIST_SETTING} from "../../constants";
+import {LIST_MENU_SETTING} from "../../constants";
 import MultiMenuItem from "./MultiMenuItem";
 
 const PROFILE_LINK = `/profile`
@@ -58,7 +58,7 @@ const MultiMenu: React.FC<IProps> = (props) => {
     }
 
     const renderMenuSettings = useMemo(() => {
-        return LIST_SETTING.map((item, index) => {
+        return LIST_MENU_SETTING.map((item, index) => {
             const {Icon, subMenu, label, to} = item;
             return <MultiMenuItem onClick={() => {
                 if (to) {

@@ -3,6 +3,7 @@ import styles from './styles.module.scss'
 import {Box, IconButton, Typography} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import MultiMenuItem from "../MultiMenuItem";
+import {useNavigate} from "react-router-dom";
 
 interface IProps {
     active: boolean;
@@ -12,12 +13,13 @@ interface IProps {
 }
 
 const SubMenu: React.FC<IProps> = ({data, active, parentTitle, handleClose}) => {
+    const navigate = useNavigate();
 
     const renderMenuItem = useMemo(() => {
         return data.map((item, index) => {
             const {Icon, label, to} = item;
             return <MultiMenuItem onClick={() => {
-                console.log(to)
+                navigate(to);
             }} key={index} icon={<Icon/>} text={label}/>
         })
     }, [data])

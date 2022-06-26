@@ -8,6 +8,7 @@ import GamePage from "./pages/Game";
 import MarketplacePage from "./pages/Marketplace";
 import GroupPage from "./pages/Group";
 import {useGetFriendsQuery, useGetMeQuery} from "./app/services/UserService";
+import SettingPage from "./pages/Setting";
 
 function App() {
     useGetMeQuery();
@@ -20,6 +21,7 @@ function App() {
             <Route path="/watch" element={<WatchPage/>}/>
             <Route path="/game" element={<GamePage/>}/>
             <Route path="/marketplace" element={<MarketplacePage/>}/>
+            <Route path="/settings/*" element={<SettingPage/>}/>
             <Route path="/group" element={<GroupPage/>}/>
             <Route path="/*" element={<NotFound/>}/>
         </Routes>
