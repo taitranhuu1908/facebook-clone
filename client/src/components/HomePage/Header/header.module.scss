@@ -11,12 +11,7 @@
   top: 0;
   z-index: 100;
 
-  .headerRight {
-    display: flex;
-    align-items: center;
-    flex-shrink: 1;
-    gap: 10px;
-
+  .headerLeft {
     .logo {
       height: 40px;
       width: 40px;

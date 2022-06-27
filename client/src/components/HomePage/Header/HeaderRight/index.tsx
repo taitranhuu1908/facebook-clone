@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import {Box, IconButton, InputBase} from "@mui/material";
-import styles from "../header.module.scss";
+import styles from "./styles.module.scss";
 import ButtonCircle from "../../../Button/Circle";
 import Menu from "../Menu";
 import MenuItemWithAvatar from "../MenuItemWithAvatar";
