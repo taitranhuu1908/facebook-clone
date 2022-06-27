@@ -13,18 +13,17 @@ import work.nguyentruonganhkiet.api.model.dtos.requests.ChangeFriendStatusDto;
 import work.nguyentruonganhkiet.api.model.dtos.requests.UpdateUserRequestDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.MessageReturnDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.UserHaftDto;
-import work.nguyentruonganhkiet.api.model.entities.Friend;
-import work.nguyentruonganhkiet.api.model.entities.Notification;
-import work.nguyentruonganhkiet.api.model.entities.User;
+import work.nguyentruonganhkiet.api.model.entities.*;
 import work.nguyentruonganhkiet.api.model.enums.FriendStatus;
 import work.nguyentruonganhkiet.api.model.enums.NotificationType;
-import work.nguyentruonganhkiet.api.service.NotificationService;
-import work.nguyentruonganhkiet.api.service.PostService;
-import work.nguyentruonganhkiet.api.service.UserService;
+import work.nguyentruonganhkiet.api.service.*;
 
 import javax.validation.Valid;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import static work.nguyentruonganhkiet.api.utils.constant.API.API_ENDPOINTS_USERS;
+import static work.nguyentruonganhkiet.api.utils.constant.API.*;
 import static work.nguyentruonganhkiet.api.utils.constant.STATUS.HTTP_OK;
 import static work.nguyentruonganhkiet.api.utils.constant.STATUS.HTTP_OK_MESSAGE;
 
@@ -33,25 +32,26 @@ import static work.nguyentruonganhkiet.api.utils.constant.STATUS.HTTP_OK_MESSAGE
 public class UserController {
 
 	private final UserService userService;
-
 	private final PostService postService;
-
 	private final NotificationService notificationService;
 	private final ModelMapper modelMapper;
-
+	private final RoomService roomService;
 
 	@Autowired
-	public UserController( UserService userService , PostService postService , NotificationService notificationService , ModelMapper modelMapper ) {
+	public UserController( UserService userService , PostService postService , NotificationService notificationService , ModelMapper modelMapper , RoomService roomService ) {
 		this.userService = userService;
 		this.postService = postService;
 		this.notificationService = notificationService;
 		this.modelMapper = modelMapper;
+		this.roomService = roomService;
 	}
 
-	@GetMapping("/get/{id}")
+	@GetMapping(GET_ID)
 	public MessageReturnDto<?> getUser( @PathVariable("id") Long id , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
-		User user = userService.findByEmail(userDetails.getUsername());
 		try {
+
+			User user = userService.findByEmail(userDetails.getUsername());
+
 			User u = userService.findById(id);
 
 			UserHaftDto userHaftDto = modelMapper.map(u , UserHaftDto.class);
@@ -62,29 +62,43 @@ public class UserController {
 		}
 	}
 
-	@PutMapping("/settings/update")
-	public MessageReturnDto<?> updateProfile( @Valid @RequestBody UpdateUserRequestDto updateUserRequestDto , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
-		User user = userService.findByEmail(userDetails.getUsername());
+	@GetMapping(GET_FRIENDS)
+	public MessageReturnDto getAllFriends( @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
+
+			User user = userService.findByEmail(userDetails.getUsername());
+
+			List<User> fs = user.getFriends().stream().filter(f -> f.getStatus().equals(FriendStatus.ACCEPTED)).map(Friend::getUser).toList();
+
+			List<UserHaftDto> userHaftDtos = fs.stream().map(f -> this.modelMapper.map(f , UserHaftDto.class)).toList();
+
+			return ResponseEntity.ok(MessageReturnDto.<List<UserHaftDto>>builder().message(HTTP_OK_MESSAGE).status(HTTP_OK).data(userHaftDtos).build()).getBody();
+
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+
+	}
+
+	@PutMapping(SETTINGS_UPDATE)
+	public MessageReturnDto<?> updateProfile( @Valid @RequestBody UpdateUserRequestDto updateUserRequestDto , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
+			User user = userService.findByEmail(userDetails.getUsername());
 
 			if (updateUserRequestDto.getFirstName() != null)
 				user.getUserInfo().setFirstName(updateUserRequestDto.getFirstName());
 			if (updateUserRequestDto.getLastName() != null)
 				user.getUserInfo().setLastName(updateUserRequestDto.getLastName());
-			if (updateUserRequestDto.getPhone() != null)
-				user.getUserInfo().setPhone(updateUserRequestDto.getPhone());
+			if (updateUserRequestDto.getPhone() != null) user.getUserInfo().setPhone(updateUserRequestDto.getPhone());
 			if (updateUserRequestDto.getAddress() != null)
 				user.getUserInfo().setAddress(updateUserRequestDto.getAddress());
 			if (updateUserRequestDto.getAvatar() != null)
 				user.getUserInfo().setAvatar(updateUserRequestDto.getAvatar());
 			if (updateUserRequestDto.getCoverImage() != null)
 				user.getUserInfo().setCoverImage(updateUserRequestDto.getCoverImage());
-			if (updateUserRequestDto.getAbout() != null)
-				user.getUserInfo().setAbout(updateUserRequestDto.getAbout());
-			if (updateUserRequestDto.getBio() != null)
-				user.getUserInfo().setBio(updateUserRequestDto.getBio());
-			if (updateUserRequestDto.getSlug() != null)
-				user.getUserInfo().setSlug(updateUserRequestDto.getSlug());
+			if (updateUserRequestDto.getAbout() != null) user.getUserInfo().setAbout(updateUserRequestDto.getAbout());
+			if (updateUserRequestDto.getBio() != null) user.getUserInfo().setBio(updateUserRequestDto.getBio());
+			if (updateUserRequestDto.getSlug() != null) user.getUserInfo().setSlug(updateUserRequestDto.getSlug());
 			if (updateUserRequestDto.getBirthday() != null)
 				user.getUserInfo().setBirthday(updateUserRequestDto.getBirthday());
 			if (updateUserRequestDto.getGender() != ( - 1 ))
@@ -98,9 +112,10 @@ public class UserController {
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
+
 	}
 
-	@PostMapping("/utils/add-friend")
+	@PostMapping(UTILS_ADD_FRIEND)
 	public MessageReturnDto<?> addFriend( @Valid @RequestBody AddFriendRequestDto addFriendRequestDto , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
 
@@ -125,7 +140,7 @@ public class UserController {
 		}
 	}
 
-	@PutMapping("/utils/change-status-friend")
+	@PutMapping(UTILS_CHANGE_STATUS_FRIEND)
 	public MessageReturnDto changeStatusFriend( @Valid @RequestBody ChangeFriendStatusDto changeFriendStatusDto , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
 
@@ -133,11 +148,7 @@ public class UserController {
 
 			User friend = userService.findByEmail(changeFriendStatusDto.getEmailTarget());
 
-			Friend f = user.getFriends().stream().filter(friend1 -> friend1.getUser().getEmail().equals(friend.getEmail())).findFirst().get();
-
-			f.setStatus(changeFriendStatusDto.getStatus());
-
-			userService.save(user);
+			this.userService.processFriendStatus(user , friend , changeFriendStatusDto.getStatus());
 
 			Notification notification = Notification.builder().owner(user).userRef(friend).type(NotificationType.ADD_FRIEND).build();
 
@@ -145,6 +156,34 @@ public class UserController {
 
 			return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).build()).getBody();
 
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+	}
+
+	@GetMapping(GET_IMAGE_OF_USER)
+	public MessageReturnDto getImagesUser( @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
+
+			User user = userService.findByEmail(userDetails.getUsername());
+
+			List<String> images = user.getPosts().stream().map(Post::getThumbnail).toList();
+
+			return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<List<String>>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).data(images).build()).getBody();
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+	}
+
+	@PutMapping(LOCK_ACCOUNT)
+	public MessageReturnDto lockAccount( @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
+
+			User user = userService.findByEmail(userDetails.getUsername());
+
+			this.userService.delete(user);
+
+			return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<UserHaftDto>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).build()).getBody();
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}

@@ -25,8 +25,8 @@ import work.nguyentruonganhkiet.api.model.entities.UserInfo;
 import work.nguyentruonganhkiet.api.repositories.RoleRepository;
 import work.nguyentruonganhkiet.api.repositories.UserInfoRepository;
 import work.nguyentruonganhkiet.api.repositories.UserRepository;
+import work.nguyentruonganhkiet.api.service.UserService;
 import work.nguyentruonganhkiet.api.utils.JwtUtils;
-import work.nguyentruonganhkiet.api.utils.constant.STATUS;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -53,9 +53,11 @@ public class AuthController {
 
 	final ModelMapper modelMapper;
 
+	private final UserService userService;
+
 
 	@Autowired
-	public AuthController( AuthenticationManager authenticationManager , UserRepository userRepository , RoleRepository roleRepository , PasswordEncoder encoder , JwtUtils jwtUtils , UserInfoRepository userInfoRepository , ModelMapper modelMapper ) {
+	public AuthController( AuthenticationManager authenticationManager , UserRepository userRepository , RoleRepository roleRepository , PasswordEncoder encoder , JwtUtils jwtUtils , UserInfoRepository userInfoRepository , ModelMapper modelMapper , UserService userService ) {
 		this.authenticationManager = authenticationManager;
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
@@ -63,6 +65,7 @@ public class AuthController {
 		this.jwtUtils = jwtUtils;
 		this.userInfoRepository = userInfoRepository;
 		this.modelMapper = modelMapper;
+		this.userService = userService;
 	}
 
 	@PostMapping(API_ENDPOINTS_AUTH_LOGIN)

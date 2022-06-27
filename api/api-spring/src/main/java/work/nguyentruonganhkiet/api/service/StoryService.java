@@ -4,6 +4,8 @@ package work.nguyentruonganhkiet.api.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import work.nguyentruonganhkiet.api.model.entities.Story;
+import work.nguyentruonganhkiet.api.model.sub.CommentStory;
+import work.nguyentruonganhkiet.api.model.sub.ReactStory;
 import work.nguyentruonganhkiet.api.repositories.StoryRepository;
 import work.nguyentruonganhkiet.api.utils.files.SaveFile;
 
@@ -54,5 +56,15 @@ public class StoryService implements IBaseService<Story, Long> {
 	@Override
 	public List<Story> findAll() {
 		return this.storyRepository.findAll().stream().filter(story -> ! story.isDelete()).collect(Collectors.toList());
+	}
+
+	public Story reactToStory( Story story , ReactStory reactStory ) {
+		story.getReactStories().add(reactStory);
+		return this.storyRepository.save(story);
+	}
+
+	public Story commentToStory( Story story , CommentStory commentStory ) {
+		story.getCommentStories().add(commentStory);
+		return this.storyRepository.save(story);
 	}
 }

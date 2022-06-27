@@ -16,7 +16,7 @@ public class PostDto implements Serializable {
 	private Long id;
 	private Timestamp createdAt;
 	private Timestamp updatedAt;
-	private boolean isDelete = false;
+	private boolean isDelete;
 	private String title;
 	private String slug;
 	private String thumbnail;

@@ -17,7 +17,7 @@ public class NotificationDto implements Serializable {
 	private Long id;
 	private Timestamp createdAt;
 	private Timestamp updatedAt;
-	private boolean isDelete = false;
+	private boolean isDelete;
 	private NotificationType type;
 	private FriendStatus friendStatus;
 	private PostDto postRef;

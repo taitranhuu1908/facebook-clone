@@ -15,7 +15,7 @@ public class ReactCommentDto implements Serializable {
 	private Long id;
 	private Timestamp createdAt;
 	private Timestamp updatedAt;
-	private boolean isDelete = false;
+	private boolean isDelete;
 	private ReactType reactType;
 	private int reactCount;
 	private UserHaftDto user;

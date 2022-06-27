@@ -17,7 +17,7 @@ public class CommentStoryDto implements Serializable {
 	private Long id;
 	private Timestamp createdAt;
 	private Timestamp updatedAt;
-	private boolean isDelete = false;
+	private boolean isDelete;
 	private String comment;
 	private Set<ReactCommentDto> reactComments = new LinkedHashSet<>();
 	private UserHaftDto user;

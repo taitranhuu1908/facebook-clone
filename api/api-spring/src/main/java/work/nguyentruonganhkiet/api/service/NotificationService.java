@@ -3,9 +3,7 @@ package work.nguyentruonganhkiet.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import work.nguyentruonganhkiet.api.model.entities.Notification;
-import work.nguyentruonganhkiet.api.model.entities.Post;
-import work.nguyentruonganhkiet.api.model.entities.User;
+import work.nguyentruonganhkiet.api.model.entities.*;
 import work.nguyentruonganhkiet.api.model.enums.NotificationType;
 import work.nguyentruonganhkiet.api.repositories.NotificationRepository;
 
@@ -48,7 +46,7 @@ public class NotificationService implements IBaseService<Notification, Long> {
 		noti.setPostRef(post);
 		noti.setUserRef(userRef);
 		noti.setOwner(owner);
-		noti.setType(NotificationType.REACT);
+		noti.setType(NotificationType.REACT_POST);
 		return this.save(noti);
 	}
 
@@ -56,7 +54,31 @@ public class NotificationService implements IBaseService<Notification, Long> {
 		noti.setPostRef(post);
 		noti.setUserRef(userRef);
 		noti.setOwner(owner);
-		noti.setType(NotificationType.COMMENT);
+		noti.setType(NotificationType.COMMENT_POST);
+		return this.save(noti);
+	}
+
+	public Notification reactStoryNotification( Story story , User userRef , User owner , Notification noti ) {
+		noti.setStoryRef(story);
+		noti.setUserRef(userRef);
+		noti.setOwner(owner);
+		noti.setType(NotificationType.REACT_STORY);
+		return this.save(noti);
+	}
+
+	public Notification commentStoryNotification( Story story , User userRef , User owner , Notification noti ) {
+		noti.setStoryRef(story);
+		noti.setUserRef(userRef);
+		noti.setOwner(owner);
+		noti.setType(NotificationType.COMMENT_STORY);
+		return this.save(noti);
+	}
+
+	public Notification reactCommentNotification( Comment comment , User userRef , User owner , Notification noti ) {
+		noti.setCommentRef(comment);
+		noti.setUserRef(userRef);
+		noti.setOwner(owner);
+		noti.setType(NotificationType.REACT_COMMENT);
 		return this.save(noti);
 	}
 }
