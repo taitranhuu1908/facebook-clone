@@ -39,4 +39,13 @@ public class API {
 
 	public static final String COMMENT_ID = "/comment/{id}";
 
+
+	public static final String GET_FRIENDS = "/get-friends";
+	public static final String SETTINGS_UPDATE = "/settings/update";
+	public static final String UTILS_ADD_FRIEND = "/utils/add-friend";
+	public static final String UTILS_CHANGE_STATUS_FRIEND = "/utils/change-status-friend";
+	public static final String GET_IMAGE_OF_USER = "/get-image-of-user";
+	public static final String LOCK_ACCOUNT = "/lock-account";
+
+
 }

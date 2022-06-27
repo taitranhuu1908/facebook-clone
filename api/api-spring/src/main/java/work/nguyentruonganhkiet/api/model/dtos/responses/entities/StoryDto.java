@@ -14,13 +14,14 @@ import java.util.Set;
 @ToString
 public class StoryDto implements Serializable {
 	private Long id;
-	private Timestamp createdAt;
-	private Timestamp updatedAt;
-	private boolean isDelete = false;
+	private String slug;
 	private String title;
 	private String image;
-	private String slug;
+	private boolean special;
 	private UserHaftDto user;
+	private boolean isDelete;
+	private Timestamp createdAt;
+	private Timestamp updatedAt;
 	private Set<ReactStoryDto> reactStories = new LinkedHashSet<>();
 	private Set<CommentStoryDto> commentStories = new LinkedHashSet<>();
 }

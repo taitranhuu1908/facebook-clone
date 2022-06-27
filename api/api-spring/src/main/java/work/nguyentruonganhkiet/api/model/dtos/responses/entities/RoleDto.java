@@ -16,7 +16,7 @@ public class RoleDto implements Serializable {
 	private Long id;
 	private Timestamp createdAt;
 	private Timestamp updatedAt;
-	private boolean isDelete = false;
+	private boolean isDelete;
 	private String name;
 	private Set<PermissionDto> permissions = new LinkedHashSet<>();
 }

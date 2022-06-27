@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import work.nguyentruonganhkiet.api.model.base.BaseEntity;
 import work.nguyentruonganhkiet.api.model.enums.FriendStatus;
+import work.nguyentruonganhkiet.api.model.observe.FriendObserve;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
+@EntityListeners(FriendObserve.class)
 public class Friend extends BaseEntity {
 
 	@NotNull

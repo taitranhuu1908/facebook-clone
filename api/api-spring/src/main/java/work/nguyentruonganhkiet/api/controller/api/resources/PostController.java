@@ -2,7 +2,6 @@ package work.nguyentruonganhkiet.api.controller.api.resources;
 
 
 import io.swagger.v3.oas.annotations.Parameter;
-import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -12,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import work.nguyentruonganhkiet.api.model.dtos.requests.CommentPostRequestDto;
 import work.nguyentruonganhkiet.api.model.dtos.requests.PostCreateDto;
-import work.nguyentruonganhkiet.api.model.dtos.requests.ReactPostRequestDto;
+import work.nguyentruonganhkiet.api.model.dtos.requests.ReactRequestDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.MessageReturnDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.PostDto;
 import work.nguyentruonganhkiet.api.model.entities.Notification;
@@ -30,7 +29,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static work.nguyentruonganhkiet.api.utils.constant.API.*;
 
@@ -45,13 +43,7 @@ public class PostController {
 	private final SaveFile saveFile;
 
 	@Autowired
-	public PostController(
-			UserService userService ,
-			PostService postService ,
-			ModelMapper modelMapper ,
-			NotificationService notificationService ,
-			SaveFile saveFile
-	) {
+	public PostController( UserService userService , PostService postService , ModelMapper modelMapper , NotificationService notificationService , SaveFile saveFile ) {
 		this.userService = userService;
 		this.postService = postService;
 		this.modelMapper = modelMapper;
@@ -62,13 +54,14 @@ public class PostController {
 	@GetMapping(FRIENDS)
 	public MessageReturnDto<List<PostDto>> getAllPostsOfFriends( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
+
 			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
 
 			User user = userService.findByEmail(userDetails.getUsername());
 
-			List<Post> posts = user.getFriends().stream().map(friend -> friend.getUser().getPosts()).flatMap(Set::stream).filter(post -> ! post.isDelete()).collect(Collectors.toList());
+			List<Post> posts = user.getFriends().stream().map(friend -> friend.getUser().getPosts()).flatMap(Set::stream).filter(post -> ! post.isDelete()).toList();
 
-			List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post , PostDto.class)).collect(Collectors.toList());
+			List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post , PostDto.class)).toList();
 
 			Page<PostDto> pagePosts = new PageImpl<>(postDtos , pageable , posts.size());
 
@@ -81,18 +74,18 @@ public class PostController {
 
 	@GetMapping(ALL)
 	public MessageReturnDto<List<PostDto>> getAllPostsOfUser( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
-
-		Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
-
-		User user = userService.findByEmail(userDetails.getUsername());
-
 		try {
+
+			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
+
+			User user = userService.findByEmail(userDetails.getUsername());
+
 			List<Post> posts = this.postService.findAllByUserId(user.getId() , pageable);
 
 			if (posts.isEmpty())
 				return MessageReturnDto.<List<PostDto>>builder().data(null).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).build();
 
-			List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post , PostDto.class)).collect(Collectors.toList());
+			List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post , PostDto.class)).toList();
 
 			return ResponseEntity.ok(MessageReturnDto.<List<PostDto>>builder().data(postDtos).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
 		} catch (Exception e) {
@@ -103,9 +96,10 @@ public class PostController {
 
 	@PostMapping(CREATE)
 	public MessageReturnDto<PostDto> createPost( @Valid @RequestBody PostCreateDto post , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
-		User user = userService.findByEmail(userDetails.getUsername());
-
 		try {
+
+			User user = userService.findByEmail(userDetails.getUsername());
+
 			Post p = this.postService.save(Post.builder().body(post.getBody()).thumbnail(post.getThumbnail()).user(user).body(post.getBody()).build());
 
 			PostDto pr = modelMapper.map(p , PostDto.class);
@@ -119,8 +113,9 @@ public class PostController {
 
 	@GetMapping(GET_ID)
 	public MessageReturnDto<PostDto> getPostById( @PathVariable("id") Long id , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
-		User user = userService.findByEmail(userDetails.getUsername());
 		try {
+
+			User user = userService.findByEmail(userDetails.getUsername());
 
 			Post post = this.postService.findById(id);
 
@@ -138,8 +133,10 @@ public class PostController {
 
 	@PutMapping(UPDATE_ID)
 	public MessageReturnDto<PostDto> updatePost( @PathVariable("id") Long id , @Valid @RequestBody PostCreateDto post , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
-		User user = userService.findByEmail(userDetails.getUsername());
 		try {
+
+			User user = userService.findByEmail(userDetails.getUsername());
+
 			Post p = this.postService.findById(id);
 
 			if (! Objects.equals(p.getUser().getId() , user.getId()))
@@ -164,10 +161,10 @@ public class PostController {
 
 	@DeleteMapping(DELETE_ID)
 	public MessageReturnDto<PostDto> deletePost( @PathVariable("id") Long id , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
-
-		User user = userService.findByEmail(userDetails.getUsername());
-
 		try {
+
+			User user = userService.findByEmail(userDetails.getUsername());
+
 			Post p = this.postService.findById(id);
 
 			if (! Objects.equals(p.getUser().getId() , user.getId()))
@@ -184,7 +181,7 @@ public class PostController {
 	}
 
 	@PostMapping(REACT_ID)
-	public MessageReturnDto<PostDto> reactPost( @PathVariable("id") Long id , @Valid @RequestBody ReactPostRequestDto react , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+	public MessageReturnDto<PostDto> reactPost( @PathVariable("id") Long id , @Valid @RequestBody ReactRequestDto react , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
 
 			User user = userService.findByEmail(userDetails.getUsername());
