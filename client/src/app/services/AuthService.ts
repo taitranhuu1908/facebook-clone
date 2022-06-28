@@ -1,5 +1,6 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
-import {IUserLogin, IUserRegister} from "../models/User";
+import {IUserFull, IUserLogin, IUserRegister} from "../models/User";
+import {Response} from '../models/Response';
 
 const BASE_URL = process.env.URL_API || `http://localhost:1000/api`;
 
@@ -8,6 +9,8 @@ export const authService = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: `${BASE_URL}/v1/auth`,
         prepareHeaders(headers) {
+            const token = localStorage.getItem('auth');
+            if (token) headers.set('Authorization', `Bearer ${token}`);
             return headers;
         },
     }),
@@ -25,8 +28,14 @@ export const authService = createApi({
                 method: `POST`,
                 body: data
             })
+        }),
+        getMe: build.query<Response<IUserFull>, void>({
+            query: () => ({
+                url: `/me`,
+                method: `GET`
+            })
         })
     }),
 });
 
-export const {usePostRegisterMutation, usePostLoginMutation} = authService;
+export const {usePostRegisterMutation, usePostLoginMutation, useGetMeQuery} = authService;
