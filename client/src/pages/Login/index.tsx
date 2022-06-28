@@ -8,6 +8,7 @@ import {IUserLogin} from "../../app/models/User";
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup'
 import RegisterModal from "../../components/Modal/Register";
+import {usePostLoginMutation} from "../../app/services/AuthService";
 
 const InputLogin = styled("input")`
   background-color: white;
@@ -58,11 +59,14 @@ const LoginPage: React.FC = () => {
     const {register, formState: {errors}, handleSubmit} = useForm<IUserLogin>({
         resolver: yupResolver(schema),
         mode: "onSubmit"
-    }    )
+    })
+    const [postLoginApi] = usePostLoginMutation();
     const [openRegister, setOpenRegister] = useState(false)
 
-    const handleLogin: SubmitHandler<IUserLogin> = (data) => {
-        console.log(data)
+    const handleLogin: SubmitHandler<IUserLogin> = async (data) => {
+        await postLoginApi(data).then((response) => {
+            console.log(response)
+        })
     }
 
     return (
@@ -77,7 +81,8 @@ const LoginPage: React.FC = () => {
                     </Box>
                     <Box>
                         <form className="login__form" onSubmit={handleSubmit(handleLogin)}>
-                            <InputLogin type="text" className={`${errors.email ? "input__login--error" : ""}`} {...register("email")}
+                            <InputLogin type="text"
+                                        className={`${errors.email ? "input__login--error" : ""}`} {...register("email")}
                                         placeholder="Email hoặc số điện thoại"/>
                             {errors.email && <Typography className="message__login--error">
                                 {errors.email.message}.
@@ -88,7 +93,9 @@ const LoginPage: React.FC = () => {
                                     </Typography>
                                 </Link>
                             </Typography>}
-                            <InputLogin type="password" {...register("password")} className={`${errors.password ? "input__login--error" : ""}`} placeholder="Mật khẩu"/>
+                            <InputLogin type="password" {...register("password")}
+                                        className={`${errors.password ? "input__login--error" : ""}`}
+                                        placeholder="Mật khẩu"/>
                             {errors.password && <Typography className="message__login--error">
                                 {errors.password.message}
                             </Typography>}

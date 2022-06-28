@@ -29,5 +29,5 @@ export interface IUserRegister {
     birthday: string;
     firstName: string;
     lastName: string;
-    gender: string; // 0: Nữ, 1: Nam
+    gender: boolean; // 0: Nữ, 1: Nam
 }

@@ -13,8 +13,9 @@ import StoriesPage from "./pages/Stories";
 import CreateStories from "./pages/Stories/Create";
 
 function App() {
-    useGetMeQuery();
-    useGetFriendsQuery();
+    // useGetMeQuery();
+    // useGetFriendsQuery();
+    console.log(process.env)
 
     return (
         <Routes>
