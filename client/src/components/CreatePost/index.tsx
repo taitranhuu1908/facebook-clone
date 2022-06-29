@@ -1,9 +1,12 @@
-import React from 'react';
-import {Avatar, Box, Button, IconButton, Modal, TextareaAutosize } from "@mui/material";
+import React, {useState} from 'react';
+import {Avatar, Box, Button, IconButton, Modal, TextareaAutosize} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import styles from './create-post.module.scss';
 import PublicIcon from '@mui/icons-material/Public';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import {useCreatePostMutation} from "../../app/services/PostService";
+import {IPostCreate, IPostFull} from "../../app/models/Post";
+import {Response} from "../../app/models/Response";
 
 
 interface Props {
@@ -13,7 +16,9 @@ interface Props {
 
 
 const CreatePost: React.FC<Props> = (props) => {
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [bodyPost, setBodyPost] = useState('');
+    const [createPostApi] = useCreatePostMutation();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -22,6 +27,19 @@ const CreatePost: React.FC<Props> = (props) => {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const handleCreatePost = async () => {
+        const request: IPostCreate = {
+            body: bodyPost,
+        }
+        await createPostApi(request).then((response: any) => {
+            if (response.status === 200) {
+                const {data} = response;
+                setBodyPost('');
+            }
+        })
+    }
+
     return (
         <Box sx={{padding: '0 15px'}}>
             <Box className={styles.createPost}>
@@ -39,7 +57,7 @@ const CreatePost: React.FC<Props> = (props) => {
                             <Box className={styles.header}>
                                 <h3>Tạo bài viết</h3>
                                 <IconButton onClick={handleClose} className={styles.closeButton} aria-label="delete">
-                                    <CloseIcon />
+                                    <CloseIcon/>
                                 </IconButton>
                             </Box>
                             <hr/>
@@ -58,6 +76,8 @@ const CreatePost: React.FC<Props> = (props) => {
                                         className={styles.textarea}
                                         minRows={6}
                                         maxRows={10}
+                                        value={bodyPost}
+                                        onChange={(e) => setBodyPost(e.target.value)}
                                         placeholder="Nhập nội dung bài viết của bạn..."
                                         style={{
                                             fontSize: '1.2rem',
@@ -74,17 +94,23 @@ const CreatePost: React.FC<Props> = (props) => {
                                         <Button className={styles.buttonAdd}>Thêm vào bài viết</Button>
                                     </Box>
                                     <Box sx={{display: 'flex'}}>
-                                        <IconButton className={styles.buttonFunction}><span className={styles.addImage}></span></IconButton>
-                                        <IconButton className={styles.buttonFunction}><span className={styles.addTag}></span></IconButton>
-                                        <IconButton className={styles.buttonFunction}><span className={styles.addFeeling}></span></IconButton>
-                                        <IconButton className={styles.buttonFunction}><span className={styles.addLocation}></span></IconButton>
-                                        <IconButton className={styles.buttonFunction}><span className={styles.addActivity}></span></IconButton>
-                                        <IconButton className={styles.buttonFunction}><span className={styles.addMore}></span></IconButton>
+                                        <IconButton className={styles.buttonFunction}><span
+                                            className={styles.addImage}></span></IconButton>
+                                        <IconButton className={styles.buttonFunction}><span
+                                            className={styles.addTag}></span></IconButton>
+                                        <IconButton className={styles.buttonFunction}><span
+                                            className={styles.addFeeling}></span></IconButton>
+                                        <IconButton className={styles.buttonFunction}><span
+                                            className={styles.addLocation}></span></IconButton>
+                                        <IconButton className={styles.buttonFunction}><span
+                                            className={styles.addActivity}></span></IconButton>
+                                        <IconButton className={styles.buttonFunction}><span
+                                            className={styles.addMore}></span></IconButton>
                                     </Box>
                                 </Box>
                             </Box>
                             <Box className={styles.footer}>
-                                <Button>Đăng</Button>
+                                <Button onClick={handleCreatePost}>Đăng</Button>
                             </Box>
                         </Box>
                     </Modal>

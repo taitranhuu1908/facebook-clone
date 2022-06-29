@@ -2,12 +2,12 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {IUserFull, IUserLogin, IUserRegister} from "../models/User";
 import {Response} from '../models/Response';
 
-const BASE_URL = process.env.URL_API || `http://localhost:1000/api`;
+const BASE_URL = process.env.REACT_APP_URL_API || `http://localhost:1000/api/v1`;
 
 export const authService = createApi({
     reducerPath: "authService",
     baseQuery: fetchBaseQuery({
-        baseUrl: `${BASE_URL}/v1/auth`,
+        baseUrl: `${BASE_URL}/auth`,
         prepareHeaders(headers) {
             const token = localStorage.getItem('auth');
             if (token) headers.set('Authorization', `Bearer ${token}`);
