@@ -1,6 +1,6 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
-import {IPostCreate, IPostFull} from "../models/Post";
-import {Response} from "../models/Response";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { IPostCreate, IPostFull } from "../models/Post";
+import { Response } from "../models/Response";
 
 const BASE_URL = process.env.REACT_APP_URL_API || "";
 
@@ -14,21 +14,22 @@ export const postService = createApi({
             return headers;
         },
     }),
+    tagTypes: ["IPostFull", "IPostCreate"],
     endpoints: (build) => ({
         createPost: build.mutation<Response<IPostFull>, IPostCreate>({
             query: (data) => ({
                 url: "/create",
                 method: "POST",
-                body: data
-            })
+                body: data,
+            }),
         }),
-        getPostsByFriend: build.query<Response<IPostFull>, void>({
+        getPostsByFriend: build.query<Response<IPostFull[]>, void>({
             query: () => ({
                 url: "/friends?page=0&size=10",
-                method: "GET"
-            })
-        })
+                method: "GET",
+            }),
+        }),
     }),
 });
 
-export const {useCreatePostMutation, useGetPostsByFriendQuery} = postService;
+export const { useCreatePostMutation, useGetPostsByFriendQuery } = postService;
