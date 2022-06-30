@@ -22,6 +22,7 @@ import javax.persistence.*;
 @EntityListeners(ReactObserve.class)
 public abstract class React extends BaseEntity {
 
+	@Column(columnDefinition = "int default 0")
 	private int views = 0;
 
 	@Column(name = "react_type", nullable = false)
@@ -30,7 +31,7 @@ public abstract class React extends BaseEntity {
 	@Column(name = "react_count", nullable = false, columnDefinition = "int default 0")
 	private int reactCount;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JsonBackReference
 	@JoinColumn(name = "user_id")
 	private User user;
