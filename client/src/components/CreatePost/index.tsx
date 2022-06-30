@@ -103,8 +103,11 @@ const CreatePost: React.FC<Props> = () => {
                                         <Button className={styles.buttonAdd}>Thêm vào bài viết</Button>
                                     </Box>
                                     <Box sx={{ display: 'flex' }}>
-                                        <IconButton className={styles.buttonFunction}><span
-                                            className={styles.addImage}></span></IconButton>
+                                        <IconButton className={styles.buttonFunction}>
+                                            <span className={styles.addImage}></span>
+                                            <label htmlFor=""></label>
+                                            <input type="file" hidden/>
+                                        </IconButton>
                                         <IconButton className={styles.buttonFunction}><span
                                             className={styles.addTag}></span></IconButton>
                                         <IconButton className={styles.buttonFunction}><span
