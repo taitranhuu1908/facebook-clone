@@ -21,7 +21,7 @@ public class MessageReturnDto<T> {
 
     private Pageable paginate;
 
-    private final String buildVersion = "Version 1.0.1";
+    private final String buildVersion = "Version 1.1.1";
 
     private final String buildDate = "30-06-2022";
 
