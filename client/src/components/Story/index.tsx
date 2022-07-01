@@ -10,10 +10,7 @@ const Story = () => {
     return (
         <Box>
             <Grid container className={styles.storyContainer}>
-                <CreateStory user={{
-                    name: 'Nguyễn Phan Huy Hiếu',
-                    avatar: 'https://scontent.fdad3-4.fna.fbcdn.net/v/t1.6435-9/186540483_2924150637822211_8758031143615848898_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=TdIrZhnDatAAX8jrsOK&_nc_ht=scontent.fdad3-4.fna&oh=00_AT9sQ-hwAIv0DdwDuYZjmXfQj8O71xLPakrFhho6AVtAHQ&oe=62D8D521'
-                }}/>
+                <CreateStory />
                 <StoryItem story={{image: 'https://taimienphi.vn/tmp/cf/aut/anh-gai-xinh-1.jpg'}} user={{
                     name: 'Nguyễn Trương Anh Kiệt',
                     avatar: 'https://scontent.fdad3-3.fna.fbcdn.net/v/t39.30808-1/286412953_7777480448958529_2260869162989296128_n.jpg?stp=dst-jpg_p200x200&_nc_cat=100&ccb=1-7&_nc_sid=7206a8&_nc_ohc=EmMFLpa1TBIAX84NP44&_nc_oc=AQkz4RSGEVUmmX-wTAro4_GN5V_dMOIgHt94w9g_ZtnFjbAvJW4JgDe7N2N7vrfv7VQCjSXuMmLDzKwvBYDo0zoG&_nc_ht=scontent.fdad3-3.fna&oh=00_AT-1JIvW47tKYzbMoaUCWQ_ndl7e9py0ZoC23N8GJWOm_g&oe=62B85CFF'

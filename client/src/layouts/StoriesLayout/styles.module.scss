@@ -1,0 +1,22 @@
+.root {
+  height: 100vh;
+
+  .wrapperContent {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      flex-shrink: 1;
+      padding: 10px;
+    }
+
+    .content {
+      flex-grow: 1;
+      margin-left: var(--navbar-width);
+    }
+  }
+}
