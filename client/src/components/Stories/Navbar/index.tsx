@@ -2,7 +2,6 @@ import React from 'react';
 import {Avatar, Box, Divider, IconButton, Typography} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
-import HeaderRight from "../../HomePage/Header/HeaderRight";
 import styles from './styles.module.scss'
 import {useNavigate} from "react-router-dom";
 import {useAppSelector} from "../../../app/hook";

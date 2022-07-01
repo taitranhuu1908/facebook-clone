@@ -35,6 +35,38 @@
     .wrapperImagePreview {
       position: relative;
       flex-grow: 1;
+      border-radius: 8px;
+      overflow: hidden;
+
+    }
+
+    .footer {
+      flex-shrink: 1;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+
+      .zoomImage {
+        width: 30%;
+        display: flex;
+        align-items: center;
+      }
     }
   }
+}
+
+.wrapperShowStory {
+  width: var(--navbar-width);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  height: 72px;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 }
