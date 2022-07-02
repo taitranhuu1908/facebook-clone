@@ -1,6 +1,6 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Response } from "../models/Response";
-import { IStoryCreate, IStoryFull } from "../models/Story";
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
+import {Response} from "../models/Response";
+import {IStoryCreate, IStoryFull} from "../models/Story";
 
 const BASE_URL = process.env.REACT_APP_URL_API || "";
 
@@ -31,7 +31,13 @@ export const storyService = createApi({
             }),
             providesTags: ["IStoryFull"],
         }),
+        getStoryById: build.mutation<Response<IStoryFull>, string>({
+            query: (id) => ({
+                url: `/get/${id}`,
+                method: "GET",
+            }),
+        })
     }),
 });
 
-export const { useCreateStoryMutation, useGetStoriesByMeQuery } = storyService;
+export const {useGetStoryByIdMutation, useCreateStoryMutation, useGetStoriesByMeQuery} = storyService;

@@ -1,20 +1,17 @@
-import React, { useCallback, useRef, useState } from 'react';
-import StoriesLayout from "../../../layouts/StoriesLayout";
-import { Box, ButtonBase, Slider, Typography, IconButton } from "@mui/material";
+import React, {useCallback, useRef, useState} from 'react';
+import {Box, ButtonBase, IconButton, Slider, Typography} from "@mui/material";
 import styles from './styles.module.scss'
 import ImageIcon from '@mui/icons-material/Image';
-import Cropper, { Area } from 'react-easy-crop'
+import Cropper, {Area} from 'react-easy-crop'
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
-import styled from "@emotion/styled";
 import CropRotateIcon from '@mui/icons-material/CropRotate';
 import getCroppedImg from '../../../utils/CropImage';
 import Navbar from '../../../components/Stories/NavbarCreate';
 import HeaderRight from '../../../components/HomePage/Header/HeaderRight';
-import { useCreateStoryMutation, useGetStoriesByMeQuery } from '../../../app/services/StoryService';
-import { IStoryCreate, IStoryFull } from '../../../app/models/Story';
-import { Response } from '../../../app/models/Response';
-import { useNavigate } from 'react-router-dom';
+import {useCreateStoryMutation, useGetStoriesByMeQuery} from '../../../app/services/StoryService';
+import {IStoryCreate} from '../../../app/models/Story';
+import {useNavigate} from 'react-router-dom';
 
 interface IProps {
 
@@ -24,7 +21,7 @@ const CreateStories: React.FC<IProps> = () => {
     useGetStoriesByMeQuery();
     const navigate = useNavigate();
     const [createStoryApi] = useCreateStoryMutation();
-    const [crop, setCrop] = useState({ x: 0, y: 0 })
+    const [crop, setCrop] = useState({x: 0, y: 0})
     const [rotation, setRotation] = useState(0)
     const [storyPreview, setStoryPreview] = useState("")
     const storyRef = useRef<any>(null);
@@ -62,7 +59,6 @@ const CreateStories: React.FC<IProps> = () => {
             rotation
         )
 
-        // Handle Request Create Story
         if (cropImage) {
             const request: IStoryCreate = {
                 title: "Create Story",
@@ -108,31 +104,31 @@ const CreateStories: React.FC<IProps> = () => {
     }
 
     return <>
-        <Box className={styles.wrapper} sx={{ backgroundColor: "#e4e6eb" }}>
-            <Navbar />
+        <Box className={styles.wrapper} sx={{backgroundColor: "#e4e6eb"}}>
+            <Navbar/>
             <Box className={styles.wrapperContent}>
                 <Box className={styles.header}>
-                    <HeaderRight />
+                    <HeaderRight/>
                 </Box>
                 <Box className={styles.content}>
                     {storyPreview && (
                         <Box className={styles.wrapperShowStory}>
-                            <ButtonStyled onClick={() => setStoryPreview("")}>Bỏ</ButtonStyled>
-                            <ButtonStyled onClick={showCroppedImage}
-                                sx={{ backgroundColor: "#1a6ed8 !important", color: "white" }}>Chia sẻ lên
-                                tin</ButtonStyled>
+                            <ButtonBase className={styles.buttonShow} onClick={() => setStoryPreview("")}>Bỏ</ButtonBase>
+                            <ButtonBase className={styles.buttonShow} onClick={showCroppedImage}
+                                          sx={{backgroundColor: "#1a6ed8 !important", color: "white"}}>Chia sẻ lên
+                                tin</ButtonBase>
                         </Box>
                     )}
                     <Box className={styles.root}>
                         {!storyPreview ? (
                             <ButtonBase className={styles.createButton}>
                                 <label htmlFor='story_file' className="wrapper-ab"></label>
-                                <input type="file" onChange={chooseImageStory} ref={storyRef} hidden id="story_file" />
-                                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
+                                <input type="file" onChange={chooseImageStory} ref={storyRef} hidden id="story_file"/>
+                                <Box sx={{display: "flex", flexDirection: "column", alignItems: "center", gap: "10px"}}>
                                     <Box className={styles.wrapperIcon}>
-                                        <ImageIcon />
+                                        <ImageIcon/>
                                     </Box>
-                                    <Typography sx={{ color: "white" }} fontWeight="bold">Tạo tin ảnh</Typography>
+                                    <Typography sx={{color: "white"}} fontWeight="bold">Tạo tin ảnh</Typography>
                                 </Box>
                             </ButtonBase>
                         ) : (
@@ -155,18 +151,18 @@ const CreateStories: React.FC<IProps> = () => {
                                 <Box className={styles.footer}>
                                     <Box className={styles.zoomImage}>
                                         <IconButton onClick={() => changeSlider('decrement')}>
-                                            <RemoveIcon />
+                                            <RemoveIcon/>
                                         </IconButton>
                                         <Slider value={typeof sliderValue === 'number' ? sliderValue : 0}
-                                            onChange={handleSliderChange} />
+                                                onChange={handleSliderChange}/>
                                         <IconButton onClick={() => changeSlider('increment')}>
-                                            <AddIcon />
+                                            <AddIcon/>
                                         </IconButton>
                                     </Box>
-                                    <ButtonRotateStyled onClick={changeRotation}>
-                                        <CropRotateIcon fontSize={`small`} />
+                                    <ButtonBase className={styles.buttonRotate} onClick={changeRotation}>
+                                        <CropRotateIcon fontSize={`small`}/>
                                         <Typography fontWeight={`bold`} fontSize={`small`}>Xoay</Typography>
-                                    </ButtonRotateStyled>
+                                    </ButtonBase>
                                 </Box>
                             </Box>
                         )}
@@ -177,22 +173,4 @@ const CreateStories: React.FC<IProps> = () => {
     </>
 }
 
-const ButtonRotateStyled = styled(ButtonBase)`
-  background-color: #d8dadf;
-  border-radius: 6px;
-  padding: 0 15px;
-  display: flex;
-  gap: 5px;
-`
-
-const ButtonStyled = styled(ButtonBase)`
-  padding: 0 20px;
-  background-color: #E4E6EB;
-  flex-grow: 1;
-  height: 36px;
-  border-radius: 6px;
-  font-weight: bold;
-`
-
 export default CreateStories;
-

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import Navbar from "../../components/Stories/NavbarCreate";
+import React, {useEffect, useState} from 'react';
 import styles from './styles.module.scss'
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 import HeaderRight from "../../components/HomePage/Header/HeaderRight";
-import { useLocation } from "react-router-dom";
+import {useLocation} from "react-router-dom";
+import NavbarList from "../../components/Stories/NavbarList";
+import Header from "../../components/HomePage/Header";
 
 interface IProps {
     children: React.ReactNode;
@@ -16,13 +17,10 @@ const StoriesLayout: React.FC<IProps> = ({ children }) => {
     useEffect(() => {
         switch (location.pathname) {
             case '/stories':
-                setBgr('#000');
-                break;
-            case '/stories/create':
                 setBgr('#e4e6eb');
                 break;
             default:
-                setBgr('#e4e6eb');
+                setBgr('#000');
                 break;
         }
     }, [location]);
@@ -30,14 +28,10 @@ const StoriesLayout: React.FC<IProps> = ({ children }) => {
 
     return <>
         <Box className={styles.root} sx={{ backgroundColor: bgr }}>
-            <Navbar />
+            <Header/>
+            <NavbarList />
             <Box className={styles.wrapperContent}>
-                <Box className={styles.header}>
-                    <HeaderRight />
-                </Box>
-                <Box className={styles.content}>
                     {children}
-                </Box>
             </Box>
         </Box>
     </>
