@@ -9,23 +9,30 @@ import AddIcon from '@mui/icons-material/Add';
 import styled from "@emotion/styled";
 import CropRotateIcon from '@mui/icons-material/CropRotate';
 import getCroppedImg from '../../../utils/CropImage';
+import Navbar from '../../../components/Stories/NavbarCreate';
+import HeaderRight from '../../../components/HomePage/Header/HeaderRight';
+import { useCreateStoryMutation, useGetStoriesByMeQuery } from '../../../app/services/StoryService';
+import { IStoryCreate, IStoryFull } from '../../../app/models/Story';
+import { Response } from '../../../app/models/Response';
+import { useNavigate } from 'react-router-dom';
 
 interface IProps {
 
 }
 
 const CreateStories: React.FC<IProps> = () => {
+    useGetStoriesByMeQuery();
+    const navigate = useNavigate();
+    const [createStoryApi] = useCreateStoryMutation();
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [rotation, setRotation] = useState(0)
     const [storyPreview, setStoryPreview] = useState("")
     const storyRef = useRef<any>(null);
     const [zoom, setZoom] = useState(0.5)
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
-    const [croppedImage, setCroppedImage] = useState(null)
     const [sliderValue, setSliderValue] = React.useState<number | string | Array<number | string>>(
         30,
     );
-
 
     const chooseImageStory = (e: any) => {
         const file = e.target.files[0];
@@ -54,12 +61,23 @@ const CreateStories: React.FC<IProps> = () => {
             croppedAreaPixels,
             rotation
         )
-        // @ts-ignore
-        setCroppedImage(cropImage)
-        // Handle Request Create Story
-        console.log(cropImage)
 
-    }, [croppedAreaPixels, rotation, storyPreview])
+        // Handle Request Create Story
+        if (cropImage) {
+            const request: IStoryCreate = {
+                title: "Create Story",
+                image: cropImage,
+            }
+
+            createStoryApi(request).then((response: any) => {
+                if (response.data.status === 200) {
+                    setStoryPreview("");
+                    navigate('/');
+                }
+            })
+        }
+
+    }, [createStoryApi, croppedAreaPixels, navigate, rotation, storyPreview])
 
     const changeSlider = (type: string) => {
         if (type === "increment") {
@@ -90,66 +108,72 @@ const CreateStories: React.FC<IProps> = () => {
     }
 
     return <>
-        <StoriesLayout>
-            {storyPreview && (
-                <Box className={styles.wrapperShowStory}>
-                    <ButtonStyled onClick={() => setStoryPreview("")}>Bỏ</ButtonStyled>
-                    <ButtonStyled onClick={showCroppedImage}
-                        sx={{ backgroundColor: "#1a6ed8 !important", color: "white" }}>Chia sẻ lên
-                        tin</ButtonStyled>
+        <Box className={styles.wrapper} sx={{ backgroundColor: "#e4e6eb" }}>
+            <Navbar />
+            <Box className={styles.wrapperContent}>
+                <Box className={styles.header}>
+                    <HeaderRight />
                 </Box>
-            )}
-            <Box className={styles.root}>
-                {!storyPreview ? (
-                    <ButtonBase className={styles.createButton}>
-                        <label htmlFor='story_file' className="wrapper-ab"></label>
-                        <input type="file" onChange={chooseImageStory} ref={storyRef} hidden id="story_file" />
-                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
-                            <Box className={styles.wrapperIcon}>
-                                <ImageIcon />
+                <Box className={styles.content}>
+                    {storyPreview && (
+                        <Box className={styles.wrapperShowStory}>
+                            <ButtonStyled onClick={() => setStoryPreview("")}>Bỏ</ButtonStyled>
+                            <ButtonStyled onClick={showCroppedImage}
+                                sx={{ backgroundColor: "#1a6ed8 !important", color: "white" }}>Chia sẻ lên
+                                tin</ButtonStyled>
+                        </Box>
+                    )}
+                    <Box className={styles.root}>
+                        {!storyPreview ? (
+                            <ButtonBase className={styles.createButton}>
+                                <label htmlFor='story_file' className="wrapper-ab"></label>
+                                <input type="file" onChange={chooseImageStory} ref={storyRef} hidden id="story_file" />
+                                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
+                                    <Box className={styles.wrapperIcon}>
+                                        <ImageIcon />
+                                    </Box>
+                                    <Typography sx={{ color: "white" }} fontWeight="bold">Tạo tin ảnh</Typography>
+                                </Box>
+                            </ButtonBase>
+                        ) : (
+                            <Box className={styles.wrapperEditStory}>
+                                <Typography fontWeight="bold">Xem trước</Typography>
+                                <Box className={styles.wrapperImagePreview}>
+                                    <Cropper
+                                        image={storyPreview}
+                                        crop={crop}
+                                        zoom={zoom}
+                                        rotation={rotation}
+                                        aspect={10 / 16}
+                                        onCropChange={setCrop}
+                                        onCropComplete={onCropComplete}
+                                        onZoomChange={setZoom}
+                                        showGrid={false}
+                                        restrictPosition={false}
+                                    />
+                                </Box>
+                                <Box className={styles.footer}>
+                                    <Box className={styles.zoomImage}>
+                                        <IconButton onClick={() => changeSlider('decrement')}>
+                                            <RemoveIcon />
+                                        </IconButton>
+                                        <Slider value={typeof sliderValue === 'number' ? sliderValue : 0}
+                                            onChange={handleSliderChange} />
+                                        <IconButton onClick={() => changeSlider('increment')}>
+                                            <AddIcon />
+                                        </IconButton>
+                                    </Box>
+                                    <ButtonRotateStyled onClick={changeRotation}>
+                                        <CropRotateIcon fontSize={`small`} />
+                                        <Typography fontWeight={`bold`} fontSize={`small`}>Xoay</Typography>
+                                    </ButtonRotateStyled>
+                                </Box>
                             </Box>
-                            <Typography sx={{ color: "white" }} fontWeight="bold">Tạo tin ảnh</Typography>
-                        </Box>
-                    </ButtonBase>
-                ) : (
-                    <Box className={styles.wrapperEditStory}>
-                        <Typography fontWeight="bold">Xem trước</Typography>
-                        <Box className={styles.wrapperImagePreview}>
-                            <Cropper
-                                image={storyPreview}
-                                crop={crop}
-                                zoom={zoom}
-                                rotation={rotation}
-                                aspect={10 / 16}
-                                onCropChange={setCrop}
-                                onCropComplete={onCropComplete}
-                                onZoomChange={setZoom}
-                                showGrid={false}
-                                restrictPosition={false}
-                            />
-                        </Box>
-                        <Box className={styles.footer}>
-                            <Box className={styles.zoomImage}>
-                                <IconButton onClick={() => changeSlider('decrement')}>
-                                    <RemoveIcon />
-                                </IconButton>
-                                <Slider value={typeof sliderValue === 'number' ? sliderValue : 0}
-                                    onChange={handleSliderChange} />
-                                <IconButton onClick={() => changeSlider('increment')}>
-                                    <AddIcon />
-                                </IconButton>
-                            </Box>
-                            <ButtonRotateStyled onClick={changeRotation}>
-                                <CropRotateIcon fontSize={`small`} />
-                                <Typography fontWeight={`bold`} fontSize={`small`}>Xoay</Typography>
-                            </ButtonRotateStyled>
-                        </Box>
+                        )}
                     </Box>
-                )}
-
-
+                </Box>
             </Box>
-        </StoriesLayout>
+        </Box>
     </>
 }
 
