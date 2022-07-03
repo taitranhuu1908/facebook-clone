@@ -8,9 +8,11 @@ import PostNormal from "../../components/Post/PostNormal";
 import PostSkeleton from '../../components/Skeleton/PostSkeleton';
 import Story from "../../components/Story";
 import HomeLayout from "../../layouts/HomeLayout";
+import {useGetStoriesByMeQuery} from "../../app/services/StoryService";
 
 const HomePage: React.FC = () => {
     const { isLoading } = useGetPostsByFriendQuery();
+    useGetStoriesByMeQuery();
     const { posts } = useAppSelector(state => state.postSlice)
 
     const renderPosts = () => {

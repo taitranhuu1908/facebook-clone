@@ -13,6 +13,7 @@ import {useGetMeQuery} from "./app/services/AuthService";
 import LoadingCircle from "./components/Loading/LoadingCircle";
 import PrivateRoute from "./components/Router/PrivateRoute";
 import NotFound from "./components/NotFound/404";
+import StoryDetail from "./pages/Stories/Detail";
 
 function App() {
     const {isLoading} = useGetMeQuery();
@@ -34,6 +35,7 @@ function App() {
                 <Route path="stories">
                     <Route index element={<StoriesPage/>}/>
                     <Route path="create" element={<CreateStories/>}/>
+                    <Route path=":id" element={<StoryDetail/>}/>
                 </Route>
             </Route>
             <Route path="test" element={<Test/>}/>
