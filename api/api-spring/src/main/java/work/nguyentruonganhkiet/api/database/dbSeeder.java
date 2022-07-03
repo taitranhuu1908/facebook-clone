@@ -41,15 +41,15 @@ public class dbSeeder {
 	private StoryRepository storyRepository;
 
 
-	@EventListener(ApplicationReadyEvent.class)
-	public void seed() {
-		this.userSeeder();
-		this.postSeeder();
-		this.reactPostSeeder();
-		this.commentPostSeeder();
-		this.reactCommentPostSeeder();
-//		this.storySeeder();
-	}
+//	@EventListener(ApplicationReadyEvent.class)
+//	public void seed() {
+//		this.userSeeder();
+//		this.postSeeder();
+//		this.reactPostSeeder();
+//		this.commentPostSeeder();
+//		this.reactCommentPostSeeder();
+////		this.storySeeder();
+//	}
 
 
 	public void userSeeder() {
