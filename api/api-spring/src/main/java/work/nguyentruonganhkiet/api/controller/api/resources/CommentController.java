@@ -92,7 +92,7 @@ public class CommentController {
 		}
 	}
 
-	@GetMapping(COMMENT_ID)
+	@GetMapping("post/{id}")
 	public MessageReturnDto getCommentByPost( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @PathVariable("id") Long id , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
 			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
