@@ -47,6 +47,7 @@ public class FriendController {
 
 			return ResponseEntity.ok(MessageReturnDto.<List<FriendDto>>builder().message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).data(friendDtos).build()).getBody();
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}

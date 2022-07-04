@@ -15,6 +15,7 @@ import work.nguyentruonganhkiet.api.model.dtos.requests.ReactRequestDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.MessageReturnDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.CommentDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.PostDto;
+import work.nguyentruonganhkiet.api.model.dtos.responses.entities.ReactDto;
 import work.nguyentruonganhkiet.api.model.entities.Friend;
 import work.nguyentruonganhkiet.api.model.entities.Notification;
 import work.nguyentruonganhkiet.api.model.entities.Post;
@@ -87,6 +88,7 @@ public class PostController {
 
 			return ResponseEntity.ok(MessageReturnDto.<List<PostDto>>builder().data(pagePosts.getContent()).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 
@@ -114,6 +116,7 @@ public class PostController {
 
 			return ResponseEntity.ok(MessageReturnDto.<List<PostDto>>builder().data(postDtos).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 
@@ -152,6 +155,7 @@ public class PostController {
 			return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(pr).build()).getBody();
 
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
@@ -180,6 +184,7 @@ public class PostController {
 			return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().data(pr).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).build()).getBody();
 
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
@@ -201,6 +206,7 @@ public class PostController {
 
 			return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(pr).build()).getBody();
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
@@ -225,6 +231,7 @@ public class PostController {
 
 			return ResponseEntity.ok(MessageReturnDto.<ReactDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(r).build()).getBody();
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 
@@ -249,7 +256,6 @@ public class PostController {
 			CommentDto commentDto = modelMapper.map(commentPost , CommentDto.class);
 
 			return ResponseEntity.ok(MessageReturnDto.<CommentDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(commentDto).build()).getBody();
-
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();

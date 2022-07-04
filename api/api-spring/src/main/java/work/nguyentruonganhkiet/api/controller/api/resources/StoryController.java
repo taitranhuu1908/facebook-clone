@@ -73,6 +73,7 @@ public class StoryController {
 			return ResponseEntity.ok(MessageReturnDto.<List<StoryDto>>builder().message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).data(storyDtos).build()).getBody();
 
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
@@ -98,6 +99,7 @@ public class StoryController {
 
 			return ResponseEntity.ok(MessageReturnDto.<List<StoryDto>>builder().data(storiesDtos).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
@@ -115,6 +117,7 @@ public class StoryController {
 
 			return ResponseEntity.ok(MessageReturnDto.<StoryDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(storyDto).build()).getBody();
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
@@ -131,6 +134,7 @@ public class StoryController {
 
 			return ResponseEntity.ok(MessageReturnDto.<StoryDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(storyDto).build()).getBody();
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
@@ -158,6 +162,7 @@ public class StoryController {
 
 			return ResponseEntity.ok(MessageReturnDto.<StoryDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(storyDto).build()).getBody();
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
@@ -180,6 +185,7 @@ public class StoryController {
 			return ResponseEntity.ok(MessageReturnDto.<StoryDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(storyDto).build()).getBody();
 
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
@@ -205,6 +211,7 @@ public class StoryController {
 			return ResponseEntity.ok(MessageReturnDto.<StoryDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(storyDto).build()).getBody();
 
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
@@ -230,6 +237,7 @@ public class StoryController {
 			return ResponseEntity.ok(MessageReturnDto.<StoryDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(prdto).build()).getBody();
 
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
