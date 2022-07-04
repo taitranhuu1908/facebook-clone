@@ -13,6 +13,7 @@ import work.nguyentruonganhkiet.api.model.dtos.requests.CommentPostRequestDto;
 import work.nguyentruonganhkiet.api.model.dtos.requests.PostCreateDto;
 import work.nguyentruonganhkiet.api.model.dtos.requests.ReactRequestDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.MessageReturnDto;
+import work.nguyentruonganhkiet.api.model.dtos.responses.entities.CommentDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.PostDto;
 import work.nguyentruonganhkiet.api.model.entities.Friend;
 import work.nguyentruonganhkiet.api.model.entities.Notification;
@@ -21,6 +22,8 @@ import work.nguyentruonganhkiet.api.model.entities.User;
 import work.nguyentruonganhkiet.api.model.enums.FriendStatus;
 import work.nguyentruonganhkiet.api.model.sub.CommentPost;
 import work.nguyentruonganhkiet.api.model.sub.ReactPost;
+import work.nguyentruonganhkiet.api.repositories.ReactRepository;
+import work.nguyentruonganhkiet.api.service.CommentService;
 import work.nguyentruonganhkiet.api.service.NotificationService;
 import work.nguyentruonganhkiet.api.service.PostService;
 import work.nguyentruonganhkiet.api.service.UserService;
@@ -45,14 +48,18 @@ public class PostController {
 	private final ModelMapper modelMapper;
 	private final NotificationService notificationService;
 	private final SaveFile saveFile;
+	private final CommentService commentService;
+	private final ReactRepository reactRepository;
 
 	@Autowired
-	public PostController( UserService userService , PostService postService , ModelMapper modelMapper , NotificationService notificationService , SaveFile saveFile ) {
+	public PostController( UserService userService , PostService postService , ModelMapper modelMapper , NotificationService notificationService , SaveFile saveFile , CommentService commentService , ReactRepository reactRepository ) {
 		this.userService = userService;
 		this.postService = postService;
 		this.modelMapper = modelMapper;
 		this.notificationService = notificationService;
 		this.saveFile = saveFile;
+		this.commentService = commentService;
+		this.reactRepository = reactRepository;
 	}
 
 	@GetMapping(FRIENDS)
@@ -199,7 +206,7 @@ public class PostController {
 	}
 
 	@PostMapping(REACT_ID)
-	public MessageReturnDto<PostDto> reactPost( @PathVariable("id") Long id , @Valid @RequestBody ReactRequestDto react , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+	public MessageReturnDto<ReactDto> reactPost( @PathVariable("id") Long id , @Valid @RequestBody ReactRequestDto react , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
 
 			User user = userService.findByEmail(userDetails.getUsername());
@@ -208,15 +215,15 @@ public class PostController {
 
 			ReactPost reactPost = ReactPost.builder().user(user).reactType(react.getReactType()).post(p).build();
 
-			Post pr = this.postService.reactToPost(p , reactPost);
+			this.reactRepository.save(reactPost);
 
 			Notification notification = Notification.builder().postRef(p).reactRef(reactPost).build();
 
 			this.notificationService.reactPostNotification(p , p.getUser() , user , notification);
 
-			PostDto prdto = modelMapper.map(pr , PostDto.class);
+			ReactDto r = modelMapper.map(reactPost , ReactDto.class);
 
-			return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(prdto).build()).getBody();
+			return ResponseEntity.ok(MessageReturnDto.<ReactDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(r).build()).getBody();
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
@@ -224,7 +231,7 @@ public class PostController {
 	}
 
 	@PostMapping(COMMENT_ID)
-	public MessageReturnDto<PostDto> commentPost( @PathVariable("id") Long id , @Valid @RequestBody CommentPostRequestDto comment , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+	public MessageReturnDto<CommentDto> commentPost( @PathVariable("id") Long id , @Valid @RequestBody CommentPostRequestDto comment , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
 
 			User user = userService.findByEmail(userDetails.getUsername());
@@ -233,15 +240,15 @@ public class PostController {
 
 			CommentPost commentPost = CommentPost.builder().comment(comment.getComment()).user(user).post(p).build();
 
-			Post pr = this.postService.commentToPost(p , commentPost);
+			this.commentService.save(commentPost);
 
 			Notification notification = Notification.builder().postRef(p).commentRef(commentPost).build();
 
 			this.notificationService.commentPostNotification(p , p.getUser() , user , notification);
 
-			PostDto prdto = modelMapper.map(pr , PostDto.class);
+			CommentDto commentDto = modelMapper.map(commentPost , CommentDto.class);
 
-			return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(prdto).build()).getBody();
+			return ResponseEntity.ok(MessageReturnDto.<CommentDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(commentDto).build()).getBody();
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
