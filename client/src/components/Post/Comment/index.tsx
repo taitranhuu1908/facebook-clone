@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './styles.module.scss'
 import {Box, IconButton, InputBase} from "@mui/material";
 import styled from "@emotion/styled";
@@ -9,25 +9,34 @@ import {useSendCommentByPostMutation} from "../../../app/services/PostService";
 import {ICommentFull} from "../../../app/models/Comment";
 import CommentItem from "./CommentItem";
 import moment from "moment";
+import {IPostFull} from "../../../app/models/Post";
 
 interface IProps {
-    postId: number;
+    post: IPostFull;
 }
 
-const Comment: React.FC<IProps> = ({postId}) => {
+const Comment: React.FC<IProps> = ({post}) => {
     const {user} = useAppSelector(state => state.authSlice);
     const [comment, setComment] = useState<string>('');
     const [sendCommentApi] = useSendCommentByPostMutation();
     const [commentList, setCommentList] = useState<ICommentFull[]>([])
 
+    useEffect(() => {
+        setCommentList(post.commentPosts)
+    }, [post.commentPosts])
+
     const handleSubmit = (e: React.SyntheticEvent) => {
         e.preventDefault();
         const request = {
-            postId,
+            postId: post.id,
             comment
         }
         sendCommentApi(request).then((response: any) => {
-            setCommentList([...response.data.data.commentPosts,...commentList])
+            if (response.data.status === 200) {
+                const data = response.data.data;
+                setCommentList([...commentList, data])
+            }
+
         })
         setComment("");
     }
@@ -47,7 +56,7 @@ const Comment: React.FC<IProps> = ({postId}) => {
                     </Box>
                 </form>
                 <Box>
-                    {commentList.map((comment: ICommentFull) => {
+                    {commentList.slice().reverse().map((comment: ICommentFull) => {
                         return (
                             <CommentItem
                                 key={comment.id}

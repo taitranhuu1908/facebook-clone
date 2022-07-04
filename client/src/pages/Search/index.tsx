@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Header from "../../components/HomePage/Header";
 import {
     Avatar,
@@ -17,13 +17,34 @@ import CommentBankIcon from '@mui/icons-material/CommentBank';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import ImageIcon from '@mui/icons-material/Image';
 import styled from "@emotion/styled";
-import {Link} from "react-router-dom";
+import {Link, useSearchParams} from "react-router-dom";
+import {useFindByNameMutation} from "../../app/services/UserService";
+import {IUserFull} from "../../app/models/User";
+import {useAppSelector} from "../../app/hook";
 
 interface IProps {
 
 }
 
 const SearchPage: React.FC<IProps> = () => {
+    const [searchParams] = useSearchParams();
+    const [findByNameApi] = useFindByNameMutation();
+    const [userList, setUserList] = useState<IUserFull[]>([]);
+    const {user} = useAppSelector(state => state.authSlice)
+
+    useEffect(() => {
+        const keyword = searchParams.get('k');
+        if (keyword) {
+            findByNameApi(keyword).then((response: any) => {
+                if (response.data.status === 200) {
+                    let list = response.data.data;
+                    list = list.filter((item: IUserFull) => item.id !== user.id);
+                    setUserList([...list]);
+                }
+            })
+        }
+    }, [findByNameApi, searchParams, user]);
+
 
     return <>
         <Header/>
@@ -61,32 +82,51 @@ const SearchPage: React.FC<IProps> = () => {
             </List>
         </Box>
         <Wrapper>
+
             <Paper className={styles.wrapperContent}>
-                <Typography fontWeight={`bold`} fontSize={`large`}>
-                    Mọi người
-                </Typography>
-                <List>
-                    <ListItem
-                        secondaryAction={
-                            <>
-                                <ButtonActionStyled>
-                                    Thêm bạn bè
-                                </ButtonActionStyled>
-                            </>
-                        }
-                    >
-                        <ListItemIcon>
-                            <Avatar/>
-                        </ListItemIcon>
-                        <ListItemText
-                            primary={
-                                <Link to={`/`} className={`text-decoration-none`}>
-                                    <Typography fontWeight={`bold`}>Trần Hữu Tài</Typography>
-                                </Link>
-                            }
-                        />
-                    </ListItem>
-                </List>
+
+                {userList.length <= 0 ? (
+                    <Box sx={{display: `flex`, justifyContent: `center`}}>
+                        <Typography sx={{color: `#606770`}} fontWeight={`bold`} fontSize={`large`}>Không tìm thấy người
+                            dùng
+                            nào</Typography>
+                    </Box>
+                ) : (
+                    <>
+                        <Typography fontWeight={`bold`} fontSize={`large`}>
+                            Mọi người
+                        </Typography>
+                        <List>
+                            {userList.map((user, index) => {
+                                return (
+                                    <ListItem
+                                        key={index}
+                                        secondaryAction={
+                                            <>
+                                                <ButtonActionStyled>
+                                                    Thêm bạn bè
+                                                </ButtonActionStyled>
+                                            </>
+                                        }
+                                    >
+                                        <ListItemIcon>
+                                            <Avatar/>
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={
+                                                <Link to={`/`} className={`text-decoration-none`}>
+                                                    <Typography fontWeight={`bold`} sx={{color: "#333"}}>
+                                                        {`${user.userInfo.firstName} ${user.userInfo.lastName}`}
+                                                    </Typography>
+                                                </Link>
+                                            }
+                                        />
+                                    </ListItem>
+                                )
+                            })}
+                        </List>
+                    </>
+                )}
             </Paper>
         </Wrapper>
     </>
@@ -103,7 +143,12 @@ const Wrapper = styled(Box)`
 `
 
 const ButtonActionStyled = styled(ButtonBase)`
-
+  border-radius: 6px;
+  padding: 10px 15px;
+  background-color: #dbe7f2;
+  font-size: 14px;
+  font-weight: bold;
+  color: #1877F2;
 `
 
 

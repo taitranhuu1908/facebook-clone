@@ -46,19 +46,19 @@ public class dbSeeder {
     private FriendRepository friendRepository;
 
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void seed() {
-        this.userSeeder();
-        this.friendSeeder();
-        this.postSeeder();
-        this.reactPostSeeder();
-        this.commentPostSeeder();
-        this.reactCommentPostSeeder();
-        this.storySeeder();
-        this.reactStorySeeder();
-        this.commentStorySeeder();
-        this.reactCommentStorySeeder();
-    }
+    // @EventListener(ApplicationReadyEvent.class)
+    // public void seed() {
+    //     this.userSeeder();
+    //     this.friendSeeder();
+    //     this.postSeeder();
+    //     this.reactPostSeeder();
+    //     this.commentPostSeeder();
+    //     this.reactCommentPostSeeder();
+    //     this.storySeeder();
+    //     this.reactStorySeeder();
+    //     this.commentStorySeeder();
+    //     this.reactCommentStorySeeder();
+    // }
 
 
     public void userSeeder() {

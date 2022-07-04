@@ -2,6 +2,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {IPostCreate, IPostFull} from "../models/Post";
 import {Response} from "../models/Response";
 import {ICommentCreate} from "../models/Comment";
+import {IReactCreate, IReactFull} from "../models/React";
 
 const BASE_URL = process.env.REACT_APP_URL_API || "";
 
@@ -41,6 +42,15 @@ export const postService = createApi({
                     comment: data.comment,
                 },
             })
+        }),
+        reactByPost: build.mutation<Response<IReactFull>, IReactCreate>({
+            query: (data) => ({
+                url: `/react/${data.postId}`,
+                method: "POST",
+                body: {
+                    reactType: data.reactType,
+                }
+            })
         })
     }),
 });
@@ -49,5 +59,6 @@ export const {
     useCreatePostMutation,
     useGetPostsByFriendQuery,
     useGetPostsByMeQuery,
-    useSendCommentByPostMutation
+    useSendCommentByPostMutation,
+    useReactByPostMutation
 } = postService;
