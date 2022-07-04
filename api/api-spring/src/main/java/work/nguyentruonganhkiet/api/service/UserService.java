@@ -144,7 +144,7 @@ public class UserService implements UserDetailsService, IBaseService<User, Long>
 	}
 
 	public List<User> getUsersByLastName( String lastName ) {
-		return this.findAll().stream().filter(f -> lastName.contains(f.getUserInfo().getLastName())).toList();
+		return this.findAll().stream().filter(f -> f.getUserInfo().getLastName().contains(lastName)).toList();
 	}
 
 }
