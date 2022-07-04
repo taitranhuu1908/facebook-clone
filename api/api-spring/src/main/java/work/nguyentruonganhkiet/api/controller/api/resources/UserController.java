@@ -12,6 +12,7 @@ import work.nguyentruonganhkiet.api.model.dtos.requests.AddFriendRequestDto;
 import work.nguyentruonganhkiet.api.model.dtos.requests.ChangeFriendStatusDto;
 import work.nguyentruonganhkiet.api.model.dtos.requests.UpdateUserRequestDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.MessageReturnDto;
+import work.nguyentruonganhkiet.api.model.dtos.responses.entities.FriendDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.UserHaftDto;
 import work.nguyentruonganhkiet.api.model.entities.Friend;
 import work.nguyentruonganhkiet.api.model.entities.Notification;
@@ -25,7 +26,9 @@ import work.nguyentruonganhkiet.api.service.RoomService;
 import work.nguyentruonganhkiet.api.service.UserService;
 
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static work.nguyentruonganhkiet.api.utils.constant.API.*;
 import static work.nguyentruonganhkiet.api.utils.constant.STATUS.HTTP_OK;
@@ -74,11 +77,11 @@ public class UserController {
 
             User user = userService.findByEmail(userDetails.getUsername());
 
-            List<User> fs = user.getFriends().stream().filter(f -> f.getStatus().equals(FriendStatus.ACCEPTED)).map(Friend::getUser).toList();
+            List<Friend> fs = user.getFriends().stream().filter(f -> f.getStatus().equals(FriendStatus.ACCEPTED)).toList();
 
-            List<UserHaftDto> userHaftDtos = fs.stream().map(f -> this.modelMapper.map(f, UserHaftDto.class)).toList();
+            List<FriendDto> userHaftDtos = fs.stream().map(f -> this.modelMapper.map(f, FriendDto.class)).toList();
 
-            return ResponseEntity.ok(MessageReturnDto.<List<UserHaftDto>>builder().message(HTTP_OK_MESSAGE).status(HTTP_OK).data(userHaftDtos).build()).getBody();
+            return ResponseEntity.ok(MessageReturnDto.<List<FriendDto>>builder().message(HTTP_OK_MESSAGE).status(HTTP_OK).data(userHaftDtos).build()).getBody();
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
@@ -129,9 +132,12 @@ public class UserController {
 
             User friend = userService.findByEmail(addFriendRequestDto.getEmail());
 
-            Friend f = Friend.builder().user(friend).build();
+            Set<User> friends = new HashSet<>();
+            friends.add(friend);
 
-            user.getFriends().add(f);
+            Friend fu = Friend.builder().users(friends).status(FriendStatus.PENDING).build();
+
+            user.getFriends().add(fu);
 
             userService.save(user);
 
@@ -190,6 +196,19 @@ public class UserController {
             this.userService.delete(user);
 
             return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<UserHaftDto>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).build()).getBody();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+        }
+    }
+
+    @GetMapping()
+    public MessageReturnDto findUserByName(@RequestParam(name = "name", defaultValue = "") String name, @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            List<User> users = this.userService.getUsersByLastName(name);
+
+            List<UserHaftDto> usersHaftDtos = users.stream().map(user -> modelMapper.map(user, UserHaftDto.class)).toList();
+
+            return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<List<UserHaftDto>>builder().data(usersHaftDtos).status(HTTP_OK).message(HTTP_OK_MESSAGE).build()).getBody();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
         }

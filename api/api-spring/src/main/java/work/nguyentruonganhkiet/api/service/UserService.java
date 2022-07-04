@@ -38,11 +38,9 @@ public class UserService implements UserDetailsService, IBaseService<User, Long>
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
-        if (user.isDelete())
-            throw new UsernameNotFoundException("User Not Found with username: " + username);
+        if (user.isDelete()) throw new UsernameNotFoundException("User Not Found with username: " + username);
 
         List<GrantedAuthority> authorities = new ArrayList<>();
 
@@ -76,9 +74,7 @@ public class UserService implements UserDetailsService, IBaseService<User, Long>
 
     @Override
     public List<User> findAll() {
-        return this.userRepository.findAll().stream()
-                .filter(user -> !user.isDelete())
-                .collect(Collectors.toList());
+        return this.userRepository.findAll().stream().filter(user -> !user.isDelete()).collect(Collectors.toList());
     }
 
     public User findByEmail(String email) {
@@ -88,7 +84,10 @@ public class UserService implements UserDetailsService, IBaseService<User, Long>
     public boolean processFriendStatus(User user, User friend, FriendStatus friendStatus) {
         try {
 
-            Friend f = user.getFriends().stream().filter(friend1 -> friend1.getUser().getEmail().equals(friend.getEmail())).findFirst().get();
+//			Friend f = user.getFriends().stream().map(fz -> fz.getUsers().stream().filter(user1 -> user1.getEmail().equals(friend.getEmail())).findFirst().get()).findFirst().get();
+
+
+            Friend f = user.getFriends().stream().filter(fz -> fz.getUsers().stream().filter(user1 -> user1.getEmail().equals(friend.getEmail())).findFirst().get() != null).findFirst().get();
 
             f.setStatus(friendStatus);
 
@@ -112,12 +111,19 @@ public class UserService implements UserDetailsService, IBaseService<User, Long>
 
     public boolean deleteFriend(User user, User friend) {
         try {
-            Set<Friend> us = user.getFriends().stream().map(f -> {
-                if (f.getUser().getId().equals(friend.getId())) {
-                    user.getFriends().remove(f);
+//			Set<Friend> us = user.getFriends().stream().map(f -> {
+//				if (f.getUser().getId().equals(friend.getId())) {
+//					user.getFriends().remove(f);
+//				}
+//				return f;
+//			}).collect(Collectors.toSet());
+
+            Set<Friend> us = user.getFriends().stream().map(f -> f.getUsers().stream().map(user1 -> {
+                if (user1.getId().equals(friend.getId())) {
+                    f.getUsers().remove(user1);
                 }
                 return f;
-            }).collect(Collectors.toSet());
+            }).collect(Collectors.toSet()).stream().findFirst().get()).collect(Collectors.toSet());
 
             user.setFriends(us);
 
@@ -130,13 +136,16 @@ public class UserService implements UserDetailsService, IBaseService<User, Long>
     }
 
     public User getRandomUser() {
-        return this.userRepository.findAll().stream()
-                .filter(user -> !user.isDelete())
-                .findAny().orElse(null);
+        return this.userRepository.findAll().stream().filter(user -> !user.isDelete()).findAny().orElse(null);
     }
 
     public long count() {
         return this.userRepository.count();
+    }
+
+    public List<User> getUsersByLastName(String lastName) {
+        List<User> users = this.findAll().stream().filter(f -> f.getUserInfo().getLastName().contains(lastName)).collect(Collectors.toList());
+        return users;
     }
 
 }
