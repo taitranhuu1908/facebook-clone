@@ -201,7 +201,7 @@ public class UserController {
         }
     }
 
-    @GetMapping()
+    @GetMapping("find-by-name")
     public MessageReturnDto findUserByName(@RequestParam(name = "name", defaultValue = "") String name, @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         try {
             List<User> users = this.userService.getUsersByLastName(name);
