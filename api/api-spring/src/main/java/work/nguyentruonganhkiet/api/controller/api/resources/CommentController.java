@@ -67,6 +67,7 @@ public class CommentController {
 
 			return ResponseEntity.ok(MessageReturnDto.<CommentDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(commentDto).build()).getBody();
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
@@ -88,6 +89,7 @@ public class CommentController {
 			return ResponseEntity.ok(MessageReturnDto.<CommentDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(commentDto).build()).getBody();
 
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
@@ -105,6 +107,7 @@ public class CommentController {
 
 			return ResponseEntity.ok(MessageReturnDto.<Page<CommentDto>>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(commentPostPage).paginate(pageable).build()).getBody();
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
