@@ -15,6 +15,7 @@ import work.nguyentruonganhkiet.api.model.sub.ReactPost;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.sql.Blob;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ public class Post extends BaseEntity {
 
 	@Column(columnDefinition = "LONGTEXT")
 	private String slug;
-	@Column(columnDefinition = "LONGBLOB")
+	@Column(columnDefinition = "MEDIUMTEXT")
 	private String thumbnail;
 	@Column(columnDefinition = "LONGTEXT")
 	private String body;

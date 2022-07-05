@@ -25,24 +25,24 @@ import java.util.Date;
 public class UserInfo extends BaseEntity {
 
 	@NotNull
-	@Column(columnDefinition = "LONGTEXT")
+	@Column(columnDefinition = "MEDIUMTEXT")
 	private String firstName;
 	@NotNull
-	@Column(columnDefinition = "LONGTEXT")
+	@Column(columnDefinition = "MEDIUMTEXT")
 	private String lastName;
-	@Column(columnDefinition = "LONGTEXT")
+	@Column(columnDefinition = "MEDIUMTEXT")
 	private String phone;
-	@Column(columnDefinition = "LONGTEXT")
+	@Column(columnDefinition = "MEDIUMTEXT")
 	private String address;
-	@Column(columnDefinition = "LONGBLOB")
+	@Column(columnDefinition = "MEDIUMTEXT")
 	private String avatar;
-	@Column(columnDefinition = "LONGBLOB")
+	@Column(columnDefinition = "MEDIUMTEXT")
 	private String coverImage;
-	@Column(columnDefinition = "LONGTEXT")
+	@Column(columnDefinition = "MEDIUMTEXT")
 	private String about;
-	@Column(columnDefinition = "LONGTEXT")
+	@Column(columnDefinition = "MEDIUMTEXT")
 	private String bio;
-	@Column(columnDefinition = "LONGTEXT")
+	@Column(columnDefinition = "MEDIUMTEXT")
 	private String slug;
 	private Date birthday;
 	private boolean gender;

@@ -3,9 +3,11 @@ package work.nguyentruonganhkiet.api.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import work.nguyentruonganhkiet.api.model.entities.Friend;
+import work.nguyentruonganhkiet.api.model.entities.FriendRequest;
 import work.nguyentruonganhkiet.api.model.entities.User;
 import work.nguyentruonganhkiet.api.model.enums.FriendStatus;
 import work.nguyentruonganhkiet.api.repositories.FriendRepository;
+import work.nguyentruonganhkiet.api.repositories.FriendRequestRepository;
 
 import java.util.List;
 
@@ -14,9 +16,12 @@ public class FriendService implements IBaseService<Friend, Long> {
 
 	private final FriendRepository friendRepository;
 
+	private final FriendRequestRepository friendRequestRepository;
+
 	@Autowired
-	public FriendService( FriendRepository friendRepository ) {
+	public FriendService( FriendRepository friendRepository , FriendRequestRepository friendRequestRepository ) {
 		this.friendRepository = friendRepository;
+		this.friendRequestRepository = friendRequestRepository;
 	}
 
 	@Override
@@ -48,23 +53,32 @@ public class FriendService implements IBaseService<Friend, Long> {
 		boolean isFriend = friends.stream().filter(f -> f.getUserOne().equals(one) && f.getFriend().equals(two)).findFirst().orElse(null) != null;
 
 		if (! isFriend) {
-			Friend f1 = Friend.builder().status(FriendStatus.PENDING).userOne(one).friend(two).build();
-			Friend f2 = Friend.builder().status(FriendStatus.PENDING).userOne(two).friend(one).build();
-			friendRepository.save(f1);
-			friendRepository.save(f2);
+			FriendRequest fq = FriendRequest.builder().userSend(one).userReceive(two).status(FriendStatus.PENDING).build();
+			this.friendRequestRepository.save(fq);
 		}
 		return true;
 	}
 
 	public boolean changeStatusFriend( User one , User two , FriendStatus status ) {
 		List<Friend> friends = friendRepository.findAll();
-		Friend f1 = friends.stream().filter(fz -> fz.getUserOne().getId().equals(one.getId()) && fz.getFriend().getId().equals(two.getId())).findFirst().orElse(null);
-		if (f1 == null)
+		List<FriendRequest> frs = this.friendRequestRepository.findAll();
+		FriendRequest fq = frs.stream().filter(f -> f.getUserSend().equals(one) && f.getUserReceive().equals(two)).findFirst().orElse(null);
+		if (fq == null)
 			return false;
-		Friend f2 = friends.stream().filter(fz -> fz.getUserOne().getId().equals(two.getId()) && fz.getFriend().getId().equals(one.getId())).findFirst().orElse(null);
-		f1.setStatus(status);
-		assert f2 != null;
-		f2.setStatus(status);
+		if (status.equals(FriendStatus.ACCEPTED)) {
+			Friend f1 = Friend.builder().userOne(one).friend(two).status(status).build();
+			Friend f2 = Friend.builder().userOne(two).friend(one).status(status).build();
+			this.friendRepository.save(f1);
+			this.friendRepository.save(f2);
+		} else {
+			Friend f1 = friends.stream().filter(f -> f.getUserOne().equals(one) && f.getFriend().equals(two)).findFirst().orElse(null);
+			Friend f2 = friends.stream().filter(f -> f.getUserOne().equals(two) && f.getFriend().equals(one)).findFirst().orElse(null);
+			f1.setStatus(status);
+			f2.setStatus(status);
+			this.friendRepository.save(f1);
+			this.friendRepository.save(f2);
+		}
+		this.friendRequestRepository.delete(fq);
 		return true;
 	}
 }

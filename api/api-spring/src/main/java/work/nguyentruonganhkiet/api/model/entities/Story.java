@@ -29,7 +29,7 @@ public class Story extends BaseEntity {
 
 	@Column(columnDefinition = "LONGTEXT")
 	private String title;
-	@Column(columnDefinition = "LONGBLOB")
+	@Column(columnDefinition = "MEDIUMTEXT")
 	private String image;
 	@Column(columnDefinition = "LONGTEXT")
 	private String slug;
