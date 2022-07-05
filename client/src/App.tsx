@@ -15,6 +15,7 @@ import PrivateRoute from "./components/Router/PrivateRoute";
 import NotFound from "./components/NotFound/404";
 import StoryDetail from "./pages/Stories/Detail";
 import SearchPage from "./pages/Search";
+import PostDetail from "./pages/Posts/Detail";
 
 function App() {
     const {isLoading} = useGetMeQuery();
@@ -33,6 +34,9 @@ function App() {
                 <Route path="marketplace" element={<MarketplacePage/>}/>
                 <Route path="settings" element={<SettingPage/>}/>
                 <Route path="group" element={<GroupPage/>}/>
+                <Route path="post">
+                    <Route path=":slug" element={<PostDetail/>}/>
+                </Route>
                 <Route path="stories">
                     <Route index element={<StoriesPage/>}/>
                     <Route path="create" element={<CreateStories/>}/>
