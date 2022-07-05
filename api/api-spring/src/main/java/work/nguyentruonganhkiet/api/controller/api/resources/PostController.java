@@ -20,14 +20,10 @@ import work.nguyentruonganhkiet.api.model.entities.Friend;
 import work.nguyentruonganhkiet.api.model.entities.Notification;
 import work.nguyentruonganhkiet.api.model.entities.Post;
 import work.nguyentruonganhkiet.api.model.entities.User;
-import work.nguyentruonganhkiet.api.model.enums.FriendStatus;
 import work.nguyentruonganhkiet.api.model.sub.CommentPost;
 import work.nguyentruonganhkiet.api.model.sub.ReactPost;
 import work.nguyentruonganhkiet.api.repositories.ReactRepository;
-import work.nguyentruonganhkiet.api.service.CommentService;
-import work.nguyentruonganhkiet.api.service.NotificationService;
-import work.nguyentruonganhkiet.api.service.PostService;
-import work.nguyentruonganhkiet.api.service.UserService;
+import work.nguyentruonganhkiet.api.service.*;
 import work.nguyentruonganhkiet.api.utils.constant.STATUS;
 import work.nguyentruonganhkiet.api.utils.files.SaveFile;
 
@@ -45,224 +41,222 @@ import static work.nguyentruonganhkiet.api.utils.constant.API.*;
 @RequestMapping(API_ENDPOINTS_POSTS)
 public class PostController {
 
-    private final UserService userService;
-    private final PostService postService;
-    private final ModelMapper modelMapper;
-    private final NotificationService notificationService;
-    private final SaveFile saveFile;
-    private final CommentService commentService;
-    private final ReactRepository reactRepository;
+	private final UserService userService;
+	private final PostService postService;
+	private final ModelMapper modelMapper;
+	private final NotificationService notificationService;
+	private final SaveFile saveFile;
+	private final CommentService commentService;
+	private final ReactRepository reactRepository;
+	private final FriendService friendService;
 
-    @Autowired
-    public PostController(UserService userService, PostService postService, ModelMapper modelMapper, NotificationService notificationService, SaveFile saveFile, CommentService commentService, ReactRepository reactRepository) {
-        this.userService = userService;
-        this.postService = postService;
-        this.modelMapper = modelMapper;
-        this.notificationService = notificationService;
-        this.saveFile = saveFile;
-        this.commentService = commentService;
-        this.reactRepository = reactRepository;
-    }
+	@Autowired
+	public PostController( UserService userService , PostService postService , ModelMapper modelMapper , NotificationService notificationService , SaveFile saveFile , CommentService commentService , ReactRepository reactRepository , FriendService friendService ) {
+		this.userService = userService;
+		this.postService = postService;
+		this.modelMapper = modelMapper;
+		this.notificationService = notificationService;
+		this.saveFile = saveFile;
+		this.commentService = commentService;
+		this.reactRepository = reactRepository;
+		this.friendService = friendService;
+	}
 
-    @GetMapping(FRIENDS)
-    public MessageReturnDto<List<PostDto>> getAllPostsOfFriends(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy, @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        try {
+	@GetMapping(FRIENDS)
+	public MessageReturnDto<List<PostDto>> getAllPostsOfFriends( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
 
-//            Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-//
-//            User user = userService.findByEmail(userDetails.getUsername());
-//
-//            List<Friend> friends = user.getFriends().stream().filter(f -> f.getStatus().equals(FriendStatus.ACCEPTED)).toList();
-//
-//            List<User> users = friends.stream().map(Friend::getUsers).flatMap(Collection::stream).filter(Objects::nonNull).distinct().collect(Collectors.toList());
-//
-//            List<Post> posts = users.stream().map(User::getPosts).flatMap(Set::stream).filter(Objects::nonNull).toList();
-//
-//            posts.forEach(post -> {
-//                Set<CommentPost> commentPosts = post.getCommentPosts().stream().sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt())).limit(5).collect(Collectors.toSet());
-//                post.setCommentPosts(commentPosts);
-//            });
-//
-//            List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post, PostDto.class)).toList();
-//
-//            Page<PostDto> pagePosts = new PageImpl<>(postDtos, pageable, posts.size());
+			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
 
-//            return ResponseEntity.ok(MessageReturnDto.<List<PostDto>>builder().data(pagePosts.getContent()).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
-            return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+			User user = userService.findByEmail(userDetails.getUsername());
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
-        }
+			List<Friend> friends = this.friendService.findAll().stream().filter(f -> f.getUserOne().getId().equals(user.getId())).toList();
 
-    }
+			List<Post> posts = friends.stream().map(f -> f.getFriend().getPosts()).flatMap(Collection::stream).toList();
 
-    @GetMapping(ALL)
-    public MessageReturnDto<List<PostDto>> getAllPostsOfUser(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy, @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        try {
+			posts.forEach(post -> {
+				Set<CommentPost> commentPosts = post.getCommentPosts().stream().sorted(( a , b ) -> b.getCreatedAt().compareTo(a.getCreatedAt())).limit(5).collect(Collectors.toSet());
+				post.setCommentPosts(commentPosts);
+			});
 
-            Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+			List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post , PostDto.class)).toList();
 
-            User user = userService.findByEmail(userDetails.getUsername());
+			Page<PostDto> pagePosts = new PageImpl<>(postDtos , pageable , posts.size());
 
-            List<Post> posts = this.postService.findAllByUserId(user.getId(), pageable);
+			return ResponseEntity.ok(MessageReturnDto.<List<PostDto>>builder().data(pagePosts.getContent()).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
 
-            posts.forEach(post -> {
-                Set<CommentPost> commentPosts = post.getCommentPosts().stream().sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt())).limit(5).collect(Collectors.toSet());
-                post.setCommentPosts(commentPosts);
-            });
+	}
 
-            if (posts.isEmpty())
-                return MessageReturnDto.<List<PostDto>>builder().data(null).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).build();
+	@GetMapping(ALL)
+	public MessageReturnDto<List<PostDto>> getAllPostsOfUser( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
 
-            List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post, PostDto.class)).toList();
+			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
 
-            return ResponseEntity.ok(MessageReturnDto.<List<PostDto>>builder().data(postDtos).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
-        }
+			User user = userService.findByEmail(userDetails.getUsername());
 
-    }
+			List<Post> posts = this.postService.findAllByUserId(user.getId() , pageable);
 
-    @PostMapping(CREATE)
-    public MessageReturnDto<PostDto> createPost(@Valid @RequestBody PostCreateDto post, @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        try {
+			posts.forEach(post -> {
+				Set<CommentPost> commentPosts = post.getCommentPosts().stream().sorted(( a , b ) -> b.getCreatedAt().compareTo(a.getCreatedAt())).limit(5).collect(Collectors.toSet());
+				post.setCommentPosts(commentPosts);
+			});
 
-            User user = userService.findByEmail(userDetails.getUsername());
+			if (posts.isEmpty())
+				return MessageReturnDto.<List<PostDto>>builder().data(null).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).build();
 
-            Post p = this.postService.save(Post.builder().body(post.getBody()).thumbnail(post.getThumbnail()).user(user).body(post.getBody()).build());
+			List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post , PostDto.class)).toList();
 
-            PostDto pr = modelMapper.map(p, PostDto.class);
+			return ResponseEntity.ok(MessageReturnDto.<List<PostDto>>builder().data(postDtos).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
 
-            return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(pr).build()).getBody();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
-        }
-    }
+	}
 
-    @GetMapping(GET_ID)
-    public MessageReturnDto<PostDto> getPostById(@PathVariable("id") Long id, @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        try {
+	@PostMapping(CREATE)
+	public MessageReturnDto<PostDto> createPost( @Valid @RequestBody PostCreateDto post , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
 
-            User user = userService.findByEmail(userDetails.getUsername());
+			User user = userService.findByEmail(userDetails.getUsername());
 
-            Post post = this.postService.findById(id);
+			Post p = this.postService.save(Post.builder().body(post.getBody()).thumbnail(post.getThumbnail()).user(user).body(post.getBody()).build());
 
-            if (Objects.isNull(post))
-                return MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_NOT_FOUND).message(STATUS.HTTP_NOT_FOUND_MESSAGE).data(null).build();
+			PostDto pr = modelMapper.map(p , PostDto.class);
 
-            PostDto pr = modelMapper.map(post, PostDto.class);
+			return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(pr).build()).getBody();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+	}
 
-            return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(pr).build()).getBody();
+	@GetMapping(GET_ID)
+	public MessageReturnDto<PostDto> getPostById( @PathVariable("id") Long id , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
-        }
-    }
+			User user = userService.findByEmail(userDetails.getUsername());
 
-    @PutMapping(UPDATE_ID)
-    public MessageReturnDto<PostDto> updatePost(@PathVariable("id") Long id, @Valid @RequestBody PostCreateDto post, @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        try {
+			Post post = this.postService.findById(id);
 
-            User user = userService.findByEmail(userDetails.getUsername());
+			if (Objects.isNull(post))
+				return MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_NOT_FOUND).message(STATUS.HTTP_NOT_FOUND_MESSAGE).data(null).build();
 
-            Post p = this.postService.findById(id);
+			PostDto pr = modelMapper.map(post , PostDto.class);
 
-            if (!Objects.equals(p.getUser().getId(), user.getId()))
-                return MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_UNAUTHORIZED).message(STATUS.HTTP_UNAUTHORIZED_MESSAGE).build();
+			return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(pr).build()).getBody();
 
-            if (post.getThumbnail() != null) {
-                String path = saveFile.save(post.getThumbnail(), "", "");
-                p.setThumbnail(path);
-            }
-            if (post.getBody() != null) p.setBody(post.getBody());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+	}
 
-            p = this.postService.update(p, id);
+	@PutMapping(UPDATE_ID)
+	public MessageReturnDto<PostDto> updatePost( @PathVariable("id") Long id , @Valid @RequestBody PostCreateDto post , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
 
-            PostDto pr = modelMapper.map(p, PostDto.class);
+			User user = userService.findByEmail(userDetails.getUsername());
 
-            return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().data(pr).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).build()).getBody();
+			Post p = this.postService.findById(id);
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
-        }
-    }
+			if (! Objects.equals(p.getUser().getId() , user.getId()))
+				return MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_UNAUTHORIZED).message(STATUS.HTTP_UNAUTHORIZED_MESSAGE).build();
 
-    @DeleteMapping(DELETE_ID)
-    public MessageReturnDto<PostDto> deletePost(@PathVariable("id") Long id, @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        try {
+			if (post.getThumbnail() != null) {
+				String path = saveFile.save(post.getThumbnail() , "" , "");
+				p.setThumbnail(path);
+			}
+			if (post.getBody() != null) p.setBody(post.getBody());
 
-            User user = userService.findByEmail(userDetails.getUsername());
+			p = this.postService.update(p , id);
 
-            Post p = this.postService.findById(id);
+			PostDto pr = modelMapper.map(p , PostDto.class);
 
-            if (!Objects.equals(p.getUser().getId(), user.getId()))
-                return MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_UNAUTHORIZED).message(STATUS.HTTP_UNAUTHORIZED_MESSAGE).build();
+			return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().data(pr).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).build()).getBody();
 
-            this.postService.delete(p);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+	}
 
-            PostDto pr = modelMapper.map(p, PostDto.class);
+	@DeleteMapping(DELETE_ID)
+	public MessageReturnDto<PostDto> deletePost( @PathVariable("id") Long id , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
 
-            return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(pr).build()).getBody();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
-        }
-    }
+			User user = userService.findByEmail(userDetails.getUsername());
 
-    @PostMapping(REACT_ID)
-    public MessageReturnDto<ReactDto> reactPost(@PathVariable("id") Long id, @Valid @RequestBody ReactRequestDto react, @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        try {
+			Post p = this.postService.findById(id);
 
-            User user = userService.findByEmail(userDetails.getUsername());
+			if (! Objects.equals(p.getUser().getId() , user.getId()))
+				return MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_UNAUTHORIZED).message(STATUS.HTTP_UNAUTHORIZED_MESSAGE).build();
 
-            Post p = this.postService.findById(id);
+			this.postService.delete(p);
 
-            ReactPost reactPost = ReactPost.builder().user(user).reactType(react.getReactType()).post(p).build();
+			PostDto pr = modelMapper.map(p , PostDto.class);
 
-            this.reactRepository.save(reactPost);
+			return ResponseEntity.ok(MessageReturnDto.<PostDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(pr).build()).getBody();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+	}
 
-            Notification notification = Notification.builder().postRef(p).reactRef(reactPost).build();
+	@PostMapping(REACT_ID)
+	public MessageReturnDto<ReactDto> reactPost( @PathVariable("id") Long id , @Valid @RequestBody ReactRequestDto react , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
 
-            this.notificationService.reactPostNotification(p, p.getUser(), user, notification);
+			User user = userService.findByEmail(userDetails.getUsername());
 
-            ReactDto r = modelMapper.map(reactPost, ReactDto.class);
+			Post p = this.postService.findById(id);
 
-            return ResponseEntity.ok(MessageReturnDto.<ReactDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(r).build()).getBody();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
-        }
+			ReactPost reactPost = ReactPost.builder().user(user).reactType(react.getReactType()).post(p).build();
 
-    }
+			this.reactRepository.save(reactPost);
 
-    @PostMapping(COMMENT_ID)
-    public MessageReturnDto<CommentDto> commentPost(@PathVariable("id") Long id, @Valid @RequestBody CommentPostRequestDto comment, @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        try {
+			Notification notification = Notification.builder().postRef(p).reactRef(reactPost).build();
 
-            User user = userService.findByEmail(userDetails.getUsername());
+			this.notificationService.reactPostNotification(p , p.getUser() , user , notification);
 
-            Post p = this.postService.findById(id);
+			ReactDto r = modelMapper.map(reactPost , ReactDto.class);
 
-            CommentPost commentPost = CommentPost.builder().comment(comment.getComment()).user(user).post(p).build();
+			return ResponseEntity.ok(MessageReturnDto.<ReactDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(r).build()).getBody();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
 
-            this.commentService.save(commentPost);
+	}
 
-            Notification notification = Notification.builder().postRef(p).commentRef(commentPost).build();
+	@PostMapping(COMMENT_ID)
+	public MessageReturnDto<CommentDto> commentPost( @PathVariable("id") Long id , @Valid @RequestBody CommentPostRequestDto comment , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
+		try {
 
-            this.notificationService.commentPostNotification(p, p.getUser(), user, notification);
+			User user = userService.findByEmail(userDetails.getUsername());
 
-            CommentDto commentDto = modelMapper.map(commentPost, CommentDto.class);
+			Post p = this.postService.findById(id);
 
-            return ResponseEntity.ok(MessageReturnDto.<CommentDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(commentDto).build()).getBody();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
-        }
-    }
+			CommentPost commentPost = CommentPost.builder().comment(comment.getComment()).user(user).post(p).build();
+
+			this.commentService.save(commentPost);
+
+			Notification notification = Notification.builder().postRef(p).commentRef(commentPost).build();
+
+			this.notificationService.commentPostNotification(p , p.getUser() , user , notification);
+
+			CommentDto commentDto = modelMapper.map(commentPost , CommentDto.class);
+
+			return ResponseEntity.ok(MessageReturnDto.<CommentDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(commentDto).build()).getBody();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+	}
 
 }

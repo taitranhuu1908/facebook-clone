@@ -27,26 +27,24 @@ import java.util.Set;
 @EntityListeners(StoryObserve.class)
 public class Story extends BaseEntity {
 
-    @NotNull
-    @Column(columnDefinition = "LONGTEXT")
-    private String title;
-    @NotNull
-    @Column(columnDefinition = "LONGTEXT")
-    private String image;
-    @Column(columnDefinition = "LONGTEXT")
-    private String slug;
+	@Column(columnDefinition = "LONGTEXT")
+	private String title;
+	@Column(columnDefinition = "LONGBLOB")
+	private String image;
+	@Column(columnDefinition = "LONGTEXT")
+	private String slug;
 
-    @OneToMany(mappedBy = "story", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private Set<ReactStory> reactStories = new LinkedHashSet<>();
+	@OneToMany(mappedBy = "story", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private Set<ReactStory> reactStories = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "story", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private Set<CommentStory> commentStories = new LinkedHashSet<>();
+	@OneToMany(mappedBy = "story", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private Set<CommentStory> commentStories = new LinkedHashSet<>();
 
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "user_id")
-    private User user;
+	@ManyToOne
+	@JsonBackReference
+	@JoinColumn(name = "user_id")
+	private User user;
 
 }

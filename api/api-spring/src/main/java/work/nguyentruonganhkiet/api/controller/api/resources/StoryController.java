@@ -3,9 +3,7 @@ package work.nguyentruonganhkiet.api.controller.api.resources;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,8 +16,10 @@ import work.nguyentruonganhkiet.api.model.dtos.responses.entities.PostDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.StoryDto;
 import work.nguyentruonganhkiet.api.model.entities.*;
 import work.nguyentruonganhkiet.api.model.enums.FriendStatus;
+import work.nguyentruonganhkiet.api.model.sub.CommentPost;
 import work.nguyentruonganhkiet.api.model.sub.CommentStory;
 import work.nguyentruonganhkiet.api.model.sub.ReactStory;
+import work.nguyentruonganhkiet.api.service.FriendService;
 import work.nguyentruonganhkiet.api.service.NotificationService;
 import work.nguyentruonganhkiet.api.service.StoryService;
 import work.nguyentruonganhkiet.api.service.UserService;
@@ -43,37 +43,39 @@ public class StoryController {
 	private final UserService userService;
 	private final ModelMapper modelMapper;
 	private final NotificationService notificationService;
-
+	private final FriendService friendService;
 
 	@Autowired
-	public StoryController( StoryService storyService , ModelMapper modelMapper , UserService userService , NotificationService notificationService ) {
+	public StoryController( StoryService storyService , ModelMapper modelMapper , UserService userService , NotificationService notificationService , FriendService friendService ) {
 		this.storyService = storyService;
 		this.modelMapper = modelMapper;
 		this.userService = userService;
 		this.notificationService = notificationService;
+		this.friendService = friendService;
 	}
 
 
 	@GetMapping(FRIENDS)
 	public MessageReturnDto<List<StoryDto>> getAllStoryOfFriends( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
-//			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
-//
-//			User user = userService.findByEmail(userDetails.getUsername());
-//
-////			List<Story> stories = user.getFriends().stream().map(friend -> friend.getUser().getStories()).flatMap(Set::stream).filter(s -> ! s.isDelete()).toList();
-//
-//			List<Friend> friends = user.getFriends().stream().filter(f -> f.getStatus().equals(FriendStatus.ACCEPTED)).toList();
-//
-//			List<User> users = friends.stream().map(Friend::getUsers).flatMap(Collection::stream).filter(Objects::nonNull).distinct().toList();
-//
-//			List<Story> stories = users.stream().map(User::getStories).flatMap(Set::stream).filter(Objects::nonNull).toList();
-//
-//			List<StoryDto> storyDtos = stories.stream().map(story -> modelMapper.map(story , StoryDto.class)).toList();
-//
-//			return ResponseEntity.ok(MessageReturnDto.<List<StoryDto>>builder().message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).data(storyDtos).build()).getBody();
-			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
 
+			User user = userService.findByEmail(userDetails.getUsername());
+
+			List<Friend> friends = this.friendService.findAll().stream().filter(f -> f.getUserOne().getId().equals(user.getId())).toList();
+
+			List<Story> stories = friends.stream().map(f -> f.getFriend().getStories()).flatMap(Collection::stream).toList();
+
+			stories.forEach(post -> {
+				Set<CommentStory> commentStories = post.getCommentStories().stream().sorted(( a , b ) -> b.getCreatedAt().compareTo(a.getCreatedAt())).limit(5).collect(Collectors.toSet());
+				post.setCommentStories(commentStories);
+			});
+
+			List<StoryDto> storyDtos = stories.stream().map(post -> modelMapper.map(post , StoryDto.class)).toList();
+
+			Page<StoryDto> pageStories = new PageImpl<>(storyDtos , pageable , stories.size());
+
+			return ResponseEntity.ok(MessageReturnDto.<List<StoryDto>>builder().message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).data(pageStories.getContent()).paginate(pageable).build()).getBody();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();

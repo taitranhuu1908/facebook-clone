@@ -23,7 +23,6 @@ import java.util.Set;
 @SuperBuilder
 public class Comment extends BaseEntity {
 
-	@NotNull
 	@Column(columnDefinition = "LONGTEXT")
 	public String comment;
 

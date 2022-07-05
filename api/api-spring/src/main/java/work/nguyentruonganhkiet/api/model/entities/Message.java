@@ -20,10 +20,9 @@ import javax.validation.constraints.NotNull;
 @SuperBuilder
 public class Message extends BaseEntity {
 
-	@NotNull
 	@Column(columnDefinition = "LONGTEXT")
 	public String message;
-	@Column(columnDefinition = "LONGTEXT")
+	@Column(columnDefinition = "LONGBLOB")
 	public String media;
 
 	@ManyToOne(fetch = FetchType.EAGER)

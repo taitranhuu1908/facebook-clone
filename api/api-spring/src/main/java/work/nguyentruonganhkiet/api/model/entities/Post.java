@@ -30,10 +30,9 @@ public class Post extends BaseEntity {
 
 	@Column(columnDefinition = "LONGTEXT")
 	private String slug;
-	@Column(columnDefinition = "LONGTEXT")
+	@Column(columnDefinition = "LONGBLOB")
 	private String thumbnail;
 	@Column(columnDefinition = "LONGTEXT")
-	@NotNull
 	private String body;
 	@Column(columnDefinition = "int default 0")
 	private long views = 0;

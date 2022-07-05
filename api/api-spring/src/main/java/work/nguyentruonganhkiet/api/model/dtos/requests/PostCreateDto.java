@@ -13,7 +13,6 @@ public class PostCreateDto {
 
 	private String thumbnail;
 
-	@NotNull
 	private String body;
 
 }

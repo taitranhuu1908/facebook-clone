@@ -34,9 +34,9 @@ public class UserInfo extends BaseEntity {
 	private String phone;
 	@Column(columnDefinition = "LONGTEXT")
 	private String address;
-	@Column(columnDefinition = "LONGTEXT")
+	@Column(columnDefinition = "LONGBLOB")
 	private String avatar;
-	@Column(columnDefinition = "LONGTEXT")
+	@Column(columnDefinition = "LONGBLOB")
 	private String coverImage;
 	@Column(columnDefinition = "LONGTEXT")
 	private String about;
