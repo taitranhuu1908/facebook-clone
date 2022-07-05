@@ -41,11 +41,13 @@ public class FriendController {
 	@GetMapping(ALL)
 	public MessageReturnDto<?> getAllFriend( @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
-			User user = this.userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+//			User user = this.userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+//
+//			List<FriendDto> friendDtos = user.getFriends().stream().map(friend -> modelMapper.map(friend , FriendDto.class)).toList();
+//
+//			return ResponseEntity.ok(MessageReturnDto.<List<FriendDto>>builder().message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).data(friendDtos).build()).getBody();
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 
-			List<FriendDto> friendDtos = user.getFriends().stream().map(friend -> modelMapper.map(friend , FriendDto.class)).toList();
-
-			return ResponseEntity.ok(MessageReturnDto.<List<FriendDto>>builder().message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).data(friendDtos).build()).getBody();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();

@@ -11,7 +11,6 @@ import work.nguyentruonganhkiet.api.model.entities.Message;
 public class MessageController {
 
 	@SendTo("/channel/public")
-	@MessageMapping("/chat.sendMessage")
 	public Message sendMessage( @Payload Message message ) {
 		return message;
 	}
