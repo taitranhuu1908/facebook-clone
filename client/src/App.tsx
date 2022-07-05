@@ -15,6 +15,7 @@ import PrivateRoute from "./components/Router/PrivateRoute";
 import NotFound from "./components/NotFound/404";
 import StoryDetail from "./pages/Stories/Detail";
 import SearchPage from "./pages/Search";
+import ProfilePage from "./pages/Profile";
 import PostDetail from "./pages/Posts/Detail";
 import SocketProvider from "./contexts/SocketContext";
 
@@ -46,6 +47,10 @@ function App() {
                     </Route>
                     <Route path="search" element={<SearchPage/>}/>
                 </Route>
+                <Route path="profile">
+                    <Route path=":id" element={<ProfilePage/>}/>
+                </Route>
+                <Route path="search" element={<SearchPage/>}/>
                 <Route path="test" element={<Test/>}/>
                 <Route path="*" element={<NotFound/>}/>
             </Routes>
