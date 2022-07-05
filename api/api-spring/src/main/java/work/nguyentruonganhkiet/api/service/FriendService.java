@@ -59,7 +59,7 @@ public class FriendService implements IBaseService<Friend, Long> {
 	public boolean changeStatusFriend( User one , User two , FriendStatus status ) {
 		List<Friend> friends = friendRepository.findAll();
 		Friend f1 = friends.stream().filter(fz -> fz.getUserOne().getId().equals(one.getId()) && fz.getFriend().getId().equals(two.getId())).findFirst().orElse(null);
-		if (f1 != null)
+		if (f1 == null)
 			return false;
 		Friend f2 = friends.stream().filter(fz -> fz.getUserOne().getId().equals(two.getId()) && fz.getFriend().getId().equals(one.getId())).findFirst().orElse(null);
 		f1.setStatus(status);
