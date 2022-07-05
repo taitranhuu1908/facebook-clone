@@ -35,7 +35,7 @@ function App() {
                 <Route path="settings" element={<SettingPage/>}/>
                 <Route path="group" element={<GroupPage/>}/>
                 <Route path="post">
-                    <Route path=":id" element={<PostDetail/>}/>
+                    <Route path=":slug" element={<PostDetail/>}/>
                 </Route>
                 <Route path="stories">
                     <Route index element={<StoriesPage/>}/>
