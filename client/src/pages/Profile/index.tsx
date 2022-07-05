@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Box, Container, Grid, Link} from "@mui/material";
 import ProfileLayout from "../../layouts/ProfileLayout";
 import ProfileIntroduce from "../../components/Profile/ProfileIntroduce";
@@ -6,10 +6,22 @@ import ProfilePost from "../../components/Profile/ProfilePost";
 import ProfilePhoto from "../../components/Profile/ProfilePhoto";
 import ProfileFriend from "../../components/Profile/ProfileFriend";
 import styled from "@emotion/styled";
-import {useAppSelector} from "../../app/hook";
+import {useGetPostsByMeMutation} from "../../app/services/PostService";
+import {useParams} from "react-router-dom";
 
 
 const ProfilePage = () => {
+    const [getPostMeApi, {isLoading}] = useGetPostsByMeMutation();
+    const {id} = useParams();
+
+    useEffect(() => {
+        if (id) {
+            const userSplit = id.split('-');
+            const userId = userSplit[userSplit.length - 1]
+            getPostMeApi(userId);
+        }
+    }, [getPostMeApi, id]);
+
 
     return (
         <ProfileLayout>
@@ -17,7 +29,7 @@ const ProfilePage = () => {
                 <Container>
                     <Grid container spacing={0}>
                         <Grid item xs={5}>
-                            <ProfileIntroduce />
+                            <ProfileIntroduce/>
                             <ProfilePhoto/>
                             <ProfileFriend/>
                             <Box sx={{
@@ -43,7 +55,7 @@ const ProfilePage = () => {
                             </Box>
                         </Grid>
                         <Grid item xs={7}>
-                            <ProfilePost/>
+                            <ProfilePost isLoading={isLoading}/>
                         </Grid>
                     </Grid>
                 </Container>

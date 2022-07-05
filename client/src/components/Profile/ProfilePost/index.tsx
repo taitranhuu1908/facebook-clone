@@ -1,18 +1,18 @@
 import React from 'react';
-import {Box, Grid} from "@mui/material";
+import {Box} from "@mui/material";
 import styles from "../ProfileIntroduce/profile-introduce.module.scss";
 import CreatePost from "../../CreatePost";
 import ListPost from "../../Post/ListPost";
-import {useGetPostsByMeQuery} from "../../../app/services/PostService";
 import PostNormal from "../../Post/PostNormal";
 import PostSkeleton from "../../Skeleton/PostSkeleton";
 import {useAppSelector} from "../../../app/hook";
 
+interface IProps {
+    isLoading: boolean;
+}
 
-const ProfilePost = () => {
-    const {isLoading} = useGetPostsByMeQuery();
-    const {posts} = useAppSelector(state => state.postSlice);
-
+const ProfilePost: React.FC<IProps> = ({isLoading}) => {
+    const {postsMe} = useAppSelector(state => state.postSlice);
     const renderPosts = () => {
         if (isLoading) {
             return (
@@ -23,9 +23,9 @@ const ProfilePost = () => {
             )
         }
 
-        if (posts.length > 0) {
+        if (postsMe.length > 0) {
 
-            return posts.slice(0).reverse().map((post, index) => {
+            return postsMe.slice(0).reverse().map((post, index) => {
                 return (
                     <PostNormal
                         key={index}

@@ -26,8 +26,8 @@ export const postService = createApi({
             }),
             invalidatesTags: ["UpdateImage"],
         }),
-        getPostsByMe: build.query<Response<IPostFull[]>, void>({
-            query: () => `/all`,
+        getPostsByMe: build.mutation<Response<IPostFull[]>, string>({
+            query: (id) => `/get/${id}`,
         }),
         getPostsByFriend: build.query<Response<IPostFull[]>, void>({
             query: () => ({
@@ -65,7 +65,7 @@ export const postService = createApi({
 export const {
     useCreatePostMutation,
     useGetPostsByFriendQuery,
-    useGetPostsByMeQuery,
+    useGetPostsByMeMutation,
     useSendCommentByPostMutation,
     useReactByPostMutation,
     useFindPostByIdMutation

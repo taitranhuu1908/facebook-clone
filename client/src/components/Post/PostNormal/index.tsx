@@ -129,8 +129,10 @@ const PostNormal: React.FC<IProps> = ({post}) => {
                     <Box className={styles.headerLeft}>
                         <Avatar src={post.user.userInfo.avatar || ""} sx={{width: '40px', height: '40px'}}/>
                         <Box className={styles.headerTitle}>
-                            <Typography fontWeight={'bold'}
-                                        sx={{fontSize: '15px'}}>{`${post.user.userInfo.firstName} ${post.user.userInfo.lastName}`}</Typography>
+                            <Link to={`/profile/${post.user.userInfo.slug}-${post.user.id}`} className={`text-decoration-none`} style={{color: "#333"}}>
+                                <Typography fontWeight={'bold'}
+                                            sx={{fontSize: '15px'}}>{`${post.user.userInfo.firstName} ${post.user.userInfo.lastName}`}</Typography>
+                            </Link>
                             <Link to={`/post/${post.slug}-${post.id}`} className={`hover-underline text-decoration-none text-color-gray`}>
                                 <Typography sx={{fontSize: '13px'}}>{moment(post.createdAt).fromNow()}</Typography>
                             </Link>
