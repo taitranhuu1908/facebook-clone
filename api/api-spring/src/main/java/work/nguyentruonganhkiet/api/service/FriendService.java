@@ -62,7 +62,7 @@ public class FriendService implements IBaseService<Friend, Long> {
 	public boolean changeStatusFriend( User one , User two , FriendStatus status ) {
 		List<Friend> friends = friendRepository.findAll();
 		List<FriendRequest> frs = this.friendRequestRepository.findAll();
-		FriendRequest fq = frs.stream().filter(f -> f.getUserSend().equals(one) && f.getUserReceive().equals(two)).findFirst().orElse(null);
+		FriendRequest fq = frs.stream().filter(f -> f.getUserSend().getId().equals(two.getId()) && f.getUserReceive().getId().equals(one.getId())).findFirst().orElse(null);
 		if (fq == null)
 			return false;
 		if (status.equals(FriendStatus.ACCEPTED)) {
