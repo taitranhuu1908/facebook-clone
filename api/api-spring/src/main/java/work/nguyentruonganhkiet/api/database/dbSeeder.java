@@ -3,17 +3,13 @@ package work.nguyentruonganhkiet.api.database;
 
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import work.nguyentruonganhkiet.api.model.entities.*;
 import work.nguyentruonganhkiet.api.model.enums.FriendStatus;
 import work.nguyentruonganhkiet.api.model.enums.ReactType;
 import work.nguyentruonganhkiet.api.model.sub.*;
 import work.nguyentruonganhkiet.api.repositories.*;
-import work.nguyentruonganhkiet.api.service.CommentService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -160,25 +156,25 @@ public class dbSeeder {
 
     public void friendSeeder() {
         for (int i = 6; i < 50; i++) {
-            Long randomId = (long) faker.number().numberBetween(1, 50);
-            User user = this.userRepository.findById(randomId).orElse(this.userRepository.findById(1L).orElse(null));
-            User userFriend1 = this.userRepository.findById(1L).orElse(null);
-            User userFriend2 = this.userRepository.findById(2L).orElse(null);
-            User userFriend3 = this.userRepository.findById(3L).orElse(null);
-            User userFriend4 = this.userRepository.findById(4L).orElse(null);
-            User userFriend5 = this.userRepository.findById(5L).orElse(null);
-
-            Set<User> friends = new HashSet<>();
-            friends.add(userFriend1);
-            friends.add(userFriend2);
-            friends.add(userFriend3);
-            friends.add(userFriend4);
-            friends.add(userFriend5);
-
-            Friend friend1 = Friend.builder().users(friends).status(FriendStatus.ACCEPTED).build();
-            assert user != null;
-            user.getFriends().add(friend1);
-            this.userRepository.save(user);
+//            Long randomId = (long) faker.number().numberBetween(1, 50);
+//            User user = this.userRepository.findById(randomId).orElse(this.userRepository.findById(1L).orElse(null));
+//            User userFriend1 = this.userRepository.findById(1L).orElse(null);
+//            User userFriend2 = this.userRepository.findById(2L).orElse(null);
+//            User userFriend3 = this.userRepository.findById(3L).orElse(null);
+//            User userFriend4 = this.userRepository.findById(4L).orElse(null);
+//            User userFriend5 = this.userRepository.findById(5L).orElse(null);
+//
+//            Set<User> friends = new HashSet<>();
+//            friends.add(userFriend1);
+//            friends.add(userFriend2);
+//            friends.add(userFriend3);
+//            friends.add(userFriend4);
+//            friends.add(userFriend5);
+//
+//            Friend friend1 = Friend.builder().users(friends).status(FriendStatus.ACCEPTED).build();
+//            assert user != null;
+//            user.getFriends().add(friend1);
+//            this.userRepository.save(user);
         }
     }
 

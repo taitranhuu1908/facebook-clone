@@ -26,6 +26,7 @@ import work.nguyentruonganhkiet.api.service.UserService;
 import work.nguyentruonganhkiet.api.utils.constant.STATUS;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -56,21 +57,22 @@ public class StoryController {
 	@GetMapping(FRIENDS)
 	public MessageReturnDto<List<StoryDto>> getAllStoryOfFriends( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
-			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
-
-			User user = userService.findByEmail(userDetails.getUsername());
-
-//			List<Story> stories = user.getFriends().stream().map(friend -> friend.getUser().getStories()).flatMap(Set::stream).filter(s -> ! s.isDelete()).toList();
-
-			List<Friend> friends = user.getFriends().stream().filter(f -> f.getStatus().equals(FriendStatus.ACCEPTED)).toList();
-
-			List<User> users = friends.stream().map(Friend::getUsers).flatMap(Set::stream).filter(Objects::nonNull).distinct().toList();
-
-			List<Story> stories = users.stream().map(User::getStories).flatMap(Set::stream).filter(Objects::nonNull).toList();
-
-			List<StoryDto> storyDtos = stories.stream().map(story -> modelMapper.map(story , StoryDto.class)).toList();
-
-			return ResponseEntity.ok(MessageReturnDto.<List<StoryDto>>builder().message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).data(storyDtos).build()).getBody();
+//			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
+//
+//			User user = userService.findByEmail(userDetails.getUsername());
+//
+////			List<Story> stories = user.getFriends().stream().map(friend -> friend.getUser().getStories()).flatMap(Set::stream).filter(s -> ! s.isDelete()).toList();
+//
+//			List<Friend> friends = user.getFriends().stream().filter(f -> f.getStatus().equals(FriendStatus.ACCEPTED)).toList();
+//
+//			List<User> users = friends.stream().map(Friend::getUsers).flatMap(Collection::stream).filter(Objects::nonNull).distinct().toList();
+//
+//			List<Story> stories = users.stream().map(User::getStories).flatMap(Set::stream).filter(Objects::nonNull).toList();
+//
+//			List<StoryDto> storyDtos = stories.stream().map(story -> modelMapper.map(story , StoryDto.class)).toList();
+//
+//			return ResponseEntity.ok(MessageReturnDto.<List<StoryDto>>builder().message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).data(storyDtos).build()).getBody();
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
