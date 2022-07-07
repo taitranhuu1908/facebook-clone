@@ -248,4 +248,24 @@ public class StoryController {
 		}
 	}
 
+	@GetMapping("get-stories-by-user-email/{email}")
+	public MessageReturnDto getStoriesByUserEmail( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @PathVariable("email") String email ) {
+		try {
+			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
+
+			User user = userService.findByEmail(email);
+
+			List<Story> storys = user.getStories().stream().toList();
+
+			List<StoryDto> storyDtos = storys.stream().map(p -> modelMapper.map(p , StoryDto.class)).toList();
+
+			Page<StoryDto> pagePosts = new PageImpl<>(storyDtos , pageable , storyDtos.size());
+
+			return ResponseEntity.ok(MessageReturnDto.<List<StoryDto>>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(pagePosts.getContent()).build()).getBody();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+	}
+
 }

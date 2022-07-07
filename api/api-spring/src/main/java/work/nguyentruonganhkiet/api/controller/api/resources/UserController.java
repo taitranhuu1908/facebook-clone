@@ -4,6 +4,7 @@ package work.nguyentruonganhkiet.api.controller.api.resources;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,11 +15,13 @@ import work.nguyentruonganhkiet.api.model.dtos.requests.IsMyFriendDto;
 import work.nguyentruonganhkiet.api.model.dtos.requests.UpdateUserRequestDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.MessageReturnDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.FriendDto;
+import work.nguyentruonganhkiet.api.model.dtos.responses.entities.StoryDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.UserHaftDto;
 import work.nguyentruonganhkiet.api.model.entities.*;
 import work.nguyentruonganhkiet.api.model.enums.FriendStatus;
 import work.nguyentruonganhkiet.api.model.enums.NotificationType;
 import work.nguyentruonganhkiet.api.service.*;
+import work.nguyentruonganhkiet.api.utils.constant.STATUS;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -214,4 +217,21 @@ public class UserController {
 		}
 	}
 
+	@GetMapping("get-image-of-user-email/{email}")
+	public MessageReturnDto getImageByUserEmail( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @PathVariable("email") String email ) {
+		try {
+			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
+
+			User user = userService.findByEmail(email);
+
+			List<String> images = user.getStories().stream().map(p -> p.getImage()).toList();
+
+			Page<String> pageImages = new PageImpl<>(images , pageable , images.size());
+
+			return ResponseEntity.ok(MessageReturnDto.<List<String>>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(pageImages.getContent()).build()).getBody();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+	}
 }

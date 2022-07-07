@@ -112,4 +112,25 @@ public class FriendController {
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
+
+	@GetMapping("get-friend-of-user-email/{email}")
+	public MessageReturnDto getFriendOfUserEmail( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @PathVariable("email") String email ) {
+		try {
+
+			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
+
+			User user = this.userService.findByEmail(email);
+
+			List<Friend> fs = this.friendService.findAll().stream().filter(f -> f.getUserOne().getId().equals(user.getId())).toList();
+
+			List<FriendDto> friendDtos = fs.stream().map(f -> this.modelMapper.map(f , FriendDto.class)).toList();
+
+			Page<FriendDto> pageFriendDtos = new PageImpl<>(friendDtos , pageable , friendDtos.size());
+
+			return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<List<FriendDto>>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).data(pageFriendDtos.getContent()).build()).getBody();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+	}
 }
