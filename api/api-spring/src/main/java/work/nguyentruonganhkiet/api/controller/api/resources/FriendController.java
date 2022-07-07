@@ -13,6 +13,7 @@ import work.nguyentruonganhkiet.api.model.dtos.requests.IsMyFriendDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.MessageReturnDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.FriendDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.FriendRequestDto;
+import work.nguyentruonganhkiet.api.model.dtos.responses.entities.UserHaftDto;
 import work.nguyentruonganhkiet.api.model.entities.Friend;
 import work.nguyentruonganhkiet.api.model.entities.FriendRequest;
 import work.nguyentruonganhkiet.api.model.entities.User;
@@ -63,7 +64,7 @@ public class FriendController {
 
 			Page<FriendDto> pageFriendDtos = new PageImpl<>(friendDtos , pageable , friendDtos.size());
 
-			return ResponseEntity.ok(MessageReturnDto.<Page<FriendDto>>builder().message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).data(pageFriendDtos).build()).getBody();
+			return ResponseEntity.ok(MessageReturnDto.<List<FriendDto>>builder().message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).data(pageFriendDtos.getContent()).build()).getBody();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
@@ -97,13 +98,15 @@ public class FriendController {
 
 			User user = this.userService.findByEmail(userDetails.getUsername());
 
-			List<FriendRequest> frs = this.friendRequestRepository.findAll().stream().filter(fr -> fr.getUserReceive().getId().equals(user.getId())).toList();
+			List<User> frs = this.friendRequestRepository.findAll().stream().filter(fr -> fr.getUserReceive().getId().equals(user.getId()))
+					.map(FriendRequest::getUserSend)
+					.toList();
 
-			List<FriendRequestDto> frDtos = frs.stream().map(fr -> modelMapper.map(fr , FriendRequestDto.class)).toList();
+			List<UserHaftDto> frDtos = frs.stream().map(fr -> modelMapper.map(fr , UserHaftDto.class)).toList();
 
-			Page<FriendRequestDto> pagefrdtos = new PageImpl<>(frDtos , pageable , frDtos.size());
+			Page<UserHaftDto> pagefrdtos = new PageImpl<>(frDtos , pageable , frDtos.size());
 
-			return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<Page<FriendRequestDto>>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).data(pagefrdtos).build()).getBody();
+			return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<List<UserHaftDto>>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).data(pagefrdtos.getContent()).build()).getBody();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();

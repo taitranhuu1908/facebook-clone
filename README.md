@@ -5,6 +5,6 @@
 - Chạy xampp và tạo database tên `api`
 - Chạy lệnh `docker-compose up -d --build`
 
-#### Build Version 1.1.1
+#### buildVersion : Version 1.3.1
 
-#### Build Date 30-06-2022
+#### buildDate : 07-07-2022

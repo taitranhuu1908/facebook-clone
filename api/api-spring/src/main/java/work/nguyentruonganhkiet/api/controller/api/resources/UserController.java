@@ -130,6 +130,9 @@ public class UserController {
 
 			User friend = userService.findByEmail(addFriendRequestDto.getEmail());
 
+			if (user.getId().equals(friend.getId()))
+				return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+
 			this.friendService.addFriend(user , friend);
 
 			Notification notification = Notification.builder().owner(user).userRef(friend).type(NotificationType.ADD_FRIEND).build();
@@ -210,7 +213,5 @@ public class UserController {
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		}
 	}
-
-
 
 }
