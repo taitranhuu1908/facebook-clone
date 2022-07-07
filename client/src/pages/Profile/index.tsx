@@ -7,21 +7,18 @@ import ProfilePhoto from "../../components/Profile/ProfilePhoto";
 import ProfileFriend from "../../components/Profile/ProfileFriend";
 import styled from "@emotion/styled";
 import {useGetPostsByMeMutation} from "../../app/services/PostService";
-import {useParams} from "react-router-dom";
+import {useAppSelector} from "../../app/hook";
 
 
 const ProfilePage = () => {
     const [getPostMeApi, {isLoading}] = useGetPostsByMeMutation();
-    const {id} = useParams();
+    const {userCurrent} = useAppSelector(state => state.userSlice);
 
     useEffect(() => {
-        if (id) {
-            const userSplit = id.split('-');
-            const userId = userSplit[userSplit.length - 1]
-            getPostMeApi(userId);
+        if (userCurrent.email) {
+            getPostMeApi(userCurrent.email);
         }
-    }, [getPostMeApi, id]);
-
+    }, [getPostMeApi, userCurrent.email]);
 
     return (
         <ProfileLayout>

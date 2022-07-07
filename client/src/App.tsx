@@ -18,9 +18,12 @@ import SearchPage from "./pages/Search";
 import ProfilePage from "./pages/Profile";
 import PostDetail from "./pages/Posts/Detail";
 import SocketProvider from "./contexts/SocketContext";
+import {useGetFriendRequestQuery, useGetFriendsQuery} from "./app/services/FriendService";
 
 function App() {
     const {isLoading} = useGetMeQuery();
+    useGetFriendsQuery();
+    useGetFriendRequestQuery();
 
     if (isLoading) {
         return <LoadingCircle/>;
@@ -46,11 +49,10 @@ function App() {
                         <Route path=":id" element={<StoryDetail/>}/>
                     </Route>
                     <Route path="search" element={<SearchPage/>}/>
+                    <Route path="profile">
+                        <Route path=":id" element={<ProfilePage/>}/>
+                    </Route>
                 </Route>
-                <Route path="profile">
-                    <Route path=":id" element={<ProfilePage/>}/>
-                </Route>
-                <Route path="search" element={<SearchPage/>}/>
                 <Route path="test" element={<Test/>}/>
                 <Route path="*" element={<NotFound/>}/>
             </Routes>

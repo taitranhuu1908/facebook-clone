@@ -27,7 +27,7 @@ export const postService = createApi({
             invalidatesTags: ["UpdateImage"],
         }),
         getPostsByMe: build.mutation<Response<IPostFull[]>, string>({
-            query: (id) => `/get/${id}`,
+            query: (email) => `/get-post-by-user-email/${email}`,
         }),
         getPostsByFriend: build.query<Response<IPostFull[]>, void>({
             query: () => ({

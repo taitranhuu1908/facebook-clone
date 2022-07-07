@@ -43,7 +43,7 @@ const postSlice = createSlice({
         builder.addMatcher(
             postService.endpoints.getPostsByFriend.matchFulfilled,
             (state: IState, {payload}: PayloadAction<Response<IPostFull[]>>) => {
-                state.posts = [...payload.data, ...state.posts];
+                state.posts = [...payload.data];
             }
         );
         builder.addMatcher(

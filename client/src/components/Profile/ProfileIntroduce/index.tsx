@@ -18,6 +18,7 @@ const ProfileIntroduce:React.FC<props> = () => {
             setSelf(true);
         }
     }, [userCurrent, user]);
+
     return (
         <Box className={styles.introduce}>
             <Typography sx={{

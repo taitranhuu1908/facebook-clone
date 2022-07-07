@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {Box, Avatar, IconButton, Grid, Container, Menu, MenuItem, Typography, AvatarGroup, Button} from "@mui/material";
 import ButtonBase from '@mui/material/ButtonBase';
 import styles from './profile-information.module.scss';
@@ -15,6 +15,10 @@ import NavigateProfileItem from "../NavigateProfileItem";
 import {useAppSelector} from "../../../app/hook";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import {IAcceptFriend, IFriendFull} from "../../../app/models/Friend";
+import {useAcceptFriendMutation, useAddFriendMutation} from "../../../app/services/UserService";
+import {FRIEND_STATUS} from "../../../constants";
+import {IUserFull} from "../../../app/models/User";
 
 const avatarDefault = 'https://scr.vn/wp-content/uploads/2020/07/Avatar-Facebook-tr%E1%BA%AFng.jpg';
 const coverImageDefault = 'https://wallpaper.dog/large/20487323.jpg'
@@ -24,15 +28,33 @@ interface props {
 
 const ProfileInformation: React.FC<props> = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [addFriendApi] = useAddFriendMutation();
+    const [acceptFriendApi] = useAcceptFriendMutation();
     const open = Boolean(anchorEl);
     const [self, setSelf] = React.useState(false);
     const {userCurrent} = useAppSelector(state => state.userSlice)
     const {user} = useAppSelector(state => state.authSlice);
+    const {friends, friendRequest} = useAppSelector(state => state.friendSlice);
+    const [friendStatus, setFriendStatus] = useState<string>('');
+
+    useEffect(() => {
+        if (friends) {
+            const isFriend = friends.find((item: IFriendFull) => item.friend.id === userCurrent.id);
+            const isRequest = friendRequest.find((item: IUserFull) => item.id === userCurrent.id);
+            if (isFriend) {
+                setFriendStatus(FRIEND_STATUS.ACCEPTED)
+            } else if (isRequest) {
+                setFriendStatus(FRIEND_STATUS.PENDING)
+            }
+        }
+    }, [friends, userCurrent, friendRequest]);
+
     useEffect(() => {
         if (userCurrent.id === user.id) {
             setSelf(true);
         }
     }, [userCurrent, user]);
+
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -50,6 +72,99 @@ const ProfileInformation: React.FC<props> = () => {
             </NavigateProfileItem>
         })
     }, [pathname]);
+
+    const handleAddFriend = () => {
+        addFriendApi(userCurrent.email).then((response: any) => {
+            if (response.data.status === 200) {
+                setFriendStatus(FRIEND_STATUS.REQUESTS);
+            }
+        })
+    }
+
+    const handleAcceptFriend = () => {
+        console.log(userCurrent.email);
+        const request: IAcceptFriend = {
+            emailTarget: userCurrent.email,
+            status: FRIEND_STATUS.ACCEPTED
+        }
+        acceptFriendApi(request).then((response: any) => {
+            if (response.data.status === 200) {
+                setFriendStatus(FRIEND_STATUS.ACCEPTED);
+            }
+        })
+    }
+
+    const renderButton = (type: string) => {
+        let result = null;
+        switch (type) {
+            case FRIEND_STATUS.PENDING:
+                result = (
+                    <ButtonBase sx={{
+                        gap: '5px',
+                        backgroundColor: '#1B74E4',
+                        color: 'white',
+                        padding: '8px 12px 8px 12px',
+                        borderRadius: '6px'
+                    }}
+                                onClick={handleAcceptFriend}
+                    >
+                        <Typography sx={{fontSize: '.875rem', fontWeight: '600'}}>
+                            Chấp nhận kết bạn
+                        </Typography>
+                    </ButtonBase>
+                );
+                break;
+            case FRIEND_STATUS.REQUESTS:
+                result = (
+                    <ButtonBase sx={{
+                        gap: '5px',
+                        backgroundColor: '#1B74E4',
+                        color: 'white',
+                        padding: '8px 12px 8px 12px',
+                        borderRadius: '6px'
+                    }}>
+                        <Typography sx={{fontSize: '.875rem', fontWeight: '600'}}>
+                            Đã gửi lời mời kết bạn
+                        </Typography>
+                    </ButtonBase>
+                );
+                break;
+            case FRIEND_STATUS.ACCEPTED:
+                result = (
+                    <ButtonBase sx={{
+                        gap: '5px',
+                        backgroundColor: '#1B74E4',
+                        color: 'white',
+                        padding: '8px 12px 8px 12px',
+                        borderRadius: '6px'
+                    }}>
+                        <Typography sx={{fontSize: '.875rem', fontWeight: '600'}}>
+                            Bạn bè
+                        </Typography>
+                    </ButtonBase>
+                )
+                break;
+            default:
+                result = (
+                    <ButtonBase sx={{
+                        gap: '5px',
+                        backgroundColor: '#1B74E4',
+                        color: 'white',
+                        padding: '8px 12px 8px 12px',
+                        borderRadius: '6px'
+                    }}
+                                onClick={handleAddFriend}
+                    >
+                        <PersonAddIcon sx={{fontSize: '20px'}}/>
+                        <Typography sx={{fontSize: '.875rem', fontWeight: '600'}}>
+                            Thêm bạn bè
+                        </Typography>
+                    </ButtonBase>
+                )
+                break;
+        }
+        return result;
+    }
 
     return (
         <Box>
@@ -126,52 +241,52 @@ const ProfileInformation: React.FC<props> = () => {
                                 </AvatarGroup>
                             </Grid>
                             <Grid item xs={6} className={styles.buttonFunction}>
-                                {self ? <ButtonBase sx={{
-                                    gap: '5px',
-                                    backgroundColor: '#1B74E4',
-                                    color: 'white',
-                                    padding: '8px 12px 8px 12px',
-                                    borderRadius: '6px'
-                                }}>
-                                    <AddCircleIcon sx={{fontSize: '20px'}}/>
-                                    <Typography sx={{fontSize: '.875rem', fontWeight: '600'}}>
-                                        Thêm vào tin
-                                    </Typography>
-                                </ButtonBase> : <ButtonBase sx={{
-                                    gap: '5px',
-                                    backgroundColor: '#1B74E4',
-                                    color: 'white',
-                                    padding: '8px 12px 8px 12px',
-                                    borderRadius: '6px'
-                                }}>
-                                    <PersonAddIcon sx={{fontSize: '20px'}}/>
-                                    <Typography sx={{fontSize: '.875rem', fontWeight: '600'}}>
-                                        Thêm bạn bè
-                                    </Typography>
-                                </ButtonBase>}
-                                {self ? <ButtonBase sx={{
-                                    gap: '5px',
-                                    backgroundColor: '#E4E6EB',
-                                    color: 'black',
-                                    padding: '8px 12px 8px 12px',
-                                    borderRadius: '6px'
-                                }}>
-                                    <EditIcon sx={{fontSize: '20px'}}/>
-                                    <Typography sx={{fontSize: '.875rem', fontWeight: '600'}}>
-                                        Chỉnh sửa trang cá nhân
-                                    </Typography>
-                                </ButtonBase> : <ButtonBase sx={{
-                                    gap: '5px',
-                                    backgroundColor: '#E4E6EB',
-                                    color: 'black',
-                                    padding: '8px 12px 8px 12px',
-                                    borderRadius: '6px'
-                                }}>
-                                    <ChatBubbleOutlineIcon sx={{fontSize: '20px'}}/>
-                                    <Typography sx={{fontSize: '.875rem', fontWeight: '600'}}>
-                                        Nhắn tin
-                                    </Typography>
-                                </ButtonBase>}
+                                {self ? (
+                                    <>
+                                        <ButtonBase sx={{
+                                            gap: '5px',
+                                            backgroundColor: '#1B74E4',
+                                            color: 'white',
+                                            padding: '8px 12px 8px 12px',
+                                            borderRadius: '6px'
+                                        }}>
+                                            <AddCircleIcon sx={{fontSize: '20px'}}/>
+                                            <Typography sx={{fontSize: '.875rem', fontWeight: '600'}}>
+                                                Thêm vào tin
+                                            </Typography>
+                                        </ButtonBase>
+                                        <ButtonBase sx={{
+                                            gap: '5px',
+                                            backgroundColor: '#E4E6EB',
+                                            color: 'black',
+                                            padding: '8px 12px 8px 12px',
+                                            borderRadius: '6px'
+                                        }}>
+                                            <EditIcon sx={{fontSize: '20px'}}/>
+                                            <Typography sx={{fontSize: '.875rem', fontWeight: '600'}}>
+                                                Chỉnh sửa trang cá nhân
+                                            </Typography>
+                                        </ButtonBase>
+                                    </>
+                                ) : (
+                                    <>
+                                        {renderButton(friendStatus)}
+                                        <ButtonBase sx={{
+                                            gap: '5px',
+                                            backgroundColor: '#E4E6EB',
+                                            color: 'black',
+                                            padding: '8px 12px 8px 12px',
+                                            borderRadius: '6px'
+                                        }}>
+                                            <ChatBubbleOutlineIcon sx={{fontSize: '20px'}}/>
+                                            <Typography sx={{fontSize: '.875rem', fontWeight: '600'}}>
+                                                Nhắn tin
+                                            </Typography>
+                                        </ButtonBase>
+                                    </>
+                                )}
+
+
                             </Grid>
                         </Grid>
                         <Grid container>

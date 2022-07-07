@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Header from "../../components/HomePage/Header";
 import {
     Avatar,
@@ -21,6 +21,7 @@ import {Link, useSearchParams} from "react-router-dom";
 import {useFindByNameMutation} from "../../app/services/UserService";
 import {IUserFull} from "../../app/models/User";
 import {useAppSelector} from "../../app/hook";
+import {IFriendFull} from "../../app/models/Friend";
 
 interface IProps {
 
@@ -31,6 +32,10 @@ const SearchPage: React.FC<IProps> = () => {
     const [findByNameApi] = useFindByNameMutation();
     const [userList, setUserList] = useState<IUserFull[]>([]);
     const {user} = useAppSelector(state => state.authSlice)
+    const {friends} = useAppSelector(state => state.friendSlice);
+    const buttonRef = useRef<any>(null);
+
+
 
     useEffect(() => {
         const keyword = searchParams.get('k');
@@ -44,6 +49,14 @@ const SearchPage: React.FC<IProps> = () => {
             })
         }
     }, [findByNameApi, searchParams, user]);
+
+    const handleAddFriend = (email: string) => {
+        if (buttonRef.current.innerText === `Bạn bè`) {
+            return;
+        }
+        buttonRef.current.value = "Đã gửi lời mời yêu cầu kết bạn";
+        console.log(email)
+    }
 
 
     return <>
@@ -84,7 +97,6 @@ const SearchPage: React.FC<IProps> = () => {
         <Wrapper>
 
             <Paper className={styles.wrapperContent}>
-
                 {userList.length <= 0 ? (
                     <Box sx={{display: `flex`, justifyContent: `center`}}>
                         <Typography sx={{color: `#606770`}} fontWeight={`bold`} fontSize={`large`}>Không tìm thấy người
@@ -98,13 +110,14 @@ const SearchPage: React.FC<IProps> = () => {
                         </Typography>
                         <List>
                             {userList.map((user, index) => {
+                                const isFriend = friends.find((item: IFriendFull) => item.friend.id === user.id);
                                 return (
                                     <ListItem
                                         key={index}
                                         secondaryAction={
                                             <>
-                                                <ButtonActionStyled>
-                                                    Thêm bạn bè
+                                                <ButtonActionStyled ref={buttonRef} onClick={() => handleAddFriend(user.email)}>
+                                                    {buttonRef.current ? buttonRef.current.value : (isFriend ? "Bạn bè" : "Thêm bạn bè")}
                                                 </ButtonActionStyled>
                                             </>
                                         }
@@ -114,7 +127,8 @@ const SearchPage: React.FC<IProps> = () => {
                                         </ListItemIcon>
                                         <ListItemText
                                             primary={
-                                                <Link to={`/profile/${user.userInfo.slug}-${user.id}`} className={`text-decoration-none`}>
+                                                <Link to={`/profile/${user.userInfo.slug}-${user.id}`}
+                                                      className={`text-decoration-none`}>
                                                     <Typography fontWeight={`bold`} sx={{color: "#333"}}>
                                                         {`${user.userInfo.firstName} ${user.userInfo.lastName}`}
                                                     </Typography>
@@ -150,6 +164,5 @@ const ButtonActionStyled = styled(ButtonBase)`
   font-weight: bold;
   color: #1877F2;
 `
-
 
 export default SearchPage;
