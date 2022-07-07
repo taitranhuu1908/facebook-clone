@@ -61,8 +61,8 @@ const PostNormal: React.FC<IProps> = ({post}) => {
 
         if (index !== -1) {
             setLiked(true);
-            setReactCount(post.reactPosts.length);
         }
+        setReactCount(post.reactPosts.length);
 
     }, [post, user])
 

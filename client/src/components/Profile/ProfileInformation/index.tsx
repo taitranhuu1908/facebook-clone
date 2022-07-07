@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Box, Avatar, IconButton, Grid, Container, Menu, MenuItem, Typography, AvatarGroup, Button} from "@mui/material";
 import ButtonBase from '@mui/material/ButtonBase';
 import styles from './profile-information.module.scss';
@@ -27,9 +27,9 @@ interface props {
 }
 
 const ProfileInformation: React.FC<props> = () => {
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [addFriendApi] = useAddFriendMutation();
     const [acceptFriendApi] = useAcceptFriendMutation();
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const [self, setSelf] = React.useState(false);
     const {userCurrent} = useAppSelector(state => state.userSlice)
@@ -73,16 +73,16 @@ const ProfileInformation: React.FC<props> = () => {
         })
     }, [pathname]);
 
-    const handleAddFriend = () => {
+    const handleAddFriend = useCallback(() => {
         addFriendApi(userCurrent.email).then((response: any) => {
             if (response.data.status === 200) {
                 setFriendStatus(FRIEND_STATUS.REQUESTS);
             }
         })
-    }
+    }, [addFriendApi, userCurrent.email]);
 
-    const handleAcceptFriend = () => {
-        console.log(userCurrent.email);
+
+    const handleAcceptFriend = useCallback(() => {
         const request: IAcceptFriend = {
             emailTarget: userCurrent.email,
             status: FRIEND_STATUS.ACCEPTED
@@ -92,11 +92,12 @@ const ProfileInformation: React.FC<props> = () => {
                 setFriendStatus(FRIEND_STATUS.ACCEPTED);
             }
         })
-    }
+    }, [acceptFriendApi, userCurrent.email]);
 
-    const renderButton = (type: string) => {
+
+    const renderButton = useMemo(() => {
         let result = null;
-        switch (type) {
+        switch (friendStatus) {
             case FRIEND_STATUS.PENDING:
                 result = (
                     <ButtonBase sx={{
@@ -164,7 +165,7 @@ const ProfileInformation: React.FC<props> = () => {
                 break;
         }
         return result;
-    }
+    }, [friendStatus, handleAcceptFriend, handleAddFriend]);
 
     return (
         <Box>
@@ -270,7 +271,7 @@ const ProfileInformation: React.FC<props> = () => {
                                     </>
                                 ) : (
                                     <>
-                                        {renderButton(friendStatus)}
+                                        {renderButton}
                                         <ButtonBase sx={{
                                             gap: '5px',
                                             backgroundColor: '#E4E6EB',
