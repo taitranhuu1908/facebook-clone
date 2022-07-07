@@ -5,6 +5,7 @@ public class API {
 	public static final String API_VERSION = "v1";
 
 	public static final String API_PREFIX = "/api";
+
 	public static final String API_PREFIX_V1 = API_PREFIX + "/" + API_VERSION;
 
 	public static final String API_ENDPOINTS_AUTH = API_PREFIX_V1 + "/auth";
@@ -41,13 +42,21 @@ public class API {
 
 	public static final String COMMENT_ID = "/comment/{id}";
 
-
 	public static final String GET_FRIENDS = "/get-friends";
+
 	public static final String SETTINGS_UPDATE = "/settings/update";
+
 	public static final String UTILS_ADD_FRIEND = "/utils/add-friend";
+
 	public static final String UTILS_CHANGE_STATUS_FRIEND = "/utils/change-status-friend";
+
 	public static final String GET_IMAGE_OF_USER = "/get-image-of-user";
+
 	public static final String LOCK_ACCOUNT = "/lock-account";
 
+	public static final String IS_MY_FRIEND = "/is-my-friend";
 
+	public static final String FIND_BY_NAME = "/find-by-name";
+
+	public static final String GET_FRIEND_REQUEST = "get-friend-request";
 }

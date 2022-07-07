@@ -81,7 +81,7 @@ public class PostController {
 
 			List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post , PostDto.class)).toList();
 
-			Page<PostDto> pagePosts = new PageImpl<>(postDtos , pageable , posts.size());
+			Page<PostDto> pagePosts = new PageImpl<>(postDtos , pageable , postDtos.size());
 
 			return ResponseEntity.ok(MessageReturnDto.<List<PostDto>>builder().data(pagePosts.getContent()).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
 		} catch (Exception e) {
@@ -111,7 +111,9 @@ public class PostController {
 
 			List<PostDto> postDtos = posts.stream().map(post -> modelMapper.map(post , PostDto.class)).toList();
 
-			return ResponseEntity.ok(MessageReturnDto.<List<PostDto>>builder().data(postDtos).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
+			Page<PostDto> postDtoPage = new PageImpl<>(postDtos , pageable , postDtos.size());
+
+			return ResponseEntity.ok(MessageReturnDto.<List<PostDto>>builder().data(postDtoPage.getContent()).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
@@ -253,6 +255,26 @@ public class PostController {
 			CommentDto commentDto = modelMapper.map(commentPost , CommentDto.class);
 
 			return ResponseEntity.ok(MessageReturnDto.<CommentDto>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(commentDto).build()).getBody();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
+		}
+	}
+
+	@GetMapping("get-post-by-user-email/{email}")
+	public MessageReturnDto<List<PostDto>> getPostByUserId( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @PathVariable("email") String email ) {
+		try {
+			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
+
+			User user = userService.findByEmail(email);
+
+			List<Post> posts = user.getPosts().stream().toList();
+
+			List<PostDto> postDtos = posts.stream().map(p -> modelMapper.map(p , PostDto.class)).toList();
+
+			Page<PostDto> pagePosts = new PageImpl<>(postDtos , pageable , postDtos.size());
+
+			return ResponseEntity.ok(MessageReturnDto.<List<PostDto>>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(pagePosts.getContent()).build()).getBody();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();

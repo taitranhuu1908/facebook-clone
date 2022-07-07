@@ -105,7 +105,7 @@ public class CommentController {
 
 			Page<CommentDto> commentPostPage = new PageImpl<>(commentDtos , pageable , commentDtos.size());
 
-			return ResponseEntity.ok(MessageReturnDto.<Page<CommentDto>>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(commentPostPage).paginate(pageable).build()).getBody();
+			return ResponseEntity.ok(MessageReturnDto.<List<CommentDto>>builder().status(STATUS.HTTP_OK).message(STATUS.HTTP_OK_MESSAGE).data(commentPostPage.getContent()).paginate(pageable).build()).getBody();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();

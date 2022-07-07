@@ -21,11 +21,11 @@ public class MessageReturnDto<T> {
 
     private Pageable paginate;
 
-    private final String buildVersion = "Version 1.2.1";
+    private final String buildVersion = "Version 1.3.1";
 
-    private final String buildDate = "03-07-2022";
+    private final String buildDate = "07-07-2022";
 
-    private final String buildDetails = "Fix bug and some new feature";
+    private final String buildDetails = "fix friend and add new find post by email user";
 
     @Getter
     @Setter

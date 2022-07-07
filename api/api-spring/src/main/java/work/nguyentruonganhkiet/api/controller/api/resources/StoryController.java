@@ -73,7 +73,7 @@ public class StoryController {
 
 			List<StoryDto> storyDtos = stories.stream().map(post -> modelMapper.map(post , StoryDto.class)).toList();
 
-			Page<StoryDto> pageStories = new PageImpl<>(storyDtos , pageable , stories.size());
+			Page<StoryDto> pageStories = new PageImpl<>(storyDtos , pageable , storyDtos.size());
 
 			return ResponseEntity.ok(MessageReturnDto.<List<StoryDto>>builder().message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).data(pageStories.getContent()).paginate(pageable).build()).getBody();
 		} catch (Exception e) {
@@ -100,6 +100,8 @@ public class StoryController {
 				return MessageReturnDto.<List<StoryDto>>builder().data(null).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).build();
 
 			List<StoryDto> storiesDtos = storys.stream().map(story -> modelMapper.map(story , StoryDto.class)).toList();
+
+			Page<StoryDto> pageStories = new PageImpl<>(storiesDtos , pageable , storiesDtos.size());
 
 			return ResponseEntity.ok(MessageReturnDto.<List<StoryDto>>builder().data(storiesDtos).message(STATUS.HTTP_OK_MESSAGE).status(STATUS.HTTP_OK).paginate(pageable).build()).getBody();
 		} catch (Exception e) {
