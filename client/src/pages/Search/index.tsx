@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Header from "../../components/HomePage/Header";
 import {
-    Avatar,
-    Box, ButtonBase,
+    Box,
     Divider,
     List,
     ListItem,
@@ -17,10 +16,11 @@ import CommentBankIcon from '@mui/icons-material/CommentBank';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import ImageIcon from '@mui/icons-material/Image';
 import styled from "@emotion/styled";
-import {Link, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import {useFindByNameMutation} from "../../app/services/UserService";
 import {IUserFull} from "../../app/models/User";
 import {useAppSelector} from "../../app/hook";
+import SearchItem from "./SearchItem";
 
 interface IProps {
 
@@ -44,7 +44,6 @@ const SearchPage: React.FC<IProps> = () => {
             })
         }
     }, [findByNameApi, searchParams, user]);
-
 
     return <>
         <Header/>
@@ -84,7 +83,6 @@ const SearchPage: React.FC<IProps> = () => {
         <Wrapper>
 
             <Paper className={styles.wrapperContent}>
-
                 {userList.length <= 0 ? (
                     <Box sx={{display: `flex`, justifyContent: `center`}}>
                         <Typography sx={{color: `#606770`}} fontWeight={`bold`} fontSize={`large`}>Không tìm thấy người
@@ -98,31 +96,7 @@ const SearchPage: React.FC<IProps> = () => {
                         </Typography>
                         <List>
                             {userList.map((user, index) => {
-                                return (
-                                    <ListItem
-                                        key={index}
-                                        secondaryAction={
-                                            <>
-                                                <ButtonActionStyled>
-                                                    Thêm bạn bè
-                                                </ButtonActionStyled>
-                                            </>
-                                        }
-                                    >
-                                        <ListItemIcon>
-                                            <Avatar/>
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={
-                                                <Link to={`/profile/${user.userInfo.slug}-${user.id}`} className={`text-decoration-none`}>
-                                                    <Typography fontWeight={`bold`} sx={{color: "#333"}}>
-                                                        {`${user.userInfo.firstName} ${user.userInfo.lastName}`}
-                                                    </Typography>
-                                                </Link>
-                                            }
-                                        />
-                                    </ListItem>
-                                )
+                                return <SearchItem key={index} userTarget={user}/>
                             })}
                         </List>
                     </>
@@ -142,14 +116,6 @@ const Wrapper = styled(Box)`
   height: 100vh;
 `
 
-const ButtonActionStyled = styled(ButtonBase)`
-  border-radius: 6px;
-  padding: 10px 15px;
-  background-color: #dbe7f2;
-  font-size: 14px;
-  font-weight: bold;
-  color: #1877F2;
-`
 
 
 export default SearchPage;
