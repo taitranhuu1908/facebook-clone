@@ -6,6 +6,7 @@ import {USER_DEFAULT} from "./AuthSlice";
 
 interface IState {
     posts: IPostFull[];
+    postsMe: IPostFull[];
 }
 
 export const POST_DEFAULT = {
@@ -27,6 +28,7 @@ export const POST_DEFAULT = {
 
 const initialState: IState = {
     posts: [],
+    postsMe: [],
 };
 
 const postSlice = createSlice({
@@ -41,14 +43,14 @@ const postSlice = createSlice({
         builder.addMatcher(
             postService.endpoints.getPostsByFriend.matchFulfilled,
             (state: IState, {payload}: PayloadAction<Response<IPostFull[]>>) => {
-                state.posts = [...payload.data, ...state.posts];
+                state.posts = [...payload.data];
             }
         );
         builder.addMatcher(
             postService.endpoints.getPostsByMe.matchFulfilled,
             (state: IState, {payload}: PayloadAction<Response<IPostFull[]>>) => {
                 if (payload.data) {
-                    state.posts = [...payload.data, ...state.posts];
+                    state.postsMe = [...payload.data];
                 }
             }
         )

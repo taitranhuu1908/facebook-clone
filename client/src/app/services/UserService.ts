@@ -1,6 +1,7 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
-import {IUserFull, IUserUpdate} from "../models/User";
-import {Response} from "../models/Response";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { IUserFull, IUserUpdate } from "../models/User";
+import { Response } from "../models/Response";
+import { IAcceptFriend } from "../models/Friend";
 
 const BASE_URL = process.env.REACT_APP_URL_API;
 
@@ -20,20 +21,33 @@ export const userService = createApi({
             query: (name) => ({
                 url: `/find-by-name?name=${name}`,
                 method: "GET",
-            })
+            }),
         }),
         getUserById: build.mutation<Response<IUserFull>, string>({
             query: (id) => ({
                 url: `/get/${id}`,
                 method: "GET",
-            })
+            }),
         }),
         getImageOfUser: build.query<Response<string[]>, void>({
-            query: () => ({
-                url: `/get-image-of-user`,
-                method: "GET",
-            }),
+            query: () => `/get-image-of-user`,
             providesTags: ["UpdateImage"],
+        }),
+        addFriend: build.mutation<Response<IUserFull>, string>({
+            query: (email) => ({
+                url: `/utils/add-friend`,
+                method: "POST",
+                body: {
+                    email,
+                },
+            }),
+        }),
+        acceptFriend: build.mutation<Response<IUserFull>, IAcceptFriend>({
+            query: (data) => ({
+                url: `/utils/change-status-friend`,
+                method: "PUT",
+                body: data,
+            }),
         }),
         updateUser: build.mutation<Response<IUserFull>, IUserUpdate>({
             query: (data) => ({
@@ -41,8 +55,15 @@ export const userService = createApi({
                 method: "PUT",
                 body: data,
             }),
-        })
+        }),
     }),
 });
 
-export const {useFindByNameMutation, useGetUserByIdMutation, useGetImageOfUserQuery, useUpdateUserMutation} = userService;
+export const {
+    useFindByNameMutation,
+    useGetUserByIdMutation,
+    useGetImageOfUserQuery,
+    useAddFriendMutation,
+    useAcceptFriendMutation,
+    useUpdateUserMutation,
+} = userService;
