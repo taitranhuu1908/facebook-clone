@@ -135,11 +135,11 @@ public class FriendController {
 	}
 
 	@GetMapping("get-request-has-send")
-	public MessageReturnDto getRequestHasSend( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @PathVariable("email") String email ) {
+	public MessageReturnDto getRequestHasSend( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
 			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
 
-			User user = this.userService.findByEmail(email);
+			User user = this.userService.findByEmail(userDetails.getUsername());
 
 			List<FriendRequest> frs = this.friendRequestRepository.findAll().stream().filter(fr -> fr.getUserSend().getId().equals(user.getId())).toList();
 
