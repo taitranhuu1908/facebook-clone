@@ -34,6 +34,7 @@ const ProfilePhoto = () => {
                             <img
                                 src={`${item}`}
                                 style={{width: '148px', height: '148px'}}
+                                alt={""}
                             />
                     </Box>
                 ))}

@@ -1,8 +1,7 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Header from "../../components/HomePage/Header";
 import {
-    Avatar,
-    Box, ButtonBase,
+    Box,
     Divider,
     List,
     ListItem,
@@ -17,11 +16,11 @@ import CommentBankIcon from '@mui/icons-material/CommentBank';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import ImageIcon from '@mui/icons-material/Image';
 import styled from "@emotion/styled";
-import {Link, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import {useFindByNameMutation} from "../../app/services/UserService";
 import {IUserFull} from "../../app/models/User";
 import {useAppSelector} from "../../app/hook";
-import {IFriendFull} from "../../app/models/Friend";
+import SearchItem from "./SearchItem";
 
 interface IProps {
 
@@ -32,10 +31,6 @@ const SearchPage: React.FC<IProps> = () => {
     const [findByNameApi] = useFindByNameMutation();
     const [userList, setUserList] = useState<IUserFull[]>([]);
     const {user} = useAppSelector(state => state.authSlice)
-    const {friends} = useAppSelector(state => state.friendSlice);
-    const buttonRef = useRef<any>(null);
-
-
 
     useEffect(() => {
         const keyword = searchParams.get('k');
@@ -49,14 +44,6 @@ const SearchPage: React.FC<IProps> = () => {
             })
         }
     }, [findByNameApi, searchParams, user]);
-
-    const handleAddFriend = (email: string) => {
-        if (buttonRef.current.innerText === `Bạn bè`) {
-            return;
-        }
-        buttonRef.current.value = "Đã gửi lời mời yêu cầu kết bạn";
-        console.log(email)
-    }
 
 
     return <>
@@ -110,33 +97,7 @@ const SearchPage: React.FC<IProps> = () => {
                         </Typography>
                         <List>
                             {userList.map((user, index) => {
-                                const isFriend = friends.find((item: IFriendFull) => item.friend.id === user.id);
-                                return (
-                                    <ListItem
-                                        key={index}
-                                        secondaryAction={
-                                            <>
-                                                <ButtonActionStyled ref={buttonRef} onClick={() => handleAddFriend(user.email)}>
-                                                    {buttonRef.current ? buttonRef.current.value : (isFriend ? "Bạn bè" : "Thêm bạn bè")}
-                                                </ButtonActionStyled>
-                                            </>
-                                        }
-                                    >
-                                        <ListItemIcon>
-                                            <Avatar/>
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={
-                                                <Link to={`/profile/${user.userInfo.slug}-${user.id}`}
-                                                      className={`text-decoration-none`}>
-                                                    <Typography fontWeight={`bold`} sx={{color: "#333"}}>
-                                                        {`${user.userInfo.firstName} ${user.userInfo.lastName}`}
-                                                    </Typography>
-                                                </Link>
-                                            }
-                                        />
-                                    </ListItem>
-                                )
+                                return <SearchItem key={index} userTarget={user}/>
                             })}
                         </List>
                     </>
@@ -156,13 +117,6 @@ const Wrapper = styled(Box)`
   height: 100vh;
 `
 
-const ButtonActionStyled = styled(ButtonBase)`
-  border-radius: 6px;
-  padding: 10px 15px;
-  background-color: #dbe7f2;
-  font-size: 14px;
-  font-weight: bold;
-  color: #1877F2;
-`
+
 
 export default SearchPage;
