@@ -21,8 +21,11 @@ export const friendService = createApi({
         }),
         getFriendRequest: build.query<Response<IUserFull[]>, void>({
             query: () => `/get-friend-request`,
+        }),
+        getFriendHasSend: build.query<Response<IUserFull[]>, void>({
+            query: () => `/get-request-has-send`,
         })
     }),
 });
 
-export const {useGetFriendsQuery, useGetFriendRequestQuery} = friendService;
+export const {useGetFriendsQuery, useGetFriendRequestQuery, useGetFriendHasSendQuery} = friendService;

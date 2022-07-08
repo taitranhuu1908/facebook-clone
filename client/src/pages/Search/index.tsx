@@ -45,7 +45,6 @@ const SearchPage: React.FC<IProps> = () => {
         }
     }, [findByNameApi, searchParams, user]);
 
-
     return <>
         <Header/>
         <Box className={styles.navbar}>

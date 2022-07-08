@@ -50,20 +50,33 @@ const ProfileInformation: React.FC<props> = () => {
     const [self, setSelf] = React.useState(false);
     const {userCurrent} = useAppSelector(state => state.userSlice);
     const {user} = useAppSelector(state => state.authSlice);
-    const {friends, friendRequest} = useAppSelector(state => state.friendSlice);
+    const {friends, friendRequest, requestHasSend} = useAppSelector(state => state.friendSlice);
     const [friendStatus, setFriendStatus] = useState<string>('');
 
     useEffect(() => {
         if (friends) {
-            const isFriend = friends.find((item: IFriendFull) => item.friend.id === userCurrent.id);
-            const isRequest = friendRequest.find((item: IUserFull) => item.id === userCurrent.id);
-            if (isFriend) {
-                setFriendStatus(FRIEND_STATUS.ACCEPTED)
-            } else if (isRequest) {
-                setFriendStatus(FRIEND_STATUS.PENDING)
+            const friend = friends.find((item: IFriendFull) => item.friend.id === userCurrent.id);
+            if (friend) {
+                setFriendStatus(FRIEND_STATUS.ACCEPTED);
             }
         }
-    }, [friends, userCurrent, friendRequest]);
+
+        if (friendRequest) {
+            const friend = friendRequest.find((item: IUserFull) => item.id === userCurrent.id);
+            if (friend) {
+                setFriendStatus(FRIEND_STATUS.PENDING);
+            }
+        }
+
+        if (requestHasSend) {
+            const friend = requestHasSend.find((item: IUserFull) => item.id === userCurrent.id);
+            if (friend) {
+                setFriendStatus(FRIEND_STATUS.REQUESTS);
+            }
+        }
+        
+    }, [friends, userCurrent, friendRequest, requestHasSend]);
+
     const [userUpdateApi] = useUpdateUserMutation();
     const [rotation, setRotation] = useState(0);
     const [zoom, setZoom] = useState(1);
@@ -417,12 +430,17 @@ const ProfileInformation: React.FC<props> = () => {
                                         src={avatarPreview ? avatarPreview : (userCurrent.userInfo.avatar || PROFILE_IMAGE.AVATAR)}
                                         sx={{width: 165, height: 165, border: '5px solid white'}}
                                     />
-                                    <IconButton onClick={handleOpenModal} sx={{
-                                        position: 'absolute', bottom: '5%', right: '12%', backgroundColor: '#E4E6EB',
-                                        '&:hover': {backgroundColor: '#D8DADF'}
-                                    }}>
-                                        <CameraAltIcon sx={{fontSize: '22px'}}/>
-                                    </IconButton>
+                                    {self && (
+                                        <IconButton onClick={handleOpenModal} sx={{
+                                            position: 'absolute',
+                                            bottom: '5%',
+                                            right: '12%',
+                                            backgroundColor: '#E4E6EB',
+                                            '&:hover': {backgroundColor: '#D8DADF'}
+                                        }}>
+                                            <CameraAltIcon sx={{fontSize: '22px'}}/>
+                                        </IconButton>
+                                    )}
                                     <Modal
                                         open={openModal}
                                         onClose={handleCloseModal}

@@ -13,7 +13,7 @@ interface IProps {
 }
 
 const SearchItem: React.FC<IProps> = ({userTarget}) => {
-    const {friends, friendRequest} = useAppSelector(state => state.friendSlice);
+    const {friends, friendRequest, requestHasSend} = useAppSelector(state => state.friendSlice);
     const [friendStatus, setFriendStatus] = useState<string>("");
     const [acceptFriendApi] = useAcceptFriendMutation();
 
@@ -31,7 +31,15 @@ const SearchItem: React.FC<IProps> = ({userTarget}) => {
                 setFriendStatus(FRIEND_STATUS.PENDING);
             }
         }
-    }, [friends, userTarget, friendRequest]);
+
+        if (requestHasSend) {
+            const friend = requestHasSend.find((item: IUserFull) => item.id === userTarget.id);
+            if (friend) {
+                setFriendStatus(FRIEND_STATUS.REQUESTS);
+            }
+        }
+
+    }, [friends, userTarget, friendRequest, requestHasSend]);
 
     const handleAcceptFriend = useCallback(() => {
         const request: IAcceptFriend = {
@@ -66,7 +74,7 @@ const SearchItem: React.FC<IProps> = ({userTarget}) => {
             case FRIEND_STATUS.REQUESTS:
                 result = (
                     <ButtonActionStyled>
-                        Đã gửi lời mời yêu cầu kết bạn
+                        Đã gửi lời mời kết bạn
                     </ButtonActionStyled>
                 );
                 break;

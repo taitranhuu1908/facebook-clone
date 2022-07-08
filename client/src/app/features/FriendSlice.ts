@@ -6,13 +6,14 @@ import {IFriendFull} from "../models/Friend";
 
 interface IState {
     friends: IFriendFull[]
-    friendRequest: IUserFull[]
-
+    friendRequest: IUserFull[],
+    requestHasSend: IUserFull[],
 }
 
 const initialState: IState = {
     friends: [],
-    friendRequest: []
+    friendRequest: [],
+    requestHasSend: [],
 };
 
 const postSlice = createSlice({
@@ -33,6 +34,14 @@ const postSlice = createSlice({
             (state: IState, {payload}: PayloadAction<Response<IUserFull[]>>) => {
                 if (payload.data) {
                     state.friendRequest = [...payload.data];
+                }
+            }
+        );
+        builder.addMatcher(
+            friendService.endpoints.getFriendHasSend.matchFulfilled,
+            (state: IState, {payload}: PayloadAction<Response<IUserFull[]>>) => {
+                if (payload.data) {
+                    state.requestHasSend = [...payload.data];
                 }
             }
         )
