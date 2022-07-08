@@ -13,6 +13,7 @@ import work.nguyentruonganhkiet.api.model.dtos.requests.IsMyFriendDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.MessageReturnDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.FriendDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.FriendRequestDto;
+import work.nguyentruonganhkiet.api.model.dtos.responses.entities.UserDto;
 import work.nguyentruonganhkiet.api.model.dtos.responses.entities.UserHaftDto;
 import work.nguyentruonganhkiet.api.model.entities.Friend;
 import work.nguyentruonganhkiet.api.model.entities.FriendRequest;
@@ -143,11 +144,11 @@ public class FriendController {
 
 			List<FriendRequest> frs = this.friendRequestRepository.findAll().stream().filter(fr -> fr.getUserSend().getId().equals(user.getId())).toList();
 
-			List<FriendRequest> friendDtos = frs.stream().map(f -> this.modelMapper.map(f , FriendRequest.class)).toList();
+			List<UserHaftDto> friendDtos = frs.stream().map(FriendRequest::getUserReceive).map(f -> this.modelMapper.map(f , UserHaftDto.class)).toList();
 
-			Page<FriendRequest> pageFriendDtos = new PageImpl<>(friendDtos , pageable , friendDtos.size());
+			Page<UserHaftDto> pageFriendDtos = new PageImpl<>(friendDtos , pageable , friendDtos.size());
 
-			return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<List<FriendRequest>>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).data(pageFriendDtos.getContent()).build()).getBody();
+			return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<List<UserHaftDto>>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).data(pageFriendDtos.getContent()).build()).getBody();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
