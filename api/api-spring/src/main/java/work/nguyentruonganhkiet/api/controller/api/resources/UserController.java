@@ -128,7 +128,6 @@ public class UserController {
 	@PostMapping(UTILS_ADD_FRIEND)
 	public MessageReturnDto<?> addFriend( @Valid @RequestBody AddFriendRequestDto addFriendRequestDto , @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails ) {
 		try {
-
 			User user = userService.findByEmail(userDetails.getUsername());
 
 			User friend = userService.findByEmail(addFriendRequestDto.getEmail());
@@ -136,16 +135,15 @@ public class UserController {
 			if (user.getId().equals(friend.getId()))
 				return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 
-			this.friendService.addFriend(user , friend);
+			boolean addSuccess = this.friendService.addFriend(user , friend);
 
-			Notification notification = Notification.builder().owner(user).userRef(friend).type(NotificationType.ADD_FRIEND).build();
-
-			notificationService.save(notification);
-
-			UserHaftDto userHaftDto = modelMapper.map(friend , UserHaftDto.class);
-
-			return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<UserHaftDto>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).data(userHaftDto).build()).getBody();
-
+			if (addSuccess) {
+				Notification notification = Notification.builder().owner(user).userRef(friend).type(NotificationType.ADD_FRIEND).build();
+				notificationService.save(notification);
+				UserHaftDto userHaftDto = modelMapper.map(friend , UserHaftDto.class);
+				return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<UserHaftDto>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).data(userHaftDto).build()).getBody();
+			} else
+				return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return ResponseEntity.badRequest().body(MessageReturnDto.getExceptionReturn()).getBody();
