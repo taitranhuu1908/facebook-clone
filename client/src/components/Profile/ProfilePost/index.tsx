@@ -13,7 +13,6 @@ interface IProps {
 
 const ProfilePost: React.FC<IProps> = ({isLoading}) => {
     const {postsMe} = useAppSelector(state => state.postSlice);
-
     const renderPosts = useMemo(() => {
         if (isLoading) {
             return (

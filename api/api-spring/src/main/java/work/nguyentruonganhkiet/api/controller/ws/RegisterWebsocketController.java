@@ -8,8 +8,9 @@ import org.springframework.stereotype.Controller;
 public class RegisterWebsocketController {
 
     @MessageMapping("/connected")
-    @SendTo("/channel/public")
+    @SendTo("/channel/connected")
     public String register(String name) {
+        System.out.println(name);
         return "User Connected: " + name;
     }
 }

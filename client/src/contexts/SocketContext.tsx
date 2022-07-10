@@ -8,24 +8,29 @@ const URL_SERVER = process.env.REACT_APP_URL_SERVER || 'http://localhost:1000';
 const Sock = new SockJS(`${URL_SERVER}/ws`);
 const stompClient = Stomp.over(Sock);
 
-
 export const SocketContext = createContext(stompClient);
 
 const SocketProvider = ({children}: { children: React.ReactNode }) => {
     const {user} = useAppSelector(state => state.authSlice);
 
+
     useEffect(() => {
-        if (user) {
-            stompClient.connect({}, () => {
-                stompClient.send(`/app/connected`, {}, `${user.email}`);
-                stompClient.subscribe(`/channel/public`, (data: Frame | undefined) => {
-                    console.log(data)
-                }, (error: Frame | string) => {
-                    console.log(error)
-                });
-            });
-        }
-    }, [user]);
+        const token = localStorage.getItem('auth');
+        stompClient.connect({
+            'Authorization': `Bearer ${token}`,
+        }, onConnected, onError);
+    }, []);
+
+    const onError = (error: Frame | string) => {
+        console.log(error)
+    }
+
+    const onConnected = (data: Frame | undefined) => {
+        stompClient.subscribe(`/channel/connected`, (data: Frame | undefined) => {
+            console.log(data)
+        });
+        stompClient.send(`/app/connected`, {}, `Xin chào`);
+    }
 
 
     return (

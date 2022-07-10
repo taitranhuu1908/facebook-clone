@@ -2,6 +2,7 @@ import React from 'react';
 import { ButtonBase, Typography, Grid } from "@mui/material";
 import { IUserFull } from "../../../../app/models/User";
 import { Link } from 'react-router-dom'
+import {PROFILE_IMAGE} from "../../../../constants";
 
 interface Props {
     friend: IUserFull;
@@ -14,7 +15,7 @@ const FriendItem: React.FC<Props> = ({ friend }) => {
                 <img style={{ borderRadius: '5px' }}
                     width="145px"
                     height="145px"
-                    src={friend.userInfo.avatar || ""}
+                    src={friend.userInfo.avatar || PROFILE_IMAGE.AVATAR}
                     alt="" />
 
             </ButtonBase>
