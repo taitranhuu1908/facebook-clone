@@ -24,6 +24,7 @@ import work.nguyentruonganhkiet.api.service.*;
 import work.nguyentruonganhkiet.api.utils.constant.STATUS;
 
 import javax.validation.Valid;
+import java.util.Comparator;
 import java.util.List;
 
 import static work.nguyentruonganhkiet.api.utils.constant.API.*;
@@ -216,13 +217,13 @@ public class UserController {
 	}
 
 	@GetMapping("get-image-of-user-email/{email}")
-	public MessageReturnDto getImageByUserEmail( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy , @PathVariable("email") String email ) {
+	public MessageReturnDto getImageByUserEmail( @RequestParam(name = "page", defaultValue = "0") int page , @RequestParam(name = "size", defaultValue = "10") int size , @RequestParam(name = "sortBy", defaultValue = "updatedAt") String sortBy , @PathVariable("email") String email ) {
 		try {
 			Pageable pageable = PageRequest.of(page , size , Sort.by(sortBy));
 
 			User user = userService.findByEmail(email);
 
-			List<String> images = user.getStories().stream().map(p -> p.getImage()).toList();
+			List<String> images = user.getStories().stream().map(Story::getImage).sorted(Comparator.comparing(String::toString)).toList();
 
 			Page<String> pageImages = new PageImpl<>(images , pageable , images.size());
 
