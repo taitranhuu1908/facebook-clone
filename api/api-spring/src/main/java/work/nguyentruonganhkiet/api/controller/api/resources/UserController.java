@@ -223,7 +223,7 @@ public class UserController {
 
 			User user = userService.findByEmail(email);
 
-			List<String> images = user.getStories().stream().map(Story::getImage).sorted(Comparator.comparing(String::toString)).toList();
+			List<String> images = user.getPosts().stream().map(Post::getThumbnail).toList();
 
 			Page<String> pageImages = new PageImpl<>(images , pageable , images.size());
 
