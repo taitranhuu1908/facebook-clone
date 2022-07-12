@@ -1,7 +1,8 @@
 import React, {useEffect} from 'react';
 import styles from './profile-photo.module.scss';
-import {Box, Button, Link, Typography} from "@mui/material";
+import {Box, Button, Typography} from "@mui/material";
 import {useGetImageOfUserQuery} from "../../../app/services/UserService";
+import {Link} from "react-router-dom";
 
 
 const ProfilePhoto = () => {
@@ -23,21 +24,25 @@ const ProfilePhoto = () => {
                     padding: '10px 0px 4px 10px'
                 }}>Ảnh</Typography>
                 <Button sx={{textTransform: 'none'}}>
-                    <Link href='/photo'
-                          sx={{textDecoration: 'none', alignSelf: 'center', fontSize: '1rem', fontWeight: '400'}}>Xem
+                    <Link to='/photo'
+                          style={{textDecoration: 'none', alignSelf: 'center', fontSize: '1rem', fontWeight: '400'}}>Xem
                         tất cả ảnh</Link>
                 </Button>
             </Box>
-            <Box sx={{maxWidth: '460px', borderRadius: '5px', display: 'flex', flexWrap: 'wrap'}} >
-                {imageList.map((item, index) => (
-                    <Box key={index} sx={{width: '148px', height: '148px', margin: '2px'}}>
-                            <img
-                                src={`${item}`}
-                                style={{width: '148px', height: '148px'}}
-                                alt={""}
-                            />
-                    </Box>
-                ))}
+            <Box sx={{maxWidth: '460px', borderRadius: '5px', display: 'flex', flexWrap: 'wrap'}}>
+                {imageList.map((item, index) => {
+                    if (item) {
+                        return (
+                            <Box key={index} sx={{width: '148px', height: '148px', margin: '2px'}}>
+                                <img
+                                    src={`${item}`}
+                                    style={{width: '148px', height: '148px'}}
+                                    alt={""}
+                                />
+                            </Box>
+                        )
+                    }
+                })}
             </Box>
         </Box>
     )

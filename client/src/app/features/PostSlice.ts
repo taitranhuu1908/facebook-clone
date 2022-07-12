@@ -36,6 +36,7 @@ const postSlice = createSlice({
     initialState,
     reducers: {
         appendPosts: (state: IState, {payload}: PayloadAction<IPostFull>) => {
+            state.postsMe = [payload, ...state.postsMe];
             state.posts = [payload, ...state.posts];
         },
     },

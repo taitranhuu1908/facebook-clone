@@ -19,7 +19,11 @@ const initialState: IState = {
 const postSlice = createSlice({
     name: "postSlice",
     initialState,
-    reducers: {},
+    reducers: {
+        appendFriendRequest: (state, {payload}: PayloadAction<IUserFull>) => {
+            state.friendRequest = [payload, ...state.friendRequest];
+        }
+    },
     extraReducers: (builder) => {
         builder.addMatcher(
             friendService.endpoints.getFriends.matchFulfilled,
@@ -47,6 +51,8 @@ const postSlice = createSlice({
         )
     },
 });
+
+export const {appendFriendRequest} = postSlice.actions;
 
 
 export default postSlice.reducer;

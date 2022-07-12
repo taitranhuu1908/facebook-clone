@@ -1,5 +1,5 @@
-import React from 'react';
-import {Box, IconButton, InputBase} from "@mui/material";
+import React, {useMemo} from 'react';
+import {Box, IconButton, InputBase, Typography} from "@mui/material";
 import styles from "./styles.module.scss";
 import ButtonCircle from "../../../Button/Circle";
 import Menu from "../Menu";
@@ -8,6 +8,8 @@ import AvatarCircle from "../../../Avatar/AvatarCircle";
 import styled from "@emotion/styled";
 import {useAppSelector} from "../../../../app/hook";
 import MultiMenu from "../../../MultiMenu";
+import NotifyAccept from "../../../NotifyAccept";
+import {IUserFull} from "../../../../app/models/User";
 
 interface IProps {
 
@@ -15,6 +17,7 @@ interface IProps {
 
 const HeaderRight: React.FC<IProps> = () => {
     const {user} = useAppSelector(state => state.authSlice)
+    const {friendRequest} = useAppSelector(state => state.friendSlice);
     const [anchorEl, setAnchorEl] = React.useState<{
         notify: null | HTMLElement;
         messenger: null | HTMLElement;
@@ -69,6 +72,16 @@ const HeaderRight: React.FC<IProps> = () => {
     //     })
     // }, [friends, dispatch])
 
+    const renderNotify = useMemo(() => {
+        if (friendRequest.length <= 0) {
+            return <Typography fontSize={`large`} sx={{color: `#606770`}}>Chưa có thông báo nào!</Typography>
+        }
+
+        return friendRequest.map((item: IUserFull, index: number) => {
+            return <NotifyAccept userTarget={item} key={index}/>
+        })
+    }, [friendRequest])
+
     const handleClose = () => {
         setAnchorEl({
             messenger: null,
@@ -92,11 +105,12 @@ const HeaderRight: React.FC<IProps> = () => {
             </ButtonCircle>
             <Menu title={'Thông  báo'} handleClose={handleClose}
                   anchorEl={anchorEl['notify']}>
-                <MenuItemWithAvatar time={'Khoảng 1 tháng trước'} src={''} to={'/'}
-                                    title={'𝐋𝐨𝐚 𝐦𝐚́𝐲 𝐭𝐢́𝐧𝐡 𝐒𝐩𝐞𝐚𝐤𝐞𝐫 𝐄-𝟏𝟎𝟏𝟒 được thiết kế đẹp mắt, sang trọng.\n' +
-                                        'Thích hợp để bạn sử dụng trong không gian phòng nhỏ và ấm áp\n' +
-                                        'Sản phẩm bảo hành 06 Tháng\n' +
-                                        '⏰ Bảo hành 06 tháng'}/>
+                {/*<MenuItemWithAvatar time={'Khoảng 1 tháng trước'} src={''} to={'/'}*/}
+                {/*                    title={'𝐋𝐨𝐚 𝐦𝐚́𝐲 𝐭𝐢́𝐧𝐡 𝐒𝐩𝐞𝐚𝐤𝐞𝐫 𝐄-𝟏𝟎𝟏𝟒 được thiết kế đẹp mắt, sang trọng.\n' +*/}
+                {/*                        'Thích hợp để bạn sử dụng trong không gian phòng nhỏ và ấm áp\n' +*/}
+                {/*                        'Sản phẩm bảo hành 06 Tháng\n' +*/}
+                {/*                        '⏰ Bảo hành 06 tháng'}/>*/}
+                {renderNotify}
             </Menu>
             <Menu title={'Chat'} anchorEl={anchorEl['messenger']}
                   handleClose={handleClose}

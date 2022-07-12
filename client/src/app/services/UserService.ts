@@ -15,7 +15,7 @@ export const userService = createApi({
             return headers;
         },
     }),
-    tagTypes: ["UpdateImage"],
+    tagTypes: ["IPostFull"],
     endpoints: (build) => ({
         findByName: build.mutation<Response<IUserFull[]>, string>({
             query: (name) => ({
@@ -31,7 +31,7 @@ export const userService = createApi({
         }),
         getImageOfUser: build.query<Response<string[]>, void>({
             query: () => `/get-image-of-user`,
-            providesTags: ["UpdateImage"],
+            providesTags: ["IPostFull"],
         }),
         addFriend: build.mutation<Response<IUserFull>, string>({
             query: (email) => ({
