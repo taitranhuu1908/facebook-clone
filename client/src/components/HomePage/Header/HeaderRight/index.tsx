@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {Box, IconButton, InputBase} from "@mui/material";
+import {Box, IconButton, InputBase, Typography} from "@mui/material";
 import styles from "./styles.module.scss";
 import ButtonCircle from "../../../Button/Circle";
 import Menu from "../Menu";
@@ -73,6 +73,10 @@ const HeaderRight: React.FC<IProps> = () => {
     // }, [friends, dispatch])
 
     const renderNotify = useMemo(() => {
+        if (friendRequest.length <= 0) {
+            return <Typography fontSize={`large`} sx={{color: `#606770`}}>Chưa có thông báo nào!</Typography>
+        }
+
         return friendRequest.map((item: IUserFull, index: number) => {
             return <NotifyAccept userTarget={item} key={index}/>
         })

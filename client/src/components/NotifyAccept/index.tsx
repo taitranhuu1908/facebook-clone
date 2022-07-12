@@ -1,5 +1,5 @@
-import React, {useCallback, useState} from 'react';
-import {Avatar, Box, ButtonBase, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
+import React, {useState} from 'react';
+import {Avatar, Box, ButtonBase, ListItem, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import styled from "@emotion/styled";
 import {Link} from "react-router-dom";
 import {IUserFull} from "../../app/models/User";
