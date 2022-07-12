@@ -143,7 +143,7 @@ public class UserController {
                 notificationService.save(notification);
                 UserHaftDto userHaftDto = modelMapper.map(friend, UserHaftDto.class);
 
-                simpMessagingTemplate.convertAndSend("/user/" + friend.getId(), modelMapper.map(user, UserHaftDto.class));
+                simpMessagingTemplate.convertAndSend("/user/request-friend" + friend.getId(), modelMapper.map(user, UserHaftDto.class));
 
                 return ResponseEntity.status(HTTP_OK).body(MessageReturnDto.<UserHaftDto>builder().status(HTTP_OK).message(HTTP_OK_MESSAGE).data(userHaftDto).build()).getBody();
             } else
