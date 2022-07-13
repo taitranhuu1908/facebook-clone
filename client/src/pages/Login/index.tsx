@@ -70,7 +70,7 @@ const LoginPage: React.FC = () => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigate("/")
+            navigate("/", {state: {isLoggedIn: true}})
         }
         if (loginLoading || getMeLoading) {
             NProgress.start()

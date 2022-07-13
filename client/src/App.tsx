@@ -1,4 +1,4 @@
-import {Route, Routes} from 'react-router-dom';
+import {Route, Routes,} from 'react-router-dom';
 import HomePage from './pages/Home';
 import LoginPage from './pages/Login';
 import WatchPage from "./pages/Watch";
@@ -8,7 +8,6 @@ import GroupPage from "./pages/Group";
 import SettingPage from "./pages/Setting";
 import StoriesPage from "./pages/Stories";
 import CreateStories from "./pages/Stories/Create";
-import Test from "./pages/test";
 import {useGetMeQuery} from "./app/services/AuthService";
 import LoadingCircle from "./components/Loading/LoadingCircle";
 import PrivateRoute from "./components/Router/PrivateRoute";
@@ -22,12 +21,24 @@ import {useGetFriendHasSendQuery, useGetFriendRequestQuery, useGetFriendsQuery} 
 import AboutProfile from "./pages/Profile/AboutProfile";
 import FriendProfile from "./pages/Profile/FriendProfile";
 import PhotoProfile from "./pages/Profile/PhotoProfile";
+import {useEffect} from "react";
+import {useAppSelector} from "./app/hook";
 
 function App() {
     const {isLoading} = useGetMeQuery();
-    useGetFriendsQuery();
-    useGetFriendRequestQuery();
-    useGetFriendHasSendQuery();
+    const {refetch: refetchFriend} = useGetFriendsQuery();
+    const {refetch: refetchRequestFriend} = useGetFriendRequestQuery();
+    const {refetch: refetchFriendHasSend} = useGetFriendHasSendQuery();
+    const {isLoggedIn} = useAppSelector(state => state.authSlice);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            refetchFriend();
+            refetchRequestFriend();
+            refetchFriendHasSend();
+        }
+    }, [isLoggedIn, refetchFriend, refetchRequestFriend, refetchFriendHasSend]);
+
 
     if (isLoading) {
         return <LoadingCircle/>;
@@ -60,7 +71,6 @@ function App() {
                         <Route path=":id/photos" element={<PhotoProfile/>}/>
                     </Route>
                 </Route>
-                <Route path="test" element={<Test/>}/>
                 <Route path="*" element={<NotFound/>}/>
             </Routes>
         </SocketProvider>

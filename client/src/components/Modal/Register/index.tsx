@@ -56,7 +56,6 @@ const schema = yup.object().shape({
     password: yup.string().required(),
     firstName: yup.string().required(),
     lastName: yup.string().required(),
-    gender: yup.string().required(),
 })
 
 const RegisterModal: React.FC<IProps> = ({ open, onClose }) => {
@@ -84,6 +83,7 @@ const RegisterModal: React.FC<IProps> = ({ open, onClose }) => {
             gender: data.gender,
             password: data.password
         }
+
         await postRegister(request).then((response: any) => {
             if (response.data.status === 200) {
                 setValue('email', '');

@@ -13,33 +13,45 @@ const stompClient = Stomp.over(Sock);
 export const SocketContext = createContext(stompClient);
 
 const SocketProvider = ({children}: { children: React.ReactNode }) => {
-    const {user} = useAppSelector(state => state.authSlice);
+    const {user, isLoggedIn} = useAppSelector(state => state.authSlice);
     const dispatch = useAppDispatch();
 
+
     const onConnected = useCallback(() => {
-        if (user) {
-            stompClient.subscribe(`/user/friend-request/${user.id}`, (data: Frame | undefined) => {
-                if (data) {
-                    const friend: IUserFull = JSON.parse(data.body);
-                    dispatch(appendFriendRequest(friend))
-                }
-            })
-        }
+        stompClient.subscribe(`/user/friend-request/${user.id}`, (data: Frame | undefined) => {
+            if (data) {
+                const friend: IUserFull = JSON.parse(data.body);
+                dispatch(appendFriendRequest(friend))
+            }
+        })
         stompClient.subscribe(`/channel/connected`, (data: Frame | undefined) => {
             console.log(data)
         });
+
         stompClient.send(`/app/connected`, {}, `Xin chào`);
-    }, [dispatch, user])
+    }, [dispatch, user.id])
 
     useEffect(() => {
         const token = localStorage.getItem('auth');
-        stompClient.connect({
-            'Authorization': `Bearer ${token}`,
-        }, onConnected, onError);
-    }, [onConnected]);
+        if (isLoggedIn) {
+
+            stompClient.connect({
+                'Authorization': `Bearer ${token}`,
+            }, onConnected, onError);
+            console.log(`re-render`)
+        }
+
+        return () => {
+            stompClient.disconnect(() => {
+                console.log(`Disconnected`)
+            }, {})
+        }
+
+    }, [onConnected, isLoggedIn]);
 
     const onError = (error: Frame | string) => {
         console.log(error)
+        console.error('Sorry, I cannot connect to the server right now.');
     }
 
 
